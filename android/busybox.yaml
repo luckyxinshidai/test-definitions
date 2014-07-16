@@ -1,0 +1,19 @@
+metadata:
+    name: busybox
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Test busybox in android."
+    maintainer:
+        - chase.qi@linaro.org
+    os:
+        - android
+    scope:
+        - functional
+    devices:
+	- beaglebone-black
+
+run:
+    steps:
+        - 
+
+parse:
+    pattern: "^(?P<test_case_id>.*)=(?P<result>.*)"
