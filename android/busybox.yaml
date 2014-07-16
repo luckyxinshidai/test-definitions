@@ -1,25 +1,21 @@
 metadata:
-	name: busybox
-	format: "Lava-Test-Shell Test Definition 1.0"
-	description: "Test busybox in android."
-	maintainer:
-		- chase.qi@linaro.org
-	os:
-		- android
-	scope:
-		- functional
-	devices:
-		- panda
-		- panda-es
-		- beaglebone-black
-
-params:
-	TEST_NAME: "busybox"
-	TEST_PARAMS: ""	
+    name: busybox
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Test busybox in android."
+    maintainer:
+        - chase.qi@linaro.org
+    os:
+        - android
+    scope:
+        - functional
+    devices:
+        - panda
+        - panda-es
+        - beaglebone-black
 
 run:
-	steps:
-		- echo "Starting short tests"
-		- echo "root fs: \\n`busybox ls /`"
-		- echo "CPUinfo: \\n`busybox cat /proc/cpuinfo`"
-		- echo "Test is finishing"
+    steps:
+        - echo "Starting short tests"
+        - echo "root fs: \\n`busybox ls /`"
+        - echo "CPUinfo: \\n`busybox cat /proc/cpuinfo`"
+        - echo "Test is finishing"
