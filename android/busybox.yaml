@@ -19,8 +19,6 @@ params:
 
 run:
 	steps:
-		- lava-test-case step1-list-root-files --shell busybox ls /
-		- lava-test-case step2-cat-CPU-info --shell busybox cat /proc/cpuinfo
 		- echo "Starting short tests"
 		- echo "root fs: \\n`busybox ls /`"
 		- echo "CPUinfo: \\n`busybox cat /proc/cpuinfo`"
