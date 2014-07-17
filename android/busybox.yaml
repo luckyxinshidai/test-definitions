@@ -13,9 +13,15 @@ metadata:
         - panda-es
         - beaglebone-black
 
+params:
+    TEST_NAME: "busybox"
+    TEST_PARAMS: ""
+
 run:
     steps:
         - echo "Starting short tests"
         - echo "root fs: \\n`busybox ls /`"
         - echo "CPUinfo: \\n`busybox cat /proc/cpuinfo`"
         - echo "Test is finishing"
+        - lava-test-case list-root-files --shell busybox ls /
+        - lava-test-case check-cpuinfo --shell busybox cat /proc/cpuinfo
