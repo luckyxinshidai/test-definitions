@@ -20,9 +20,9 @@ params:
 run:
     steps:
         - lava-test-case set-x --shell set -x
-	- lava-test-case clean-before --shell rm -r /data/busybox 1>/dev/null 2>/dev/null
+        - lava-test-case clean-before --shell rm -r /data/busybox 1>/dev/null 2>/dev/null
         - lava-test-case mk-busybox-folder --shell /system/bin/busybox mkdir /data/busybox
-	- lava-test-case touch-test-file --shell /system/bin/busybox touch /data/busybox/test.txt
+        - lava-test-case touch-test-file --shell /system/bin/busybox touch /data/busybox/test.txt
         - lava-test-case whoami-test --shell /system/bin/busybox whoami
         - lava-test-case which-busybox --shell /system/bin/busybox which busybox
         - lava-test-case basename-test --shell /system/bin/busybox basename /data/busybox/test.txt
