@@ -1,0 +1,23 @@
+metadata:
+    name: binder
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Binder Test for Android."
+    maintainer:
+        - chase.qi@linaro.org
+    os:
+        - android
+    scope:
+        - functional
+    devices:
+        - panda
+        - panda-es
+        - beaglebone-black
+
+params:
+    TEST_NAME: "binder"
+    TEST_PARAMS: ""
+
+run:
+    steps:
+        - lava-test-case chmod-binderAddInts --shell chmod 777 /data/nativebenchmark/binderAddInts
+        - lava-test-case run-binderAddInts --shell /data/nativebenchmark/binderAddInts -n 10
