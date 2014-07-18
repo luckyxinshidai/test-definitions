@@ -13,10 +13,6 @@ metadata:
         - panda-es
         - beaglebone-black
 
-params:
-    TEST_NAME: "binder"
-    TEST_PARAMS: ""
-
 run:
     steps:
         - lava-test-case chmod-binderAddInts --shell chmod 777 /data/nativebenchmark/binderAddInts

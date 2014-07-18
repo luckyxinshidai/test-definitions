@@ -13,10 +13,6 @@ metadata:
         - panda-es
         - beaglebone-black
 
-params:
-    TEST_NAME: "busybox"
-    TEST_PARAMS: ""
-
 run:
     steps:
         - lava-test-case set-x --shell set -x
