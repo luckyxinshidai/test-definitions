@@ -77,7 +77,7 @@ test_toolchain_version_measurement() {
                                                  
     Measurement=$BuildYear.$BuildMonth
                                       
-    if [ $BuildDay -ge 15 ]; then            
+    if [ $BuildDay -ge 18 ]; then            
         if [ "$LinaroGCC" != "$Measurement" ]; then
            fail_test "Wrong Toolchain version"     
            echo "Toolchain $Measurement should be used by now"   
