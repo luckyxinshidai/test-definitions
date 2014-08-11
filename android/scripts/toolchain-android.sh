@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 #
 # Device Tree test cases for Linaro Android
 #
