@@ -34,21 +34,16 @@ function pass_test() {
 # Check if /proc/version and toolchain version not empty
 test_toolchain_not_empty() {
     TEST="test_toolchain_not_empty"
+    version=`grep "Linaro GCC" /proc/version`
 
-    if [ ! -f /proc/version ]; then
-        fail_test "Unable to find /proc/version"
+    if [ -z "$version" ]
+    then
+        fail_test "Empty toolchain description in /proc/version"
         return 1
-    fi
-
-    version=`grep "Linaro GCC" /proc/version`                        
-    if [ -z "$version" ]; then                                   
-        fail_test "Empty toolchain description at /proc/version"
-        exit 1                                               
-    fi                                                             
-                                                                   
-    echo "Content of /proc/version: $version"
-
-    pass_test
+    else
+        echo "Content of /proc/version: $version"
+        pass_test
+    fi 
 }
 
 # run the tests
