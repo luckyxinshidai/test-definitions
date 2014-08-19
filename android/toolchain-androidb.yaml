@@ -21,7 +21,7 @@ metadata:
 
 run:
     steps:
-        - "./android/scripts/toolchain-android2.sh"
+        - "./android/scripts/toolchain-androidb.sh"
 
 parse:
     pattern: "(?P<test_case_id>[a-zA-Z0-9_-]+):\\s(?P<result>\\w+)"
