@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/system/bin/sh
 #
-# Device Tree test cases for Linaro Android
+# toolchain test cases for Linaro Android
 #
 # Copyright (C) 2013, Linaro Limited.
 #
@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-# Author: Botao Sun <botao.sun@linaro.org>
+# Author: Chase Qi <chase.qi@linaro.org>
 
 function fail_test() {
     local reason=$1
@@ -74,7 +74,7 @@ test_toolchain_version_measurement() {
         if [ "$LinaroGCC" != "$Measurement" ]
         then
            fail_test "Wrong Toolchain version"
-           echo "Toolchain $Measurement should be used after the 16th"
+           echo "Toolchain $Measurement should be used after the 15th"
            echo "Toolchain used for this image: $LinaroGCC"
            return 1
         fi
