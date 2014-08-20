@@ -89,7 +89,6 @@ test_toolchain_version_measurement() {
 }
 
 # run the tests
-# test_toolchain_not_empty
 test_toolchain_not_empty
 test_toolchain_version_measurement
 
