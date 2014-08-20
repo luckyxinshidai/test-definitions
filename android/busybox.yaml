@@ -26,5 +26,4 @@ run:
         - lava-test-case rm-test --shell /system/bin/busybox rm /data/busybox/test2.txt
         - lava-test-case grep-service --shell /system/bin/busybox grep service /init.rc
         - lava-test-case clean-after --shell rm -r /data/busybox 1>/dev/null 2>/dev/null
-        - lava-test-case fail-test --shell rm -r /data/busybox 1>/dev/null 2>/dev/null
         - lava-test-case set-x --shell set +x
