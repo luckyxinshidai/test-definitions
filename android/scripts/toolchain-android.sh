@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/bin/sh
 #
 # Device Tree test cases for Linaro Android
 #
@@ -30,69 +30,62 @@ function pass_test() {
 }
 
 ## Test case definitions
-
 # Check if /proc/version and toolchain version not empty
 test_toolchain_not_empty() {
     TEST="test_toolchain_not_empty"
+    version=`grep "Linaro GCC" /proc/version`
 
-    if [ ! -f /proc/version ]; then
-        fail_test "Unable to find /proc/version"
+    if [ -z "$version" ]
+    then
+        fail_test "Empty toolchain description in /proc/version"
         return 1
+    else
+        echo "Content of /proc/version: $version"
+        pass_test
     fi
-
-    version=`grep "Linaro GCC" /proc/version`                        
-    if [ -z "$version" ]; then                                   
-        fail_test "Empty toolchain description at /proc/version"
-        return 1                                               
-    fi                                                             
-                                                                   
-    echo "Content of /proc/version: $version"
-
-    pass_test
 }
 
 # Check if toolchain version correct
-test_toolchain_version_measurement() {                             
-    TEST="test_toolchain_version_measurement"                                    
-                                                                                 
-    LinaroGCC=`awk '{print substr($12,5,7)}' /proc/version`      
-                                                                 
-    BuildYear=`awk '{print $22;}' /proc/version`                 
-    BuildMonth=`awk '{print $18;}' /proc/version`                
-    case $BuildMonth in                                          
-         Jan) BuildMonth=01 ;;                                   
-         Feb) BuildMonth=02 ;;                                  
-         Mar) BuildMonth=03 ;;                                 
-         Apr) BuildMonth=04 ;;                                     
-         May) BuildMonth=05 ;;                                     
-         Jun) BuildMonth=06 ;;                                                   
-         Jul) BuildMonth=07 ;;                                                   
-         Aug) BuildMonth=08 ;;                                                   
-         Sep) BuildMonth=09 ;;                                   
-         Oct) BuildMonth=10 ;;                                   
-         Nov) BuildMonth=11 ;;                             
-         Dec) BuildMonth=12 ;;                             
-    esac                                         
-    BuildDay=`awk '{print $19;}' /proc/version`  
-                                                 
+test_toolchain_version_measurement() {
+    TEST="test_toolchain_version_measurement"
+    LinaroGCC=`awk '{print substr($12,5,7)}' /proc/version`
+    BuildYear=`awk '{print $22;}' /proc/version`
+    BuildMonth=`awk '{print $18;}' /proc/version`
+    case $BuildMonth in
+         Jan) BuildMonth=01 ;;
+         Feb) BuildMonth=02 ;;
+         Mar) BuildMonth=03 ;;
+         Apr) BuildMonth=04 ;;
+         May) BuildMonth=05 ;;
+         Jun) BuildMonth=06 ;;
+         Jul) BuildMonth=07 ;;
+         Aug) BuildMonth=08 ;;
+         Sep) BuildMonth=09 ;;
+         Oct) BuildMonth=10 ;;
+         Nov) BuildMonth=11 ;;
+         Dec) BuildMonth=12 ;;
+    esac
+    BuildDay=`awk '{print $19;}' /proc/version`
+
     Measurement=$BuildYear.$BuildMonth
-                                      
-    if [ $BuildDay -ge 18 ]; then            
-        if [ "$LinaroGCC" != "$Measurement" ]; then
-           fail_test "Wrong Toolchain version"     
-           echo "Toolchain $Measurement should be used by now"   
-           echo "Toolchain used for this image: $LinaroGCC"      
-           return 1                                        
-        fi                                       
-    fi                                           
-                                                
-    echo "Correct toolchain used, version: $LinaroGCC"
-    pass_test                                           
-                                               
+
+    if [ $BuildDay -ge 16 ]
+    then
+        if [ "$LinaroGCC" != "$Measurement" ]
+        then
+           fail_test "Wrong Toolchain version"
+           echo "Toolchain $Measurement should be used after the 16th"
+           echo "Toolchain used for this image: $LinaroGCC"
+           return 1
+        fi
+    else
+        echo "Correct toolchain used, version: $LinaroGCC"
+        pass_test
+    fi
 }
 
 # run the tests
-test_toolchain_not_empty
+# test_toolchain_not_empty
 test_toolchain_version_measurement
 
 # clean exit so lava-test can trust the results
