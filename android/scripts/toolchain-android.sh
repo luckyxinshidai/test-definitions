@@ -20,34 +20,23 @@
 #
 # Author: Chase Qi <chase.qi@linaro.org>
 
-function fail_test() {
-    local reason=$1
-    echo "${TEST}: FAIL - ${reason}"
-}
-
-function pass_test() {
-    echo "${TEST}: PASS"
-}
-
-## Test case definitions
+# Test case definitions
 # Check if /proc/version and toolchain version not empty
-test_toolchain_not_empty() {
-    TEST="test_toolchain_not_empty"
+toolchain_not_empty() {
     echo "Content of /proc/version:"
     echo `cat /proc/version`
     version=`grep "Linaro GCC" /proc/version`
     if [ -z "$version" ]
     then
-        fail_test "Empty toolchain description in /proc/version"
+        echo "toolchain_not_empty:" "fail"
         return 1
     else
-        pass_test
+        echo "toolchain_not_empty:" "pass"
     fi
 }
 
 # Check if toolchain version correct
-test_toolchain_version_measurement() {
-    TEST="test_toolchain_version_measurement"
+toolchain_version_measurement() {
     echo "Content of /proc/version:"
     echo `cat /proc/version`
     LinaroGCC=`awk '{print substr($12,5,7)}' /proc/version`
@@ -74,23 +63,23 @@ test_toolchain_version_measurement() {
     then
         if [ "$LinaroGCC" != "$Measurement" ]
         then
-           fail_test "Wrong Toolchain version"
            echo "Toolchain $Measurement should be used after the 15th"
            echo "Toolchain used for this image: $LinaroGCC"
+           echo "toolchain_version_measurement:" "fail"
            return 1
         else
            echo "Toolchain version: $LinaroGCC"
-           pass_test
+           echo "toolchain_version_measurement:" "pass"
         fi
     else
         echo "Toolchain version: $LinaroGCC"
-        pass_test
+        echo "toolchain_version_measurement:" "pass"
     fi
 }
 
 # run the tests
-test_toolchain_not_empty
-test_toolchain_version_measurement
+toolchain_not_empty
+toolchain_version_measurement
 
 # clean exit so lava-test can trust the results
 exit 0
