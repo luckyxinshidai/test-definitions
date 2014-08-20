@@ -33,15 +33,14 @@ function pass_test() {
 # Check if /proc/version and toolchain version not empty
 test_toolchain_not_empty() {
     TEST="test_toolchain_not_empty"
+    echo "Content of /proc/version:"
+    echo `cat /proc/version`
     version=`grep "Linaro GCC" /proc/version`
-
     if [ -z "$version" ]
     then
-        echo "Content of /proc/version: $version"
         fail_test "Empty toolchain description in /proc/version"
         return 1
     else
-        echo "Content of /proc/version: $version"
         pass_test
     fi
 }
@@ -49,6 +48,8 @@ test_toolchain_not_empty() {
 # Check if toolchain version correct
 test_toolchain_version_measurement() {
     TEST="test_toolchain_version_measurement"
+    echo "Content of /proc/version:"
+    echo `cat /proc/version`
     LinaroGCC=`awk '{print substr($12,5,7)}' /proc/version`
     BuildYear=`awk '{print $22;}' /proc/version`
     BuildMonth=`awk '{print $18;}' /proc/version`
@@ -67,22 +68,22 @@ test_toolchain_version_measurement() {
          Dec) BuildMonth=12 ;;
     esac
     BuildDay=`awk '{print $19;}' /proc/version`
-
     Measurement=$BuildYear.$BuildMonth
 
     if [ $BuildDay -ge 16 ]
     then
         if [ "$LinaroGCC" != "$Measurement" ]
         then
-           echo "Content of /proc/version: $version"
            fail_test "Wrong Toolchain version"
            echo "Toolchain $Measurement should be used after the 15th"
            echo "Toolchain used for this image: $LinaroGCC"
            return 1
+        else
+           echo "Toolchain version: $LinaroGCC"
+           pass_test
         fi
     else
-        echo "Content of /proc/version: $version"
-        echo "Correct toolchain used, version: $LinaroGCC"
+        echo "Toolchain version: $LinaroGCC"
         pass_test
     fi
 }
