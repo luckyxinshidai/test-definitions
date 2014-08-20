@@ -37,6 +37,7 @@ test_toolchain_not_empty() {
 
     if [ -z "$version" ]
     then
+        echo "Content of /proc/version: $version"
         fail_test "Empty toolchain description in /proc/version"
         return 1
     else
@@ -73,12 +74,14 @@ test_toolchain_version_measurement() {
     then
         if [ "$LinaroGCC" != "$Measurement" ]
         then
+           echo "Content of /proc/version: $version"
            fail_test "Wrong Toolchain version"
            echo "Toolchain $Measurement should be used after the 15th"
            echo "Toolchain used for this image: $LinaroGCC"
            return 1
         fi
     else
+        echo "Content of /proc/version: $version"
         echo "Correct toolchain used, version: $LinaroGCC"
         pass_test
     fi
@@ -86,6 +89,7 @@ test_toolchain_version_measurement() {
 
 # run the tests
 # test_toolchain_not_empty
+test_toolchain_not_empty
 test_toolchain_version_measurement
 
 # clean exit so lava-test can trust the results
