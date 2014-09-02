@@ -2,6 +2,8 @@ metadata:
     name: toolchain
     format: "Lava-Test-Shell Test Definition 1.0"
     description: "Check if toolchain version correct"
+    maintainer:
+        - chase.qi@linaro.org
     os:
         - android
     devices:

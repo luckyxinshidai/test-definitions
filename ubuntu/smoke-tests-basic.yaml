@@ -3,7 +3,7 @@ metadata:
     name: smoke-tests-basic
     description: "Basic system test command for Linaro Ubuntu images"
     maintainer:
-        - botao.sun@linaro.org
+        - chase.qi@linaro.org
     os:
         - ubuntu
     scope:
