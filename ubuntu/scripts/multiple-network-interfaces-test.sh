@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-# Author: Chasee Qi <chase.qi@linaro.org>
+# Author: Chase Qi <chase.qi@linaro.org>
 
 # source include/sh-test-lib
 
