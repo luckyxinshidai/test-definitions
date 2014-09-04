@@ -23,6 +23,8 @@
 # Test case definitions
 # Check if /proc/version and toolchain version not empty
 toolchain_not_empty() {
+    echo -e "\n================"
+    echo "Check if /proc/version and toolchain version not empty"
     echo "Content of /proc/version:"
     echo `cat /proc/version`
     version=`grep "Linaro GCC" /proc/version`
@@ -37,6 +39,8 @@ toolchain_not_empty() {
 
 # Check if toolchain version correct
 toolchain_version_measurement() {
+    echo -e "\n================"
+    echo "Check if toolchain version correct"
     echo "Content of /proc/version:"
     echo `cat /proc/version`
     LinaroGCC=`awk '{print substr($12,5,7)}' /proc/version`
