@@ -69,15 +69,15 @@ toolchain_version_measurement() {
         then
            echo "Toolchain $Measurement should be used after the 15th"
            echo "Toolchain used for this image: $LinaroGCC"
-           echo "toolchain_version_measurement:" "fail" "$Measurement"
+           echo "toolchain_version_measurement:" "fail" "$LinaroGCC"
            return 1
         else
            echo "Toolchain version: $LinaroGCC"
-           echo "toolchain_version_measurement:" "pass" "$Measurement"
+           echo "toolchain_version_measurement:" "pass" "$LinaroGCC"
         fi
     else
         echo "Toolchain version: $LinaroGCC"
-        echo "toolchain_version_measurement:" "pass" "$Measurement"
+        echo "toolchain_version_measurement:" "pass" "$LinaroGCC"
     fi
 }
 
