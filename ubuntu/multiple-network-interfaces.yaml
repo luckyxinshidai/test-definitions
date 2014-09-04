@@ -10,6 +10,8 @@ metadata:
         - functional
     devices:
         - d01
+        - panda-es
+        - panda
     environment:
         - lava-test-shell
 
