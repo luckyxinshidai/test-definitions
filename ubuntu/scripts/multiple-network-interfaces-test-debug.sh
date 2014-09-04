@@ -163,7 +163,7 @@ fi
 address-arp-flux
 for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
-    interface-disable-test
+#    interface-disable-test
     interface-enable-test
     link-detect
     ip-not-empty
