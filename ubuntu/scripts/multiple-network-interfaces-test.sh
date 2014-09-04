@@ -87,19 +87,39 @@ sleep 10
 
 }
 
+# Link detect
+link-detect(){
+echo -e "\n$i link detect test"
+echo "===================="
+link=`cat /sys/class/net/eth1/carrier`
+
+if [ $link -ne 1 ]
+then
+    echo "Please check $i LAN cable"
+    echo "$i-link-detect:" "fail"
+    return 1
+else
+    echo "Link detected: yes"
+    echo "$i-link-detect:" "pass"
+fi
+
+}
+
 # IP not empty test
 ip-not-empty(){
 echo -e "\n$i-ip-not-empty test"
 echo "====================="
-IP=$(ifconfig $i | grep "inet addr" | awk '{print substr($2,6,10)}')
+dhclient $i
+sleep 10
+IP=$(ifconfig $i | grep "inet addr" | awk '{print $2}')
 
-if [ $? -ne 0 ]
+if [ -z $IP ]
 then
     echo "$i have no IP address"
     echo "$i-ip-not-empty:" "fail"
     return 1
 else
-    echo "$i IP: $IP"
+    echo "$i IP $IP"
     echo "$i-ip-not-empty:" "pass"
 fi
 
@@ -146,6 +166,7 @@ for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
     interface-disable-test
     interface-enable-test
+    link-detect
     ip-not-empty
     ping-test
     packet-loss-test
