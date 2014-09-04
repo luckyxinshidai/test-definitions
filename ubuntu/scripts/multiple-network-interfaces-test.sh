@@ -90,7 +90,7 @@ sleep 10
 link-detect(){
 echo -e "\n$i link detect test"
 echo "===================="
-link=`cat /sys/class/net/eth1/carrier`
+link=`cat /sys/class/net/$i/carrier`
 
 if [ $link -ne 1 ]
 then

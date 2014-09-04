@@ -31,8 +31,8 @@ ifconfig -a
 
 # Correction of ARP flux
 address-arp-flux(){
-echo -e "\nAddress ARP flux"
-echo "==============="
+echo -e "\n==============="
+echo "Address ARP flux"
 for i in all default $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
     echo 0 > /proc/sys/net/ipv4/conf/$i/rp_filter
@@ -55,8 +55,8 @@ fi
 
 # Interface disable test
 interface-disable-test(){
-echo -e "\n$i interface disable test"
 echo "=========================="
+echo "$i interface disable test"
 ifconfig $i down
 
 if [ $? -ne 0 ]
@@ -71,8 +71,8 @@ fi
 
 # Interface enable test
 interface-enable-test(){
-echo -e "\n$i interface enable test"
-echo "========================="
+echo -e "\n========================="
+echo "$i interface enable test"
 ifconfig $i up
 
 if [ $? -ne 0 ]
@@ -82,15 +82,14 @@ then
 else
     echo "$i-interface-enable-test:" "pass"
 fi
-sleep 10
 
 }
 
 # Link detect
 link-detect(){
-echo -e "\n$i link detect test"
-echo "===================="
-link=`cat /sys/class/net/eth1/carrier`
+echo -e "\n===================="
+echo "$i link detect test"
+link=`cat /sys/class/net/$i/carrier`
 
 if [ $link -ne 1 ]
 then
@@ -106,10 +105,9 @@ fi
 
 # IP not empty test
 ip-not-empty(){
-echo -e "\n$i-ip-not-empty test"
-echo "====================="
+echo -e "\n====================="
+echo "$i-ip-not-empty test"
 dhclient $i
-sleep 10
 IP=$(ifconfig $i | grep "inet addr" | awk '{print $2}')
 
 if [ -z $IP ]
@@ -126,8 +124,8 @@ fi
 
 # ping test
 ping-test(){
-echo -e "\n$i ping test"
-echo "============="
+echo -e "\n============="
+echo "$i ping test"
 ping -c 5 -I $i $GATEWAY
 
 if [ $? -ne 0 ]
@@ -143,8 +141,8 @@ fi
 
 # Packet loss test
 packet-loss-test(){
-echo -e "\n$i packet loss test"
-echo "==================="
+echo -e "\n==================="
+echo "$i packet loss test"
 packet_loss=`ping -c 5 -I eth0 10.0.0.1 | grep "packet loss" | awk '{print $6;}'`
 
 if [ "$packet_loss" != "0%" ]
