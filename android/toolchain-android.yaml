@@ -1,7 +1,7 @@
 metadata:
-    name: toolchain
+    name: toolchain-version
     format: "Lava-Test-Shell Test Definition 1.0"
-    description: "Check if toolchain version correct"
+    description: "Check if toolchain version correct. If the build date later then the 15th of each month, new version toolchain should be used"
     maintainer:
         - chase.qi@linaro.org
     os:
