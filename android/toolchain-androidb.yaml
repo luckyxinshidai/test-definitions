@@ -21,7 +21,7 @@ metadata:
 
 run:
     steps:
-        - "./android/scripts/toolchain-android.sh"
+        - "./android/scripts/toolchain-android-debug.sh"
 
 parse:
     pattern: "(?P<test_case_id>.*-*):\s+(?P<result>(pass|fail))\s+(?P<measurement>[0-9.a-zA-Z\s]+)"
