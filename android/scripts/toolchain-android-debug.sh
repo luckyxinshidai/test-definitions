@@ -30,10 +30,10 @@ toolchain_not_empty() {
     version=`grep "Linaro GCC" /proc/version`
     if [ -z "$version" ]
     then
-        echo "toolchain_not_empty:" "fail" "0"
+        echo "toolchain_not_empty:" "fail" "Not specified"
         return 1
     else
-        echo "toolchain_not_empty:" "pass" "0"
+        echo "toolchain_not_empty:" "pass" "Not specified"
     fi
 }
 
