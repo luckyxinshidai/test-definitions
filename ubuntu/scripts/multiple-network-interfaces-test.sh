@@ -127,15 +127,10 @@ fi
 address-arp-flux
 for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
-    if test "$i" = "eth0"
-    then    
-        ping-test
-    else
-        interface-enable-test
-        link-detect
-        ip-not-empty
-        ping-test
-    fi
+    interface-enable-test
+    link-detect
+    ip-not-empty
+    ping-test
 done
     
 # clean exit so lava-test can trust the results

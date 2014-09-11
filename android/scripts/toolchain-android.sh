@@ -24,13 +24,14 @@
 toolchain(){
     echo "Content of /proc/version:"
     echo `cat /proc/version`
-    version=`awk '{print substr($5,2,4),$6,$7,$8,$9,$11,$12;}' /proc/version`
-    if [ -z "$version" ]
+    gcc=`grep "Linaro GCC" /proc/version`
+    if [ -z "$gcc" ]
     then
-        echo "toolchain:" "fail" "toolchain not exist"
+        echo "toolchain:" "fail" "gcc not exist"
         return 1
     else
-        echo "toolchain:" "pass" "$version"
+        measurement=`awk '{print substr($5,2,4),$6,$7,$8,$9,$11,$12;}' /proc/version`
+        echo "toolchain:" "pass" "$measurement"
     fi
 }
 
