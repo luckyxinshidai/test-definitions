@@ -127,13 +127,13 @@ fi
 address-arp-flux
 for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
-    if [ "$i" != "eth0" ]
+    if test "$i" = "eth0"
     then    
+        ping-test
+    else
         interface-enable-test
         link-detect
         ip-not-empty
-        ping-test
-    else
         ping-test
     fi
 done
