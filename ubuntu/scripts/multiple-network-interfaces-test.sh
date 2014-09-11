@@ -161,7 +161,7 @@ fi
 address-arp-flux
 for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
-    if [ $i -ne 0 ]
+    if [ "$i" != "eth0" ]
     then    
         interface-disable-test
         interface-enable-test
