@@ -53,22 +53,6 @@ fi
 
 }
 
-# Interface disable test
-interface-disable-test(){
-echo "=========================="
-echo "$i interface disable test"
-ifconfig $i down
-
-if [ $? -ne 0 ]
-then
-    echo "$i-interface-disable-test:" "fail"
-    return 1
-else
-    echo "$i-interface-disable-test:" "pass"
-fi
-
-}
-
 # Interface enable test
 interface-enable-test(){
 echo -e "\n========================="
@@ -139,39 +123,18 @@ fi
 
 }
 
-# Packet loss test
-packet-loss-test(){
-echo -e "\n==================="
-echo "$i packet loss test"
-packet_loss=`ping -c 5 -I eth0 10.0.0.1 | grep "packet loss" | awk '{print $6;}'`
-
-if [ "$packet_loss" != "0%" ]
-then
-    echo "Packet loss happened, rate is $packet_loss"
-    echo "$i-packet-loss-test:" "fail"
-    return 1
-else
-   echo "Packet loss rate: $packet_loss"
-   echo "$i-packet-loss-test:" "pass"
-fi
-
-}
-
 # Run the tests
 address-arp-flux
 for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
     if [ "$i" != "eth0" ]
     then    
-        interface-disable-test
         interface-enable-test
         link-detect
         ip-not-empty
         ping-test
-        packet-loss-test
     else
         ping-test
-        packet-loss-test
     fi
 done
     
