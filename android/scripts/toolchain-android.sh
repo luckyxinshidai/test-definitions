@@ -21,69 +21,21 @@
 # Author: Chase Qi <chase.qi@linaro.org>
 
 # Test case definitions
-# Check if /proc/version and toolchain version not empty
-toolchain_not_empty() {
-    echo -e "\n================"
-    echo "Check if /proc/version and toolchain version not empty"
+toolchain(){
     echo "Content of /proc/version:"
     echo `cat /proc/version`
-    version=`grep "Linaro GCC" /proc/version`
+    version=`awk '{print substr($5,2,4),$6,$7,$8,$9,$11,$12;}' /proc/version`
     if [ -z "$version" ]
     then
-        echo "toolchain_not_empty:" "fail" "0"
+        echo "toolchain:" "fail" "toolchain not exist"
         return 1
     else
-        echo "toolchain_not_empty:" "pass" "0"
+        echo "toolchain:" "pass" "$version"
     fi
 }
 
-# Check if toolchain version correct
-toolchain_version_measurement() {
-    echo -e "\n================"
-    echo "Check if toolchain version correct"
-    echo "Content of /proc/version:"
-    echo `cat /proc/version`
-    LinaroGCC=`awk '{print substr($12,5,7)}' /proc/version`
-    BuildYear=`awk '{print $22;}' /proc/version`
-    BuildMonth=`awk '{print $18;}' /proc/version`
-    case $BuildMonth in
-         Jan) BuildMonth=01 ;;
-         Feb) BuildMonth=02 ;;
-         Mar) BuildMonth=03 ;;
-         Apr) BuildMonth=04 ;;
-         May) BuildMonth=05 ;;
-         Jun) BuildMonth=06 ;;
-         Jul) BuildMonth=07 ;;
-         Aug) BuildMonth=08 ;;
-         Sep) BuildMonth=09 ;;
-         Oct) BuildMonth=10 ;;
-         Nov) BuildMonth=11 ;;
-         Dec) BuildMonth=12 ;;
-    esac
-    BuildDay=`awk '{print $19;}' /proc/version`
-    Measurement=$BuildYear.$BuildMonth
-
-    if [ $BuildDay -ge 16 ]
-    then
-        if [ "$LinaroGCC" != "$Measurement" ]
-        then
-           echo "Toolchain $Measurement should be used after the 15th"
-           echo "Toolchain used for this image: $LinaroGCC"
-           echo "toolchain_version_measurement:" "fail" "$LinaroGCC"
-           return 1
-        else
-           echo "Toolchain version: $LinaroGCC"
-           echo "toolchain_version_measurement:" "pass" "$LinaroGCC"
-        fi
-    else
-        echo "Toolchain version: $LinaroGCC"
-        echo "toolchain_version_measurement:" "pass" "$LinaroGCC"
-    fi
-}
-
-# run the tests
-toolchain_not_empty
-toolchain_version_measurement
+# run the test
+toolchain
 
 # clean exit so lava-test can trust the results
 exit 0

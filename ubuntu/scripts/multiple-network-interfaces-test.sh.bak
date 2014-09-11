@@ -161,18 +161,12 @@ fi
 address-arp-flux
 for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
-    if [ $i -ne 0 ]
-    then    
-        interface-disable-test
-        interface-enable-test
-        link-detect
-        ip-not-empty
-        ping-test
-        packet-loss-test
-    else
-        ping-test
-        packet-loss-test
-    fi
+    interface-disable-test
+    interface-enable-test
+    link-detect
+    ip-not-empty
+    ping-test
+    packet-loss-test
 done
     
 # clean exit so lava-test can trust the results
