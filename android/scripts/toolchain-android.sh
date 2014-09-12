@@ -30,7 +30,7 @@ toolchain(){
         echo "toolchain:" "fail" "gcc not exist"
         return 1
     else
-        measurement=`awk '{print substr($5,2,4),$6,$7,$8,$9,$11,$12;}' /proc/version`
+        measurement=`awk '{print substr($5,2,4),$6,$7,$8,$9,$10,$11,$12;}' /proc/version`
         echo "toolchain:" "pass" "$measurement"
     fi
 }
