@@ -22,6 +22,7 @@ metadata:
 run:
     steps:
         - lava-test-case test1 --result pass --measurement 99 --units bottles
+        - lava-test-case test1 --result pass --units bottles
         - lava-test-case test3 --result pass --measurement 99 --units bottles\ version\ 123
         - lava-test-case test5 --result pass --units bottles\ test\ 123
 
