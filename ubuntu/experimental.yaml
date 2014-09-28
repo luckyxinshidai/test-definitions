@@ -22,4 +22,4 @@ metadata:
 
 run:
     steps:
-        - lava-test-case test1 --result pass --measurement LinaroGCC
+        - lava-test-case test1 --result pass --measurement 100.66

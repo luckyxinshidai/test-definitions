@@ -27,11 +27,14 @@ toolchain(){
     gcc=`grep "Linaro GCC" /proc/version`
     if [ -z "$gcc" ]
     then
-        echo "toolchain:" "fail" "gcc not exist"
+#        echo "toolchain:" "fail" "gcc not exist"
+        lava-test-case toolchain --result pass --measurement 99 --units bottles
         return 1
     else
         measurement=`awk '{print substr($5,2,4),$6,$7,$8,$9,$10,$11,$12;}' /proc/version`
-        echo "toolchain:" "pass" "$measurement"
+#        echo "toolchain:" "pass" "$measurement"
+        lava-test-case toolchain --result pass --measurement 99 --units bottles
+
     fi
 }
 
