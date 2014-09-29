@@ -1,11 +1,11 @@
 metadata:
-    name: feature experimental
+    name: toolchain-version
     format: "Lava-Test-Shell Test Definition 1.0"
-    description: "lava feature experimental"
+    description: "Check toolchain version"
     maintainer:
         - chase.qi@linaro.org
     os:
-        - ubuntu
+        - android
     devices:
         - panda
         - panda-es
@@ -14,7 +14,6 @@ metadata:
         - rtsm_foundation-armv8
         - rtsm_fvp_base-aemv8a
         - aa9
-        - d01
     scope:
         - functional
     environment:
@@ -22,4 +21,4 @@ metadata:
 
 run:
     steps:
-        - "lava-test-case test1 --result pass --measurement 100.66 --units bottles"
+        - "./android/scripts/toolchain-androidT.sh"

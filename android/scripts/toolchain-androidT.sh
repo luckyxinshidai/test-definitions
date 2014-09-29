@@ -27,16 +27,17 @@ toolchain(){
     gcc=`grep "Linaro GCC" /proc/version`
     if [ -z "$gcc" ]
     then
-        echo "toolchain:" "fail" "gcc not exist"
+        `lava-test-case` toolchain --result fail --measurement 99 --units bottles
         return 1
     else
         measurement=`awk '{print substr($5,2,4),$6,$7,$8,$9,$10,$11,$12;}' /proc/version`
-        echo "toolchain:" "pass" "$measurement"
+        `lava-test-case` toolchain --result pass --measurement 99 --units bottles
     fi
 }
 
 # run the test
 toolchain
+lava-test-case toolchianE --result pass --measurement 9999 --units bottlessss
 
 # clean exit so lava-test can trust the results
 exit 0
