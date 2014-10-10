@@ -20,8 +20,6 @@
 #
 # Author: Chase Qi <chase.qi@linaro.org>
 
-# source include/sh-test-lib
-
 GATEWAY=10.0.0.1
 
 # Display all interfaces currently available
@@ -137,6 +135,6 @@ do
       ping-test
   fi
 done
-    
+
 # clean exit so lava-test can trust the results
 exit 0
