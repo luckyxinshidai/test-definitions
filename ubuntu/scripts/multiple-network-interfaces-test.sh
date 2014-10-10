@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Multiple network interfaces test for ubuntu
 #
@@ -28,8 +28,8 @@ echo "================================="
 ifconfig -a
 
 # Correction of ARP flux
-address-arp-flux(){
-echo -e "\n==============="
+address_arp_flux(){
+echo "==============="
 echo "Address ARP flux"
 for i in all default $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
@@ -52,8 +52,8 @@ fi
 }
 
 # Interface enable test
-interface-enable-test(){
-echo -e "\n========================="
+interface_enable_test(){
+echo "========================="
 echo "$i interface enable test"
 ifconfig $i up
 
@@ -68,8 +68,8 @@ fi
 }
 
 # Link detect
-link-detect(){
-echo -e "\n===================="
+link_detect(){
+echo "===================="
 echo "$i link detect test"
 link=`cat /sys/class/net/$i/carrier`
 
@@ -86,8 +86,8 @@ fi
 }
 
 # IP not empty test
-ip-not-empty(){
-echo -e "\n====================="
+ip_not_empty(){
+echo "====================="
 echo "$i-ip-not-empty test"
 dhclient $i
 IP=$(ifconfig $i | grep "inet addr" | awk '{print $2}')
@@ -105,8 +105,8 @@ fi
 }
 
 # ping test
-ping-test(){
-echo -e "\n============="
+ping_test(){
+echo "============="
 echo "$i ping test"
 ping -c 5 -I $i $GATEWAY
 
@@ -122,17 +122,17 @@ fi
 }
 
 # Run the tests
-address-arp-flux
+address_arp_flux
 for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
 do
   if test "$i" = "eth0"
   then
-      ping-test
+      ping_test
   else
-      interface-enable-test
-      link-detect
-      ip-not-empty
-      ping-test
+      interface_enable_test
+      link_detect
+      ip_not_empty
+      ping_test
   fi
 done
 
