@@ -33,7 +33,7 @@ ifconfig -a
 address_arp_flux(){
     echo "==============="
     echo "Address ARP flux test"
-    for Interface in `ifconfig -a |grep eth |awk '{print $1}'`; do
+    for Interface in all default `ifconfig -a |grep eth |awk '{print $1}'`; do
         echo 0 > /proc/sys/net/ipv4/conf/$Interface/rp_filter
         echo "$Interface rp_filter: `cat /proc/sys/net/ipv4/conf/$Interface/rp_filter`"
         echo 1 > /proc/sys/net/ipv4/conf/$Interface/arp_ignore
@@ -86,7 +86,9 @@ ip_not_empty(){
     local ethx=$1
     echo "====================="
     echo "$ethx-ip-not-empty test"
+    echo timeout 120 >> /etc/dhcp/dhclient.conf
     dhclient $ethx
+    sleep 30
     IP=$(ifconfig $ethx | grep "inet addr" | awk '{print $2}')
 
     if [ -z $IP ]; then
