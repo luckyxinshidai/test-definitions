@@ -20,7 +20,7 @@
 #
 # Author: Chase Qi <chase.qi@linaro.org>
 
-# Define gateway
+# Print network gateway
 GATEWAY=$1
 echo "GATEWAY: $GATEWAY"
 
