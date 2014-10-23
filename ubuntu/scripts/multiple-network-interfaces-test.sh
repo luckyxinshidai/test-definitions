@@ -29,17 +29,13 @@ echo "================"
 echo "Print all network interfaces"
 ifconfig -a
 
-# Correction of ARP flux
+# Pass rp_filter=0 to kernel to address ARP flux
 address_arp_flux(){
     echo "==============="
-    echo "Address ARP flux test"
-    for Interface in all default `ifconfig -a |grep eth |awk '{print $1}'`; do
-        echo 0 > /proc/sys/net/ipv4/conf/$Interface/rp_filter
-        echo "$Interface rp_filter: `cat /proc/sys/net/ipv4/conf/$Interface/rp_filter`"
-        echo 1 > /proc/sys/net/ipv4/conf/$Interface/arp_ignore
-        echo "$Interface arp_ignore: `cat /proc/sys/net/ipv4/conf/$Interface/arp_ignore`"
-        echo 2 > /proc/sys/net/ipv4/conf/$Interface/arp_announce
-        echo "$Interface arp_announce: `cat /proc/sys/net/ipv4/conf/$Interface/arp_announce`"
+    echo "Pass rp_filter=0 to kernel to address ARP flux"
+    for i in all default; do
+        echo 0 > /proc/sys/net/ipv4/conf/$i/rp_filter
+        sysctl -a |grep $i.rp_filter
     done
 
     if [ $? -ne 0 ]; then
