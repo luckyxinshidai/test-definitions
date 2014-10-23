@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Multiple network interfaces test for ubuntu
 #
@@ -20,121 +20,115 @@
 #
 # Author: Chase Qi <chase.qi@linaro.org>
 
-GATEWAY=10.0.0.1
+# Define gateway
+GATEWAY=$1
+echo "GATEWAY: $GATEWAY"
 
-# Display all interfaces currently available
-echo "All interfaces currently available"
-echo "================================="
+# Print network interfaces list
+echo "================"
+echo "Print all network interfaces"
 ifconfig -a
 
 # Correction of ARP flux
 address_arp_flux(){
-echo "==============="
-echo "Address ARP flux"
-for i in all default $(ls /proc/sys/net/ipv4/conf/ | grep eth)
-do
-    echo 0 > /proc/sys/net/ipv4/conf/$i/rp_filter
-    echo "$i rp_filter: `cat /proc/sys/net/ipv4/conf/$i/rp_filter`"
-    echo 1 > /proc/sys/net/ipv4/conf/$i/arp_ignore
-    echo "$i arp_ignore: `cat /proc/sys/net/ipv4/conf/$i/arp_ignore`"
-    echo 2 > /proc/sys/net/ipv4/conf/$i/arp_announce
-    echo "$i arp_announce: `cat /proc/sys/net/ipv4/conf/$i/arp_announce`"
-done
+    echo "==============="
+    echo "Address ARP flux test"
+    for Interface in `ifconfig -a |grep eth |awk '{print $1}'`; do
+        echo 0 > /proc/sys/net/ipv4/conf/$Interface/rp_filter
+        echo "$Interface rp_filter: `cat /proc/sys/net/ipv4/conf/$Interface/rp_filter`"
+        echo 1 > /proc/sys/net/ipv4/conf/$Interface/arp_ignore
+        echo "$Interface arp_ignore: `cat /proc/sys/net/ipv4/conf/$Interface/arp_ignore`"
+        echo 2 > /proc/sys/net/ipv4/conf/$Interface/arp_announce
+        echo "$Interface arp_announce: `cat /proc/sys/net/ipv4/conf/$Interface/arp_announce`"
+    done
 
-if [ $? -ne 0 ]
-then
-    echo "address-arp-flux:" "fail"
-    return 1
-else
-    echo "address-arp-flux:" "pass"
-fi
-
+    if [ $? -ne 0 ]; then
+        echo "address-arp-flux:" "fail"
+        return 1
+    else
+        echo "address-arp-flux:" "pass"
+    fi
 }
 
 # Interface enable test
 interface_enable_test(){
-echo "========================="
-echo "$i interface enable test"
-ifconfig $i up
+    local ethx=$1
+    echo "========================="
+    echo "$ethx interface enable test"
+    ifconfig $ethx up
 
-if [ $? -ne 0 ]
-then
-    echo "$i-interface-enable-test:" "fail"
-    return 1
-else
-    echo "$i-interface-enable-test:" "pass"
-fi
-
+    if [ $? -ne 0 ]; then
+        echo "$ethx-interface-enable-test:" "fail"
+        return 1
+    else
+        echo "$ethx-interface-enable-test:" "pass"
+    fi
 }
 
 # Link detect
 link_detect(){
-echo "===================="
-echo "$i link detect test"
-link=`cat /sys/class/net/$i/carrier`
+    local ethx=$1
+    echo "===================="
+    echo "$ethx link detect test"
+    link=`cat /sys/class/net/$ethx/carrier`
 
-if [ $link -ne 1 ]
-then
-    echo "Please check $i LAN cable"
-    echo "$i-link-detect:" "fail"
-    return 1
-else
-    echo "Link detected: yes"
-    echo "$i-link-detect:" "pass"
-fi
+    if [ $link -ne 1 ]; then
+        echo "Please check $ethx LAN cable"
+        echo "$ethx-link-detect:" "fail"
+        return 1
+    else
+        echo "$ethx-link-detect:" "pass"
+    fi
 
 }
 
 # IP not empty test
 ip_not_empty(){
-echo "====================="
-echo "$i-ip-not-empty test"
-dhclient $i
-IP=$(ifconfig $i | grep "inet addr" | awk '{print $2}')
+    local ethx=$1
+    echo "====================="
+    echo "$ethx-ip-not-empty test"
+    dhclient $ethx
+    IP=$(ifconfig $ethx | grep "inet addr" | awk '{print $2}')
 
-if [ -z $IP ]
-then
-    echo "$i have no IP address"
-    echo "$i-ip-not-empty:" "fail"
-    return 1
-else
-    echo "$i IP $IP"
-    echo "$i-ip-not-empty:" "pass"
-fi
-
+    if [ -z $IP ]; then
+        echo "$ethx have no IP address"
+        echo "$ethx-ip-not-empty:" "fail"
+        return 1
+    else
+        echo "$ethx IP $IP"
+        echo "$ethx-ip-not-empty:" "pass"
+    fi
 }
 
 # ping test
 ping_test(){
-echo "============="
-echo "$i ping test"
-ping -c 5 -I $i $GATEWAY
+    local ethx=$1
+    echo "============="
+    echo "$ethx ping test"
+    ping -c 5 -I $ethx $GATEWAY
 
-if [ $? -ne 0 ]
-then
-    echo "Ping test through $i failed"
-    echo "$i-ping-test:" "fail"
-    return 1
-else
-    echo "$i-ping-test:" "pass"
-fi
-
+    if [ $? -ne 0 ]; then
+        echo "Ping test through $ethx failed"
+        echo "$ethx-ping-test:" "fail"
+        return 1
+    else
+        echo "$ethx-ping-test:" "pass"
+    fi
 }
 
 # Run the tests
 address_arp_flux
-for i in $(ls /proc/sys/net/ipv4/conf/ | grep eth)
-do
-  if test "$i" = "eth0"
+for Interface in `ifconfig -a |grep eth |awk '{print $1}'`; do
+  if test "$Interface" = "eth0"
   then
-      ping_test
+      ping_test $Interface
   else
-      interface_enable_test
-      link_detect
-      ip_not_empty
-      ping_test
+      interface_enable_test $Interface
+      link_detect $Interface
+      ip_not_empty $Interface
+      ping_test $Interface
   fi
 done
-
+    
 # clean exit so lava-test can trust the results
 exit 0
