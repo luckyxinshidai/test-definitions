@@ -70,6 +70,7 @@ link_detect(){
     local ethx=$1
     echo "===================="
     echo "$ethx link detect test"
+    sleep 10
     link=`cat /sys/class/net/$ethx/carrier`
 
     if [ $link -ne 1 ]; then
