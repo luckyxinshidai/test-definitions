@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Multiple network interfaces test for ubuntu
 #
