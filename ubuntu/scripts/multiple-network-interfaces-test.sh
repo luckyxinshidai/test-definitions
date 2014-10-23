@@ -79,7 +79,6 @@ link_detect(){
     else
         echo "$ethx-link-detect:" "pass"
     fi
-
 }
 
 # IP not empty test
