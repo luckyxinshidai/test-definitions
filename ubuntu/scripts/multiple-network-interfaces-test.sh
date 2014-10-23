@@ -94,10 +94,12 @@ ip_not_empty(){
 
     if [ -z $IP ]; then
         echo "$ethx have no IP address"
+        ifconfig $ethx
         echo "$ethx-ip-not-empty:" "fail"
         return 1
     else
         echo "$ethx IP $IP"
+        ifconfig $ethx
         echo "$ethx-ip-not-empty:" "pass"
     fi
 }
