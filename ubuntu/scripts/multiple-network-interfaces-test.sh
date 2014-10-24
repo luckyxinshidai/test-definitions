@@ -106,9 +106,8 @@ ping_test(){
     echo "============="
     IP=$(ifconfig $ethx | grep "inet addr" | awk '{print $2}')
     if [ -z $IP ]; then
-        ifconfig $ethx
         echo "$ethx have no IP address"
-        echo "$ethx-ping-test:" "fail"
+        echo "$ethx-ping-test:" "skip"
         return 1
     else
         echo "$ethx ping test"
