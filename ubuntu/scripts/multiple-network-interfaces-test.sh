@@ -24,7 +24,7 @@
 GATEWAY=$1
 echo "GATEWAY: $GATEWAY"
 
-# Print network interfaces list
+# Print all network interfaces
 echo "================"
 echo "Print all network interfaces"
 ifconfig -a
@@ -89,13 +89,13 @@ ip_not_empty(){
     IP=$(ifconfig $ethx | grep "inet addr" | awk '{print $2}')
 
     if [ -z $IP ]; then
-        echo "$ethx have no IP address"
         ifconfig $ethx
+        echo "$ethx have no IP address"
         echo "$ethx-ip-not-empty:" "fail"
         return 1
     else
-        echo "$ethx IP $IP"
         ifconfig $ethx
+        echo "$ethx IP $IP"
         echo "$ethx-ip-not-empty:" "pass"
     fi
 }
@@ -104,15 +104,23 @@ ip_not_empty(){
 ping_test(){
     local ethx=$1
     echo "============="
-    echo "$ethx ping test"
-    ping -c 5 -I $ethx $GATEWAY
-
-    if [ $? -ne 0 ]; then
-        echo "Ping test through $ethx failed"
+    IP=$(ifconfig $ethx | grep "inet addr" | awk '{print $2}')
+    if [ -z $IP ]; then
+        ifconfig $ethx
+        echo "$ethx have no IP address"
         echo "$ethx-ping-test:" "fail"
         return 1
     else
-        echo "$ethx-ping-test:" "pass"
+        echo "$ethx ping test"
+        ping -c 5 -I $ethx $GATEWAY
+
+        if [ $? -ne 0 ]; then
+           echo "Ping test through $ethx failed"
+           echo "$ethx-ping-test:" "fail"
+           return 1
+        else
+            echo "$ethx-ping-test:" "pass"
+        fi
     fi
 }
 
