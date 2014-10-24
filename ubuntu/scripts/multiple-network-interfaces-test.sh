@@ -126,8 +126,7 @@ ping_test(){
 # Run the tests
 address_arp_flux
 for Interface in `ifconfig -a |grep eth |awk '{print $1}'`; do
-  if test "$Interface" = "eth0"
-  then
+  if test "$Interface" = "eth0"; then
       ping_test $Interface
   else
       interface_enable_test $Interface
