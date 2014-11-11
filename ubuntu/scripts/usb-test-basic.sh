@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# enumerate all usb devices/hubs
 for bus in `ls /dev/bus/usb`; do
     for device in `ls /dev/bus/usb/$bus`; do
         echo "==================="
