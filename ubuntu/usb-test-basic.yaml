@@ -14,6 +14,7 @@ metadata:
         - arndale
         - vexpress-a9
         - vexpress-tc2
+        - beaglebone-black 
         - d01
     environment:
         - lava-test-shell
