@@ -18,10 +18,6 @@ metadata:
     environment:
         - lava-test-shell
 
-install:
-    deps:
-        - usbutils
-
 run:
     steps:
         - ./ubuntu/scripts/usb-test-basic1.sh
