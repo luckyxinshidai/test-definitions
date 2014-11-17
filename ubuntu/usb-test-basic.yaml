@@ -24,7 +24,7 @@ install:
 
 run:
     steps:
-        - ./ubuntu/script/usb-test-basic.sh
+        - ./ubuntu/scripts/usb-test-basic.sh
 
 parse:
     pattern: "(?P<test_case_id>.*-*):\\s+(?P<result>(pass|fail|skip))"

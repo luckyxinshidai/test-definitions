@@ -11,7 +11,6 @@ else
 fi
 }
 
-
 # get the usb devices/hubs list
 echo "========"
 lsusb
