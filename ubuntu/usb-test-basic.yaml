@@ -24,4 +24,4 @@ install:
 
 run:
     steps:
-        - ./ubuntu/scripts/usb-test-basic1.sh
+        - ./ubuntu/scripts/usb-test-basic.sh
