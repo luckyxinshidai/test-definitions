@@ -1,14 +1,12 @@
 #!/bin/sh
 
-# generate test result
+# generate test result with lava-test-case
 test_result(){
 if [ $? -eq 0 ]
 then
-#    echo "$1:" "pass"
-    lava-test-case $1 --result pass
+    `lava-test-case` $1 --result pass
 else
-#    echo "$1:" "fail"
-    lava-test-case $1 --result fail
+    `lava-test-case` $1 --result fail
 fi
 }
 
@@ -16,6 +14,16 @@ fi
 echo "========"
 lsusb
 test_result list-all-usb-devices
+
+# examine all usb devices/hubs
+for bus in `ls /dev/bus/usb`; do
+    for device in `ls /dev/bus/usb/$bus`; do
+        echo "========"
+        echo "Bus $bus, device $device"
+        lsusb -D /dev/bus/usb/$bus/$device
+    done
+done
+test_result examine-all-usb-devices
 
 # print supported usb protocols
 echo "========"
@@ -26,16 +34,6 @@ test_result print-supported-protocols
 echo "========"
 lsusb -t
 test_result print-supported-speeds
-
-# print detailed information of all usb devices/hubs
-for bus in `ls /dev/bus/usb`; do
-    for device in `ls /dev/bus/usb/$bus`; do
-        echo "========"
-        echo "Bus $bus, device $device"
-        lsusb -D /dev/bus/usb/$bus/$device
-    done
-done
-test_result print-device-information
 
 # clean exit so lava-test can trust the results
 exit 0
