@@ -13,7 +13,7 @@ echo "========"
 lsusb
 test_result list-all-usb-devices
 
-## examine all usb devices/hubs
+# examine all usb devices/hubs
 if [ -d /dev/bus/usb/ ]; then
     for bus in `ls /dev/bus/usb/`; do
         for device in `ls /dev/bus/usb/$bus/`; do
