@@ -21,7 +21,7 @@ for bus in `ls /dev/bus/usb/`; do
         echo "========"
         echo "Bus $bus, device $device"
         lsusb -D /dev/bus/usb/$bus/$device
-        
+
         if [ $? -ne 0 ]; then
             echo "Bus$bus-Device$device examine failed"
             lava-test-case examine-all-usb-devices --result fail
