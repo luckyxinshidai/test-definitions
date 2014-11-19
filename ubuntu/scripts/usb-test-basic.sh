@@ -16,14 +16,22 @@ lsusb
 test_result list-all-usb-devices
 
 # examine all usb devices/hubs
-for bus in `ls /dev/bus/usb`; do
-    for device in `ls /dev/bus/usb/$bus`; do
+for bus in /dev/bus/usb/*; do
+    for device in /dev/bus/usb/$bus/*; do
         echo "========"
         echo "Bus $bus, device $device"
         lsusb -D /dev/bus/usb/$bus/$device
+        
+        if [ $? -ne 0 ]; then
+            echo "Bus$bus-Device$device examine failed"
+            lava-test-case examine-all-usb-devices --result fail
+            break 2
+        fi
+
     done
+    continue
+    lava-test-case examine-all-usb-devices --result pass
 done
-test_result examine-all-usb-devices
 
 # print supported usb protocols
 echo "========"
