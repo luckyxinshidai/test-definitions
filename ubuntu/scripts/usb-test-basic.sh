@@ -14,13 +14,13 @@ lsusb
 test_result list-all-usb-devices
 
 ## examine all usb devices/hubs
-if [ -e /dev/bus/usb/ ]; then
+if [ -d /dev/bus/usb/ ]; then
     for bus in `ls /dev/bus/usb/`; do
         for device in `ls /dev/bus/usb/$bus/`; do
             echo "========"
             echo "Bus $bus, device $device"
             lsusb -D /dev/bus/usb/$bus/$device
-            status=$? # record examination exit code
+            status=$?
 
             if [ $status -ne 0 ]; then
                 echo "Bus$bus-Device$device examination failed"
@@ -37,6 +37,7 @@ if [ -e /dev/bus/usb/ ]; then
     fi
 
 else
+    echo "/dev/bus/usb/ not exists"
     lava-test-case examine-all-usb-devices --result fail
 fi
 
