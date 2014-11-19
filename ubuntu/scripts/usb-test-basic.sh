@@ -35,8 +35,13 @@ done
 
 # print supported usb protocols
 echo "========"
-lsusb -v | grep -i bcdusb | sort | uniq
-test_result print-supported-protocols
+if [ -z "`lsusb -v | grep -i bcdusb`" ]
+then
+    lava-test-case print-supported-speeds --result fail
+else
+    lsusb -v | grep -i bcdusb | sort | uniq
+    lava-test-case print-supported-speeds --result fail
+fi
 
 # print supported speeds
 echo "========"
