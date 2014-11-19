@@ -16,8 +16,8 @@ lsusb
 test_result list-all-usb-devices
 
 # examine all usb devices/hubs
-for bus in /dev/bus/usb/*; do
-    for device in /dev/bus/usb/$bus/*; do
+for bus in `ls /dev/bus/usb/`; do
+    for device in `ls /dev/bus/usb/$bus/`; do
         echo "========"
         echo "Bus $bus, device $device"
         lsusb -D /dev/bus/usb/$bus/$device
@@ -35,7 +35,7 @@ done
 
 # print supported usb protocols
 echo "========"
-lsusb -v | grep -i bcdusb
+lsusb -v | grep -i bcdusb | sort | uniq
 test_result print-supported-protocols
 
 # print supported speeds
