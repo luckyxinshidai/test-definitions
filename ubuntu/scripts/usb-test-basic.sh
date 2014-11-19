@@ -1,9 +1,7 @@
 #!/bin/sh
-
 # generate test result with lava-test-case
 test_result(){
-if [ $? -eq 0 ]
-then
+if [ $? -eq 0 ]; then
     lava-test-case $1 --result pass
 else
     lava-test-case $1 --result fail
@@ -15,23 +13,32 @@ echo "========"
 lsusb
 test_result list-all-usb-devices
 
-# examine all usb devices/hubs
-for bus in `ls /dev/bus/usb/`; do
-    for device in `ls /dev/bus/usb/$bus/`; do
-        echo "========"
-        echo "Bus $bus, device $device"
-        lsusb -D /dev/bus/usb/$bus/$device
+## examine all usb devices/hubs
+if [ -e /dev/bus/usb/ ]; then
+    for bus in `ls /dev/bus/usb/`; do
+        for device in `ls /dev/bus/usb/$bus/`; do
+            echo "========"
+            echo "Bus $bus, device $device"
+            lsusb -D /dev/bus/usb/$bus/$device
+            status=$? # record examination exit code
 
-        if [ $? -ne 0 ]; then
-            echo "Bus$bus-Device$device examine failed"
-            lava-test-case examine-all-usb-devices --result fail
-            break 2
-        fi
+            if [ $status -ne 0 ]; then
+                echo "Bus$bus-Device$device examination failed"
+                break 2
+            fi
 
+        done
     done
-    continue
-    lava-test-case examine-all-usb-devices --result pass
-done
+
+    if [ $status -eq 0 ]; then
+        lava-test-case examine-all-usb-devices --result pass
+    else
+        lava-test-case examine-all-usb-devices --result fail
+    fi
+
+else
+    lava-test-case examine-all-usb-devices --result fail
+fi
 
 # print supported usb protocols
 echo "========"
@@ -40,7 +47,7 @@ then
     lava-test-case print-supported-speeds --result fail
 else
     lsusb -v | grep -i bcdusb | sort | uniq
-    lava-test-case print-supported-speeds --result fail
+    test_result print-supported-speeds
 fi
 
 # print supported speeds
