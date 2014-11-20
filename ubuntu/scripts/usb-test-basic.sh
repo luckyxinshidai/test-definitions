@@ -52,8 +52,11 @@ fi
 
 # print supported speeds
 echo "========"
+if [ -z "`lsusb -t`" ]; then
+    lava-test-case print-supported-speeds --result fail
+else
 lsusb -t
 test_result print-supported-speeds
-
+fi
 # clean exit so lava-test can trust the results
 exit 0

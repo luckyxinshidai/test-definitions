@@ -1,13 +1,13 @@
 metadata:
     format: Lava-Test Test Definition 1.0
     name: pi-stress-test
-    description: "Stress the priority-inheritance code paths for POSIX mutexes"
+    description: "Test the classic three-way Priority Inversion deadlock to check if Priority Inheritance mutexes can avoid this deadlock."
     maintainer:
         - chase.qi@linaro.org
     os:
         - ubuntu
     scope:
-        - performance
+        - functional
         - preempt-rt
     devices:
         - panda
