@@ -10,7 +10,7 @@ pi_stress --mlockall --duration $DURATION  > pi_stress_test.log 2>&1
 if [ $? -eq 0 ]; then
     lava-test-case pi-stress-test --result pass --measurement=0 --units=groups
 else
-    if [ -n "`grep "ERROR\|deadlocked" pi_stress_test.log`" ]; then
+    if [ -n "`grep deadlocked pi_stress_test.log`" ]; then
         grep "ERROR\|deadlocked" pi_stress_test.log
         num_groups=`grep deadlocked pi_stress_test.log | wc -l`
         lava-test-case pi-stress-test --result fail --measurement=$num_groups --units=groups
