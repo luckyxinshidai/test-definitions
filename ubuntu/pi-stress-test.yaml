@@ -24,7 +24,9 @@ metadata:
 install:
     deps:
         - rt-tests
+params:
+    DURATION: 300    # Length of the test run in seconds
 
 run:
     steps:
-        - ./ubuntu/scripts/pi-stress-test.sh
+        - ./ubuntu/scripts/pi-stress-test.sh $DURATION
