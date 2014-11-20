@@ -13,7 +13,7 @@ echo "========"
 lsusb
 test_result list-all-usb-devices
 
-## examine all usb devices/hubs
+# examine all usb devices/hubs
 if [ -d /dev/bus/usb/ ]; then
     for bus in `ls /dev/bus/usb/`; do
         for device in `ls /dev/bus/usb/$bus/`; do
@@ -43,12 +43,11 @@ fi
 
 # print supported usb protocols
 echo "========"
-if [ -z "`lsusb -v | grep -i bcdusb`" ]
-then
-    lava-test-case print-supported-speeds --result fail
+if [ -z "`lsusb -v | grep -i bcdusb`" ]; then
+    lava-test-case print-supported-protocols --result fail
 else
     lsusb -v | grep -i bcdusb | sort | uniq
-    test_result print-supported-speeds
+    test_result print-supported-protocols
 fi
 
 # print supported speeds
