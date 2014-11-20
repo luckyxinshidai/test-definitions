@@ -1,0 +1,30 @@
+metadata:
+    format: Lava-Test Test Definition 1.0
+    name: pi-stress-test
+    description: "Stress the priority-inheritance code paths for POSIX mutexes"
+    maintainer:
+        - chase.qi@linaro.org
+    os:
+        - ubuntu
+    scope:
+        - performance
+        - preempt-rt
+    devices:
+        - panda
+        - panda-es
+        - arndale
+        - vexpress-a9
+        - vexpress-tc2
+        - beaglebone-black 
+        - d01
+        - rtsm_fvp_base-aemv8a
+    environment:
+        - lava-test-shell
+
+install:
+    deps:
+        - rt-tests
+
+run:
+    steps:
+        - ./ubuntu/scripts/pi-stress-test.sh
