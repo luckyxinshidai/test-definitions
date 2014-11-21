@@ -11,11 +11,11 @@ pi_stress --mlockall --duration $DURATION  > $LogFile 2>&1
 
 if [ $? -eq 0 ]; then
     grep "Total inversion performed" $LogFile
+    lava-test-run-attach $LogFile
     lava-test-case pi-stress-test --result pass
 else
     grep ERROR $LogFile
+    lava-test-run-attach $LogFile
     lava-test-case pi-stress-test --result fail
 fi
 
-# attach the log file
-lava-test-run-attach $LogFile
