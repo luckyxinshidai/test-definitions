@@ -6,7 +6,7 @@ DURATION=$1
 trap '' SIGTERM
 
 # run pi_stress test with customized running time
-LogFile=pi_stress.log
+LogFile="pi_stress.log"
 pi_stress --mlockall --duration $DURATION  > $LogFile 2>&1 
 
 if [ $? -eq 0 ]; then
