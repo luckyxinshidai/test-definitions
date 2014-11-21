@@ -6,15 +6,16 @@ DURATION=$1
 trap '' SIGTERM
 
 # run pi_stress test with customized running time
-pi_stress --mlockall --duration $DURATION  > pistress.log 2>&1 
+LogFile=pi_stress.log
+pi_stress --mlockall --duration $DURATION  > $LogFile 2>&1 
 
 if [ $? -eq 0 ]; then
-    grep "Total inversion performed" pistress.log
+    grep "Total inversion performed" $LogFile
     lava-test-case pi-stress-test --result pass
 else
-    grep ERROR pistress.log
+    grep ERROR $LogFile
     lava-test-case pi-stress-test --result fail
 fi
 
-# attach the pistress.log file
-lava-test-run-attach pistress.log
+# attach the log file
+lava-test-run-attach $LogFile
