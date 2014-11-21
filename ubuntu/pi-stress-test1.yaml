@@ -1,0 +1,32 @@
+metadata:
+    format: Lava-Test Test Definition 1.0
+    name: pi-stress-test
+    description: "Test the classic three-way Priority Inversion deadlock to check if Priority Inheritance mutexes can avoid this deadlock."
+    maintainer:
+        - chase.qi@linaro.org
+    os:
+        - ubuntu
+    scope:
+        - functional
+        - preempt-rt
+    devices:
+        - panda
+        - panda-es
+        - arndale
+        - vexpress-a9
+        - vexpress-tc2
+        - beaglebone-black 
+        - d01
+        - rtsm_fvp_base-aemv8a
+    environment:
+        - lava-test-shell
+
+install:
+    deps:
+        - rt-tests
+params:
+    DURATION: 300    # Length of the test run in seconds
+
+run:
+    steps:
+        - "lava-test-case pi-stress-test --shell pi_stress --mlockall --duration $DURATION"

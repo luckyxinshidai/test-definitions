@@ -16,6 +16,5 @@ else
     lava-test-case pi-stress-test --result fail
 fi
 
-# attach the pi-stress-test.log file to pi-stress-test
-lava-test-run-attach pi-stress-test.log text/plain
-
+# attach the pi-stress-test.log file
+lava-test-run-attach pi-stress-test.log
