@@ -43,4 +43,5 @@ run:
         - if [ "$MLOCKALL" == "true" ]; then OPTIONS="$OPTIONS --mlockall"; fi
         - if [ "$RR" != "false" ]; then OPTIONS="$OPTIONS --rr"; fi 
         - echo $OPTIONS
+        - trap '' SIGTERM
         - "lava-test-case pi-stress-test --shell pi_stress $OPTIONS"
