@@ -1,7 +1,7 @@
 metadata:
     format: Lava-Test Test Definition 1.0
     name: pi-stress-test
-    description: "Test the classic three-way Priority Inversion deadlock to check if Priority Inheritance mutexes can avoid this deadlock."
+    description: "Stress test for POSIX Priority Inheritance mutexes"
     maintainer:
         - chase.qi@linaro.org
     os:
@@ -25,8 +25,21 @@ install:
     deps:
         - rt-tests
 params:
-    DURATION: 300    # Length of the test run in seconds
+    # Length of the test run in seconds
+    DURATION: 300
+    # The number of inversion groups to run. By default pi_stress will detect the number of 
+    # processors and determine the number of inversion groups automatically.
+    GROUPS: ""
+    # Set MLOCKALL to ture to lock current and future memory
+    MLOCKALL: "true"
+    # Set RR to true if you need use SCHED_RR for test threads. The 
+    # default is to run the inversion threads as SCHED_FIFO
+    RR: "false"
 
 run:
     steps:
-        - ./ubuntu/scripts/pi-stress-test.sh $DURATION
+        - OPTIONS="--duration $DURATION --$GROUPS"
+        - if [ "$MLOCKALL" == "true" ]; then OPTIONS="$OPTIONS --mlockall"; fi
+        - if [ "$RR" != "false" ]; then OPTIONS="$OPTIONS --rr"; fi 
+        - echo $OPTIONS
+        - "lava-test-case pi-stress-test --shell pi_stress $OPTIONS"

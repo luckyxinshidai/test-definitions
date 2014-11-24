@@ -29,4 +29,4 @@ params:
 
 run:
     steps:
-        - "lava-test-case pi-stress-test --shell pi_stress --mlockall --duration $DURATION"
+        - ./ubuntu/scripts/pi-stress-test.sh $DURATION
