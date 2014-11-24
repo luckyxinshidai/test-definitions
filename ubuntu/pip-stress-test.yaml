@@ -1,0 +1,30 @@
+metadata:
+    format: Lava-Test Test Definition 1.0
+    name: pip-stress-test
+    description: "Test priority inheritance between processes"
+    maintainer:
+        - chase.qi@linaro.org
+    os:
+        - ubuntu
+    scope:
+        - functional
+        - preempt-rt
+    devices:
+        - panda
+        - panda-es
+        - arndale
+        - vexpress-a9
+        - vexpress-tc2
+        - beaglebone-black 
+        - d01
+        - rtsm_fvp_base-aemv8a
+    environment:
+        - lava-test-shell
+
+install:
+    deps:
+        - rt-tests
+
+run:
+    steps:
+        - "lava-test-case pip-stress-test --shell pip_stress

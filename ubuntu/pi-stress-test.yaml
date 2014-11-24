@@ -39,7 +39,7 @@ params:
 run:
     steps:
         - OPTIONS="--duration $DURATION"
-        - if [ "$GROUPS" != "defalut" ]; then OPTIONS="$OPTIONS --groups $GROUPS"
+        - if [ "$GROUPS" != "defalut" ]; then OPTIONS="$OPTIONS --groups $GROUPS"; fi
         - if [ "$MLOCKALL" == "true" ]; then OPTIONS="$OPTIONS --mlockall"; fi
         - if [ "$RR" != "false" ]; then OPTIONS="$OPTIONS --rr"; fi 
         - echo $OPTIONS
