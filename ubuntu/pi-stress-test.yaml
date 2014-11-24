@@ -29,12 +29,12 @@ params:
     DURATION: 300
     # The number of inversion groups to run. By default pi_stress will detect the number of 
     # processors and determine the number of inversion groups automatically.
-    GROUPS: "default"
+    GROUPS: 'default'
     # Set MLOCKALL to ture to lock current and future memory
-    MLOCKALL: "true"
+    MLOCKALL: 'true'
     # Set RR to true if you need use SCHED_RR for test threads. The 
     # default is to run the inversion threads as SCHED_FIFO
-    RR: "false"
+    RR: 'false'
 
 run:
     steps:
