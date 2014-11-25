@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 #
-# pi_stress test cases for Linux Linaro ubuntu
+# pi_stress test case for Linux Linaro ubuntu
 #
 # Copyright (C) 2012 - 2014, Linaro Limited.
 #
@@ -42,7 +42,7 @@ fi
 
 echo "========"
 echo "Running pi_stress test with options: $OPTIONS"
-trap '' SIGTERM
+trap '' TERM
 pi_stress $OPTIONS > $LogFile 2>&1
 
 if [ $? -eq 0 ]; then
