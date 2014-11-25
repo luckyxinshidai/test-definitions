@@ -26,7 +26,7 @@ GROUP=$2
 MLOCKALL=$3
 RR=$4
 OPTIONS="--duration $DURATION"
-# LogFile="pi_stress.log"
+LogFile="pi_stress.log"
 
 if [ "$GROUP" != "default" ]; then
     OPTIONS="$OPTIONS --groups $GROUP"
@@ -43,15 +43,14 @@ fi
 echo "========"
 echo "Running pi_stress test with options: $OPTIONS"
 trap '' TERM
-pi_stress $OPTIONS
-# pi_stress $OPTIONS > $LogFile 2>&1
+pi_stress $OPTIONS > $LogFile 2>&1
 
 if [ $? -eq 0 ]; then
-#    echo "pi_stress test finished successfully"
-#    grep "Total inversion performed" $LogFile
+    echo "pi_stress test finished successfully"
+    grep "Total inversion performed" $LogFile
     lava-test-case pi-stress-test --result pass
 else
-#    echo "Error occurred, pi_stresss test failed"
-#    grep ERROR $LogFile
+    echo "Error occurred, pi_stresss test failed"
+    grep ERROR $LogFile
     lava-test-case pi-stress-test --result fail
 fi

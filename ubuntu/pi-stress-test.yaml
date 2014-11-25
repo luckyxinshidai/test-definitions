@@ -39,4 +39,4 @@ params:
 run:
     steps:
        - ./ubuntu/scripts/pi-stress-test.sh $DURATION $GROUP $MLOCKALL $RR
-#       - lava-test-case-attach pi-stress-test pi_stress.log text/plain
+       - lava-test-case-attach pi-stress-test pi_stress.log text/plain
