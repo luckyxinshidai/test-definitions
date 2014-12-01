@@ -38,4 +38,4 @@ params:
 
 run:
     steps:
-       - "lava-test-case pi-stress-test --shell trap '' TERM && pi_stress --duration 30 --groups 10" 
+       - "lava-test-case pi-stress-test --shell ./ubuntu/scripts/pi-stress-test1.sh" 

@@ -26,7 +26,6 @@ import os
 import signal
 from subprocess import call
 
-# Get arguments
 DURATION = sys.argv[1]
 GROUP = sys.argv[2]
 MLOCKALL = sys.argv[3]
@@ -41,20 +40,18 @@ if MLOCKALL == 'true':
 if RR != 'false':
     OPTIONS = OPTIONS + " --rr"
 
-# Set test result to fail if terminate signal appeared
-def handler(signum, frame):
-    print 'Signal handler called with signal', signum
-    call(['lava-test-case', 'pi-stress-test', '--result', 'fail'])
+# Use pi_stress command with options to run PI stress test
+pi_stress_command = "pi_stress {0} 2>&1".format(OPTIONS)
 
-# Set terminate signal handler
-signal.signal(signal.SIGTERM, handler)
+## Run PI stress test
+print "PI stress test command is:"
+print pi_stress_command
+print "====Runing===="
 
-# Run PI stress and generate test result
-pi_stress_command = "pi_stress {0}".format(OPTIONS)
-print "Runing pi_stress test with options '{0}'".format(OPTIONS)
+# Trap and ignore SIGTERM if terminate signal appeared
+signal.signal(signal.SIGTERM, signal.SIG_IGN)
+
 if os.system(pi_stress_command) == 0:
-    print 'PI stress test finished successfully'
     call(['lava-test-case', 'pi-stress-test', '--result', 'pass'])
 else:
-    print 'Error occurred, PI stress test failed'
     call(['lava-test-case', 'pi-stress-test', '--result', 'fail'])
