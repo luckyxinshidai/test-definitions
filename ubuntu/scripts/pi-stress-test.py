@@ -44,12 +44,12 @@ if RR != 'false':
 # Trap and ignore SIGTERM if terminate signal happened
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
-# Run pi_stress and generate test result
-pi_command = "pi_stress {0}".format(OPTIONS)
+# Run PI stress and generate test result
+pi_stress_command = "pi_stress {0}".format(OPTIONS)
 print "Runing pi_stress test with options '{0}'".format(OPTIONS)
-if os.system(pi_command) == 0:
-    print 'pi_stress test finished successfully'
+if os.system(pi_stress_command) == 0:
+    print 'PI stress test finished successfully'
     call(['lava-test-case', 'pi-stress-test', '--result', 'pass'])
 else:
-    print 'Error occurred, pi_stresss test failed'
+    print 'Error occurred, PI stress test failed'
     call(['lava-test-case', 'pi-stress-test', '--result', 'fail'])
