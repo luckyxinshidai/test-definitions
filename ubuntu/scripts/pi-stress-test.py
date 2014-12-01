@@ -41,11 +41,12 @@ if MLOCKALL == 'true':
 if RR != 'false':
     OPTIONS = OPTIONS + " --rr"
 
+# Set test result to fail if terminate signal appeared
 def handler(signum, frame):
     print 'Signal handler called with signal', signum
     call(['lava-test-case', 'pi-stress-test', '--result', 'fail'])
 
-# Set terminate signal happened
+# Set terminate signal handler
 signal.signal(signal.SIGTERM, handler)
 
 # Run PI stress and generate test result
