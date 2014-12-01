@@ -41,8 +41,12 @@ if MLOCKALL == 'true':
 if RR != 'false':
     OPTIONS = OPTIONS + " --rr"
 
-# Trap and ignore SIGTERM if terminate signal happened
-signal.signal(signal.SIGTERM, signal.SIG_IGN)
+def handler(signum, frame):
+    print 'Signal handler called with signal', signum
+    call(['lava-test-case', 'pi-stress-test', '--result', 'fail'])
+
+# Set terminate signal happened
+signal.signal(signal.SIGTERM, handler)
 
 # Run PI stress and generate test result
 pi_stress_command = "pi_stress {0}".format(OPTIONS)
