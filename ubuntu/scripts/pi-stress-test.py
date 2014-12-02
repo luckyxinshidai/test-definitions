@@ -30,7 +30,7 @@ GROUP = sys.argv[2]
 MLOCKALL = sys.argv[3]
 RR = sys.argv[4]
 
-# Determine test options
+# Determine PI stress test options
 pi_stress_command = ['pi_stress', '--duration', DURATION]
 if GROUP != 'default':
     pi_stress_command.append('--groups')
@@ -39,12 +39,6 @@ if MLOCKALL == 'true':
     pi_stress_command.append('--mlockall')
 if RR != 'false':
     pi_stress_command.append('--rr')
-
-# print 'PI stress test command is:',
-# for i in pi_stress_command:
-#    print i,
-print pi_stress_command
-# print '\n====Runing===='
 
 # Trap and ignore SIGTERM if terminate signal appeared
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
