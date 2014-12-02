@@ -41,7 +41,7 @@ if RR != 'false':
     OPTIONS = OPTIONS + " --rr"
 
 # Use pi_stress command with options to run PI stress test
-pi_stress_command = "pi_stress {0} 2>&1".format(OPTIONS)
+pi_stress_command = "pi_stress {0}".format(OPTIONS)
 
 ## Run PI stress test
 print "PI stress test command is:"
