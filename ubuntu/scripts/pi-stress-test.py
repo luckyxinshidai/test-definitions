@@ -40,11 +40,11 @@ if MLOCKALL == 'true':
 if RR != 'false':
     pi_stress_command.append('--rr')
 
-print 'PI stress test command is:',
-for i in pi_stress_command:
-    print i,
-
-print '\n====Runing===='
+# print 'PI stress test command is:',
+# for i in pi_stress_command:
+#    print i,
+print pi_stress_command
+# print '\n====Runing===='
 
 # Trap and ignore SIGTERM if terminate signal appeared
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
