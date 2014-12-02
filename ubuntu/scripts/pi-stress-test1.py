@@ -22,6 +22,7 @@
 #
 
 import sys
+import os
 import signal
 from subprocess import call
 
@@ -29,28 +30,30 @@ DURATION = sys.argv[1]
 GROUP = sys.argv[2]
 MLOCKALL = sys.argv[3]
 RR = sys.argv[4]
+OPTIONS = "--duration " + DURATION
 
 # Determine test options
-pi_stress_command = ['pi_stress', '--duration', DURATION]
 if GROUP != 'default':
-    pi_stress_command.append('--groups')
-    pi_stress_command.append(GROUP)
+    OPTIONS = OPTIONS + " --groups " + GROUP
 if MLOCKALL == 'true':
-    pi_stress_command.append('--mlockall')
+    OPTIONS = OPTIONS + " --mlockall"
 if RR != 'false':
-    pi_stress_command.append('--rr')
+    OPTIONS = OPTIONS + " --rr"
 
-print 'PI stress test command is:',
-for i in pi_stress_command:
-    print i,
+# Use pi_stress command with options to run PI stress test
+print "PI stress test options: {0}".format(OPTIONS)
+pi_stress_command = "pi_stress {0}".format(OPTIONS)
 
-print '\n====Runing===='
+## Run PI stress test
+# print "PI stress test command is:"
+# print pi_stress_command
+# print "====Runing===="
 
 # Trap and ignore SIGTERM if terminate signal appeared
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
 # Run PI stress test
-if call(pi_stress_command) == 0:
+if os.system(pi_stress_command) == 0:
     call(['lava-test-case', 'pi-stress-test', '--result', 'pass'])
 else:
     call(['lava-test-case', 'pi-stress-test', '--result', 'fail'])
