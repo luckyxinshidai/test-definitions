@@ -41,16 +41,18 @@ if RR != 'false':
     OPTIONS = OPTIONS + " --rr"
 
 # Use pi_stress command with options to run PI stress test
+print "PI stress test options: {0}".format(OPTIONS)
 pi_stress_command = "pi_stress {0}".format(OPTIONS)
 
 ## Run PI stress test
-print "PI stress test command is:"
-print pi_stress_command
-print "====Runing===="
+# print "PI stress test command is:"
+# print pi_stress_command
+# print "====Runing===="
 
 # Trap and ignore SIGTERM if terminate signal appeared
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
+# Run PI stress test
 if os.system(pi_stress_command) == 0:
     call(['lava-test-case', 'pi-stress-test', '--result', 'pass'])
 else:
