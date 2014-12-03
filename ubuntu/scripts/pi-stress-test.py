@@ -43,6 +43,8 @@ if RR != 'false':
 # Trap and ignore SIGTERM if terminate signal appeared
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
+print pi_stress_command
+
 # Run PI stress test
 if call(pi_stress_command) == 0:
     call(['lava-test-case', 'pi-stress-test', '--result', 'pass'])
