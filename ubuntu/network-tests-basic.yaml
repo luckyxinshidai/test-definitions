@@ -36,4 +36,4 @@ run:
         - lava-test-case linux-linaro-ubuntu-ping --shell ping -c 5 $GATEWAY
         - lava-test-case linux-linaro-ubuntu-apt-get --shell apt-get update
         - lava-test-case linux-linaro-ubuntu-apt-get-curl --shell apt-get install -q -y curl
-        - lava-test-case linux-linaro-ubuntu-curl-big-video --shell curl http://curl.haxx.se -o curl-front-page.html
+        - lava-test-case linux-linaro-ubuntu-curl-webpage --shell curl http://curl.haxx.se -o curl-front-page.html
