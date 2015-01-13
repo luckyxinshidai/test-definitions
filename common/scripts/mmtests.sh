@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+set -x
 
 TESTS="$1"
 KernelVersion=`uname -r`
