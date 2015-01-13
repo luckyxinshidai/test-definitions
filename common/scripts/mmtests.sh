@@ -2,7 +2,7 @@
 set -e
 set -x
 
-TESTS="$1"
+TESTS=$1
 KernelVersion=`uname -r`
 DIR=`pwd`
 
