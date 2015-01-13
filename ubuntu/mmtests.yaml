@@ -5,6 +5,7 @@ metadata:
     maintainer:
         - milosz.wasilewski@linaro.org
         - chase.qi@linaro.org
+        - naresh.kamboju@linaro.org
     os:
         - ubuntu
     scope:
@@ -30,4 +31,4 @@ params:
 
 run:
     steps:
-        - './common/scripts/mmtests.sh $TESTS'
+        - ./common/scripts/mmtests.sh "$TESTS"
