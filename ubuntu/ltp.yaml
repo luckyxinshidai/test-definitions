@@ -21,6 +21,7 @@ install:
     steps:
         - 'git clone https://github.com/linux-test-project/ltp.git'
         - 'cd ltp'
+        - 'make autotools'
         - 'mkdir build'
         - './configure --prefix=$(readlink -f build)'
         - 'make all'
@@ -31,6 +32,7 @@ install:
         - bison
         - build-essential
         - wget
+        - automake
 
 params:
     TST_CMDFILES: syscalls,mm,math,timers,fcntl-locktests,ipc,fsx,fs,hugetlb,io,nptl,pty,containers,fs_bind,filecaps,admin_tools,connectors
