@@ -40,7 +40,7 @@ params:
 
 run:
     steps:
-        - './common/scripts/ltpfixup.sh -T $TST_CMDFILES -P $(readlink -f build) -S $SKIPFILE'
+        - '../common/scripts/ltpfixup.sh -T $TST_CMDFILES -P $(readlink -f build) -S $SKIPFILE'
 
 parse:
     pattern: "^(?!.+ED)(?P<test_case_id>\\w+)\\s+(?P<result>\\w+)\\s+\\d$"
