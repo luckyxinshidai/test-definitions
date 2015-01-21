@@ -22,4 +22,4 @@ params:
 
 run:
     steps:
-        - ./android/scripts/mmtests.sh "$TESTS"
+        - ./android/scripts/gtest.sh "$TESTS"
