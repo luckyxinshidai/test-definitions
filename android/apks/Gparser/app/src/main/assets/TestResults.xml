@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="44" failures="17" disabled="0" errors="0" timestamp="2015-01-19T13:21:55" time="70.886" name="AllTests">
+    <testsuite name="Allocate" tests="6" failures="1" disabled="0" errors="0" time="4.142">
+        <testcase name="Allocate" status="run" time="0.003" classname="Allocate" Heaps="4" />
+        <testcase name="AllocateCached" status="run" time="0.004" classname="Allocate" Heaps="4" />
+        <testcase name="AllocateCachedNeedsSync" status="run" time="0.004" classname="Allocate" Heaps="4">
+            <failure message="system/core/libion/tests/allocate_test.cpp:65&#x0A;Value of: ion_alloc(m_ionFd, size, 0, heapMask, 2, &amp;handle)&#x0A;  Actual: -12&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/allocate_test.cpp:63: size 2097152&#x0A;system/core/libion/tests/allocate_test.cpp:62: heap 4" type=""><![CDATA[system/core/libion/tests/allocate_test.cpp:65
+Value of: ion_alloc(m_ionFd, size, 0, heapMask, 2, &handle)
+  Actual: -12
+Expected: 0
+Google Test trace:
+system/core/libion/tests/allocate_test.cpp:63: size 2097152
+system/core/libion/tests/allocate_test.cpp:62: heap 4]]></failure>
+        </testcase>
+        <testcase name="RepeatedAllocate" status="run" time="4.121" classname="Allocate" Heaps="4" />
+        <testcase name="Zeroed" status="run" time="0.003" classname="Allocate" Heaps="4" />
+        <testcase name="Large" status="run" time="0.006" classname="Allocate" Heaps="4" />
+    </testsuite>
+    <testsuite name="FormerlyValidHandle" tests="3" failures="0" disabled="0" errors="0" time="0.001">
+        <testcase name="free" status="run" time="0" classname="FormerlyValidHandle" />
+        <testcase name="map" status="run" time="0" classname="FormerlyValidHandle" />
+        <testcase name="share" status="run" time="0" classname="FormerlyValidHandle" />
+    </testsuite>
+    <testsuite name="InvalidValues" tests="8" failures="2" disabled="0" errors="0" time="0.006">
+        <testcase name="ion_close" status="run" time="0" classname="InvalidValues" Heaps="4" />
+        <testcase name="ion_alloc" status="run" time="0.002" classname="InvalidValues" Heaps="4">
+            <failure message="system/core/libion/tests/invalid_values_test.cpp:71&#x0A;Value of: ion_alloc(m_ionFd, -1, 0, heapMask, 0, &amp;handle)&#x0A;  Actual: -12&#x0A;Expected: -22&#x0A;Google Test trace:&#x0A;system/core/libion/tests/invalid_values_test.cpp:67: heap 1" type=""><![CDATA[system/core/libion/tests/invalid_values_test.cpp:71
+Value of: ion_alloc(m_ionFd, -1, 0, heapMask, 0, &handle)
+  Actual: -12
+Expected: -22
+Google Test trace:
+system/core/libion/tests/invalid_values_test.cpp:67: heap 1]]></failure>
+            <failure message="system/core/libion/tests/invalid_values_test.cpp:71&#x0A;Value of: ion_alloc(m_ionFd, -1, 0, heapMask, 0, &amp;handle)&#x0A;  Actual: -12&#x0A;Expected: -22&#x0A;Google Test trace:&#x0A;system/core/libion/tests/invalid_values_test.cpp:67: heap 2" type=""><![CDATA[system/core/libion/tests/invalid_values_test.cpp:71
+Value of: ion_alloc(m_ionFd, -1, 0, heapMask, 0, &handle)
+  Actual: -12
+Expected: -22
+Google Test trace:
+system/core/libion/tests/invalid_values_test.cpp:67: heap 2]]></failure>
+            <failure message="system/core/libion/tests/invalid_values_test.cpp:71&#x0A;Value of: ion_alloc(m_ionFd, -1, 0, heapMask, 0, &amp;handle)&#x0A;  Actual: -12&#x0A;Expected: -22&#x0A;Google Test trace:&#x0A;system/core/libion/tests/invalid_values_test.cpp:67: heap 4" type=""><![CDATA[system/core/libion/tests/invalid_values_test.cpp:71
+Value of: ion_alloc(m_ionFd, -1, 0, heapMask, 0, &handle)
+  Actual: -12
+Expected: -22
+Google Test trace:
+system/core/libion/tests/invalid_values_test.cpp:67: heap 4]]></failure>
+            <failure message="system/core/libion/tests/invalid_values_test.cpp:71&#x0A;Value of: ion_alloc(m_ionFd, -1, 0, heapMask, 0, &amp;handle)&#x0A;  Actual: -12&#x0A;Expected: -22&#x0A;Google Test trace:&#x0A;system/core/libion/tests/invalid_values_test.cpp:67: heap 8" type=""><![CDATA[system/core/libion/tests/invalid_values_test.cpp:71
+Value of: ion_alloc(m_ionFd, -1, 0, heapMask, 0, &handle)
+  Actual: -12
+Expected: -22
+Google Test trace:
+system/core/libion/tests/invalid_values_test.cpp:67: heap 8]]></failure>
+        </testcase>
+        <testcase name="ion_alloc_fd" status="run" time="0.001" classname="InvalidValues" Heaps="4">
+            <failure message="system/core/libion/tests/invalid_values_test.cpp:94&#x0A;Value of: ion_alloc_fd(m_ionFd, -1, 0, heapMask, 0, &amp;fd)&#x0A;  Actual: -12&#x0A;Expected: -22&#x0A;Google Test trace:&#x0A;system/core/libion/tests/invalid_values_test.cpp:90: heap 1" type=""><![CDATA[system/core/libion/tests/invalid_values_test.cpp:94
+Value of: ion_alloc_fd(m_ionFd, -1, 0, heapMask, 0, &fd)
+  Actual: -12
+Expected: -22
+Google Test trace:
+system/core/libion/tests/invalid_values_test.cpp:90: heap 1]]></failure>
+            <failure message="system/core/libion/tests/invalid_values_test.cpp:94&#x0A;Value of: ion_alloc_fd(m_ionFd, -1, 0, heapMask, 0, &amp;fd)&#x0A;  Actual: -12&#x0A;Expected: -22&#x0A;Google Test trace:&#x0A;system/core/libion/tests/invalid_values_test.cpp:90: heap 2" type=""><![CDATA[system/core/libion/tests/invalid_values_test.cpp:94
+Value of: ion_alloc_fd(m_ionFd, -1, 0, heapMask, 0, &fd)
+  Actual: -12
+Expected: -22
+Google Test trace:
+system/core/libion/tests/invalid_values_test.cpp:90: heap 2]]></failure>
+            <failure message="system/core/libion/tests/invalid_values_test.cpp:94&#x0A;Value of: ion_alloc_fd(m_ionFd, -1, 0, heapMask, 0, &amp;fd)&#x0A;  Actual: -12&#x0A;Expected: -22&#x0A;Google Test trace:&#x0A;system/core/libion/tests/invalid_values_test.cpp:90: heap 4" type=""><![CDATA[system/core/libion/tests/invalid_values_test.cpp:94
+Value of: ion_alloc_fd(m_ionFd, -1, 0, heapMask, 0, &fd)
+  Actual: -12
+Expected: -22
+Google Test trace:
+system/core/libion/tests/invalid_values_test.cpp:90: heap 4]]></failure>
+            <failure message="system/core/libion/tests/invalid_values_test.cpp:94&#x0A;Value of: ion_alloc_fd(m_ionFd, -1, 0, heapMask, 0, &amp;fd)&#x0A;  Actual: -12&#x0A;Expected: -22&#x0A;Google Test trace:&#x0A;system/core/libion/tests/invalid_values_test.cpp:90: heap 8" type=""><![CDATA[system/core/libion/tests/invalid_values_test.cpp:94
+Value of: ion_alloc_fd(m_ionFd, -1, 0, heapMask, 0, &fd)
+  Actual: -12
+Expected: -22
+Google Test trace:
+system/core/libion/tests/invalid_values_test.cpp:90: heap 8]]></failure>
+        </testcase>
+        <testcase name="ion_free" status="run" time="0.001" classname="InvalidValues" Heaps="4" />
+        <testcase name="ion_map" status="run" time="0.001" classname="InvalidValues" Heaps="4" />
+        <testcase name="ion_share" status="run" time="0" classname="InvalidValues" Heaps="4" />
+        <testcase name="ion_import" status="run" time="0.001" classname="InvalidValues" Heaps="4" />
+        <testcase name="ion_sync_fd" status="run" time="0" classname="InvalidValues" Heaps="4" />
+    </testsuite>
+    <testsuite name="Map" tests="5" failures="0" disabled="0" errors="0" time="0.055">
+        <testcase name="MapHandle" status="run" time="0.012" classname="Map" Heaps="4" />
+        <testcase name="MapFd" status="run" time="0.012" classname="Map" Heaps="4" />
+        <testcase name="MapOffset" status="run" time="0" classname="Map" Heaps="4" />
+        <testcase name="MapCached" status="run" time="0.018" classname="Map" Heaps="4" />
+        <testcase name="MapCachedNeedsSync" status="run" time="0.013" classname="Map" Heaps="4" />
+    </testsuite>
+    <testsuite name="Device" tests="13" failures="13" disabled="0" errors="0" time="0.017">
+        <testcase name="KernelReadCached" status="run" time="0.001" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:96&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:140: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:96
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:140: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:159&#x0A;Value of: ((char *)buf)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:140: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:159
+Value of: ((char *)buf)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+Google Test trace:
+system/core/libion/tests/device_test.cpp:140: heap 1]]></failure>
+        </testcase>
+        <testcase name="KernelWriteCached" status="run" time="0.001" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:110&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:177: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:110
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:177: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:193&#x0A;Value of: ((char *)ptr)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;1&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:177: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:193
+Value of: ((char *)ptr)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+1
+Google Test trace:
+system/core/libion/tests/device_test.cpp:177: heap 1]]></failure>
+        </testcase>
+        <testcase name="DMAReadCached" status="run" time="0.001" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:68&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:208: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:68
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:208: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:225&#x0A;Value of: ((char *)buf)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:208: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:225
+Value of: ((char *)buf)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+Google Test trace:
+system/core/libion/tests/device_test.cpp:208: heap 1]]></failure>
+        </testcase>
+        <testcase name="DMAWriteCached" status="run" time="0.001" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:82&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:243: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:82
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:243: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:259&#x0A;Value of: ((char *)ptr)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;1&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:243: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:259
+Value of: ((char *)ptr)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+1
+Google Test trace:
+system/core/libion/tests/device_test.cpp:243: heap 1]]></failure>
+        </testcase>
+        <testcase name="KernelReadCachedNeedsSync" status="run" time="0" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:96&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:274: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:96
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:274: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:293&#x0A;Value of: ((char *)buf)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:274: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:293
+Value of: ((char *)buf)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+Google Test trace:
+system/core/libion/tests/device_test.cpp:274: heap 1]]></failure>
+        </testcase>
+        <testcase name="KernelWriteCachedNeedsSync" status="run" time="0" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:110&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:311: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:110
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:311: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:327&#x0A;Value of: ((char *)ptr)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;1&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:311: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:327
+Value of: ((char *)ptr)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+1
+Google Test trace:
+system/core/libion/tests/device_test.cpp:311: heap 1]]></failure>
+        </testcase>
+        <testcase name="DMAReadCachedNeedsSync" status="run" time="0" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:68&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:342: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:68
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:342: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:361&#x0A;Value of: ((char *)buf)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:342: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:361
+Value of: ((char *)buf)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+Google Test trace:
+system/core/libion/tests/device_test.cpp:342: heap 1]]></failure>
+        </testcase>
+        <testcase name="DMAWriteCachedNeedsSync" status="run" time="0.003" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:82&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:379: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:82
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:379: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:82&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:379: heap 2" type=""><![CDATA[system/core/libion/tests/device_test.cpp:82
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:379: heap 2]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:82&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:379: heap 4" type=""><![CDATA[system/core/libion/tests/device_test.cpp:82
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:379: heap 4]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:82&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:379: heap 8" type=""><![CDATA[system/core/libion/tests/device_test.cpp:82
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:379: heap 8]]></failure>
+        </testcase>
+        <testcase name="KernelRead" status="run" time="0.002" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:96&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:411: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:96
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:411: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:96&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:411: heap 2" type=""><![CDATA[system/core/libion/tests/device_test.cpp:96
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:411: heap 2]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:96&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:411: heap 4" type=""><![CDATA[system/core/libion/tests/device_test.cpp:96
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:411: heap 4]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:96&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:411: heap 8" type=""><![CDATA[system/core/libion/tests/device_test.cpp:96
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:411: heap 8]]></failure>
+        </testcase>
+        <testcase name="KernelWrite" status="run" time="0.002" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:110&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf2)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:448: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:110
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf2)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:448: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:464&#x0A;Value of: ((char *)ptr)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;1&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:448: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:464
+Value of: ((char *)ptr)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+1
+Google Test trace:
+system/core/libion/tests/device_test.cpp:448: heap 1]]></failure>
+        </testcase>
+        <testcase name="DMARead" status="run" time="0.001" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:68&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:479: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:68
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:479: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:496&#x0A;Value of: ((char *)buf)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:479: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:496
+Value of: ((char *)buf)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+Google Test trace:
+system/core/libion/tests/device_test.cpp:479: heap 1]]></failure>
+        </testcase>
+        <testcase name="DMAWrite" status="run" time="0.002" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:82&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:514: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:82
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:514: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:530&#x0A;Value of: ((char *)ptr)[i]&#x0A;  Actual: &apos;\0&apos;&#x0A;Expected: (char)i&#x0A;Which is: &apos;\x1&apos; (1)&#x0A;1&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:514: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:530
+Value of: ((char *)ptr)[i]
+  Actual: '\0'
+Expected: (char)i
+Which is: '\x1' (1)
+1
+Google Test trace:
+system/core/libion/tests/device_test.cpp:514: heap 1]]></failure>
+        </testcase>
+        <testcase name="IsCached" status="run" time="0.001" classname="Device" Heaps="4">
+            <failure message="system/core/libion/tests/device_test.cpp:68&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:544: heap 1" type=""><![CDATA[system/core/libion/tests/device_test.cpp:68
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:544: heap 1]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:68&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:544: heap 2" type=""><![CDATA[system/core/libion/tests/device_test.cpp:68
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:544: heap 2]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:68&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:544: heap 4" type=""><![CDATA[system/core/libion/tests/device_test.cpp:68
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:544: heap 4]]></failure>
+            <failure message="system/core/libion/tests/device_test.cpp:68&#x0A;Value of: ioctl(m_deviceFd, (((1U) &lt;&lt; (((0+8)+8)+14)) | (((&apos;I&apos;)) &lt;&lt; (0+8)) | (((0xf1)) &lt;&lt; 0) | ((((sizeof(struct ion_test_rw_data)))) &lt;&lt; ((0+8)+8))), &amp;ion_test_rw_data)&#x0A;  Actual: -1&#x0A;Expected: 0&#x0A;Google Test trace:&#x0A;system/core/libion/tests/device_test.cpp:544: heap 8" type=""><![CDATA[system/core/libion/tests/device_test.cpp:68
+Value of: ioctl(m_deviceFd, (((1U) << (((0+8)+8)+14)) | ((('I')) << (0+8)) | (((0xf1)) << 0) | ((((sizeof(struct ion_test_rw_data)))) << ((0+8)+8))), &ion_test_rw_data)
+  Actual: -1
+Expected: 0
+Google Test trace:
+system/core/libion/tests/device_test.cpp:544: heap 8]]></failure>
+        </testcase>
+    </testsuite>
+    <testsuite name="Exit" tests="9" failures="1" disabled="0" errors="0" time="66.664">
+        <testcase name="WithAlloc" status="run" time="0.072" classname="Exit" Heaps="4" />
+        <testcase name="WithAllocFd" status="run" time="0.068" classname="Exit" Heaps="4" />
+        <testcase name="WithRepeatedAllocFd" status="run" time="66.144" classname="Exit" Heaps="4">
+            <failure message="system/core/libion/tests/exit_test.cpp:78&#x0A;Death test: { int handle_fd = -1; switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal:: EqHelper&lt;(sizeof(::testing::internal::IsNullLiteralHelper(0)) == 1)&gt;::Compare(&quot;0&quot;, &quot;ion_alloc_fd(m_ionFd, size, 0, heapMask, 0, &amp;handle_fd)&quot;, 0, ion_alloc_fd(m_ionFd, size, 0, heapMask, 0, &amp;handle_fd)))) ; else return ::testing::internal::AssertHelper(::testing::TestPartResult::kFatalFailure, &quot;system/core/libion/tests/exit_test.cpp&quot;, 78, gtest_ar.failure_message()) = ::testing::Message(); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE(&quot;-1&quot;, &quot;handle_fd&quot;, -1, handle_fd))) ; else return ::testing::internal::AssertHelper(::testing::TestPartResult::kFatalFailure, &quot;system/core/libion/tests/exit_test.cpp&quot;, 78, gtest_ar.failure_message()) = ::testing::Message(); exit(0); }&#x0A;    Result: illegal return in test statement.&#x0A; Error msg:&#x0A;[  DEATH   ] &#x0A;failed on heap 8 and size 2097152 on iteration 50&#x0A;Google Test trace:&#x0A;system/core/libion/tests/exit_test.cpp:71: size 2097152&#x0A;system/core/libion/tests/exit_test.cpp:70: heap 8" type=""><![CDATA[system/core/libion/tests/exit_test.cpp:78
+Death test: { int handle_fd = -1; switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal:: EqHelper<(sizeof(::testing::internal::IsNullLiteralHelper(0)) == 1)>::Compare("0", "ion_alloc_fd(m_ionFd, size, 0, heapMask, 0, &handle_fd)", 0, ion_alloc_fd(m_ionFd, size, 0, heapMask, 0, &handle_fd)))) ; else return ::testing::internal::AssertHelper(::testing::TestPartResult::kFatalFailure, "system/core/libion/tests/exit_test.cpp", 78, gtest_ar.failure_message()) = ::testing::Message(); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("-1", "handle_fd", -1, handle_fd))) ; else return ::testing::internal::AssertHelper(::testing::TestPartResult::kFatalFailure, "system/core/libion/tests/exit_test.cpp", 78, gtest_ar.failure_message()) = ::testing::Message(); exit(0); }
+    Result: illegal return in test statement.
+ Error msg:
+[  DEATH   ]
+failed on heap 8 and size 2097152 on iteration 50
+Google Test trace:
+system/core/libion/tests/exit_test.cpp:71: size 2097152
+system/core/libion/tests/exit_test.cpp:70: heap 8]]></failure>
+        </testcase>
+        <testcase name="WithMapping" status="run" time="0.071" classname="Exit" Heaps="4" />
+        <testcase name="WithPartialMapping" status="run" time="0.053" classname="Exit" Heaps="4" />
+        <testcase name="WithMappingCached" status="run" time="0.071" classname="Exit" Heaps="4" />
+        <testcase name="WithPartialMappingCached" status="run" time="0.056" classname="Exit" Heaps="4" />
+        <testcase name="WithMappingNeedsSync" status="run" time="0.074" classname="Exit" Heaps="4" />
+        <testcase name="WithPartialMappingNeedsSync" status="run" time="0.054" classname="Exit" Heaps="4" />
+    </testsuite>
+</testsuites>
