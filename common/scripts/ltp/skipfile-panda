@@ -1,1 +1,1 @@
-fs_bind
+BindMounts      $LTPROOT/testscripts/test_fs_bind.sh
