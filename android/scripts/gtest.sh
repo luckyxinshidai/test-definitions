@@ -4,6 +4,15 @@ set -x
 
 TESTS=$1
 
+# Install gparser.apk
+pm install gparser.apk || echo "gparser.apk installation failed"
+# mkdir /data/data/org.linaro.gparser/files
+./gtest-death-test_test --gtest_output=xml:/data/data/org.linaro.gparser/files/TestResults.xml
+am start -n org.linaro.gparser/.MainActivity
+cp /data/data/org.linaro.gparser/files/ParsedTestResults.txt 
+am force-stop org.linaro.gparser
+
+
 for i in $TESTS; do
     # Detect file attribute.
     DIR="/data/nativetest"
