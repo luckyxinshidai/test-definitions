@@ -31,6 +31,6 @@ public class TestResult {
 
     @Override
     public String toString() {
-        return testsuite + "." + testcase + ":" + "  " + result;
+        return testsuite + "." + testcase + "  " + result;
     }
 }

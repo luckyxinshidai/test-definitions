@@ -1,0 +1,25 @@
+metadata:
+    name: gtest
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Run gtest based tests on Android"
+    maintainer:
+        - milosz.wasilewski@linaro.org
+        - chase.qi@linaro.org
+    os:
+        - android
+    scope:
+        - functional
+    devices:
+        - panda
+        - panda-es
+        - juno
+        - vexpress-a9
+        - vexpress-tc2
+        - ifc6410
+
+params:
+    TESTS: 'BasicHashtable_test BlobCache_test BufferQueue_test InputChannel_test InputDispatcher_test InputEvent_test InputPublisherAndConsumer_test InputReader_test Looper_test ObbFile_test String8_test Unicode_test ZipFileRO_test dalvik-vm-unit-tests gtest-death-test_test gtest-filepath_test gtest-message_test gtest-options_test gtest-port_test gtest-test-part_test gtest-typed-test2_test gtest-typed-test_test gtest_environment_test gtest_prod_test gtest_repeat_test gtest_stress_test ion-unit-tests libgui_test webrtc_apm_unit_test'
+
+run:
+    steps:
+        - ./android/scripts/gtest.sh "$TESTS"

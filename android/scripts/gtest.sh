@@ -3,60 +3,54 @@ set -e
 set -x
 
 TESTS=$1
+ScriptDIR=`pwd`
+FilesDIR="/data/data/org.linaro.gparser/files"
 
-# Install gparser.apk
-
-pm install "/data/gparser.apk" || echo "gparser.apk installation failed"
-# mkdir /data/data/org.linaro.gparser/files
-./gtest-death-test_test --gtest_output=xml:/data/data/org.linaro.gparser/files/TestResults.xml
-chmod -R 777 /data/data/org.linaro.gparser/files/
-am start -n org.linaro.gparser/.MainActivity
-cp /data/data/org.linaro.gparser/files/ParsedTestResults.txt 
-am force-stop org.linaro.gparser
-
+# Download and install gparser.apk
+wget http://people.linaro.org/~chase.qi/apks/gparser.apk
+chmod -R 777 $ScriptDIR
+pm install "$ScriptDIR/gparser.apk" || echo "gparser.apk installation failed"
+mkdir $FilesDIR
 
 for i in $TESTS; do
-    # Detect file attribute.
-    DIR="/data/nativetest"
-    if [ -e $DIR/$i ]; then
-        test -d $DIR/$i && DIR="$DIR/$i"
-        chmod 755 $DIR/$i
-    else
-        echo "$i test NOT found."
-        lava-test-case $i --result fail
-        continue
-    fi
-
-    # Run test.
-    chmod 755 $DIR/$i
+    chmod 755 $i
+    TestCaseName=`echo $i |awk -F '/' '{print $5}'`
     # Nonzero exit code will terminate test script, use "||true" as work around.
-    $DIR/$i --gtest_output="xml:$i.xml" || true
-    if [ -f $i.xml ]; then
-        echo "Generated XML report successfullu."
+    $i --gtest_output="xml:$ScriptDIR/$TestCaseName.xml" || true
+    if [ -f $ScriptDIR/$TestCaseName.xml ]; then
+        echo "Generated XML report successfully."
     else
-        echo "XML report NOT found."
-        lava-test-case $i --result fail
+        echo "$TestCaseName XML report NOT found."
+        lava-test-case $TestCaseName --result fail
         continue
     fi
 
     # Parse test result.
-    grep "<testsuite name=" $i.xml | awk -F '"' '{print $2,$6}' > $i.xml.parsed
-    if [ $? -ne 0 ]; then
-        echo "Valid test result NOT found"
-        lava-test-case $i --result fail
+    cp $ScriptDIR/$TestCaseName.xml $FilesDIR/TestResults.xml
+    chmod -R 777 $FilesDIR
+    am start -n org.linaro.gparser/.MainActivity || echo "Failed to start MainActivity"
+    sleep 15
+    am force-stop org.linaro.gparser || echo "Failed to stop gparser"
+    if [ -f $FilesDIR/ParsedTestResults.txt ]; then
+        echo "XML report parsed successfully."
+        mv $FilesDIR/ParsedTestResults.txt $ScriptDIR/$TestCaseName.ParsedTestResults.txt
+    else
+        echo "Failed to parse $TestCaseName test result."
+        lava-test-case $TestCaseName --result fail
         continue
     fi
 
+    # Collect test results 
     while read line; do
             TestCaseID=`echo $line | awk '{print $1}'`
             echo $TestCaseID
-            Failures=`echo $line | awk '{print $2}'`
-            echo $Failures
-
-            if [ $Failures -eq 0 ]; then
-                lava-test-case $TestCaseID --result pass
-            else
-                lava-test-case $TestCaseID --result fail
-            fi
-    done < $i.xml.parsed
+            TestResult=`echo $line | awk '{print $2}'`
+            echo $TestResult
+            
+            # Use testcase name as prefix.
+            lava-test-case $TestCaseName.$TestCaseID --result $TestResult
+    done < $ScriptDIR/$TestCaseName.ParsedTestResults.txt
 done
+
+# Uninstall gparser
+pm uninstall org.linaro.gparser
