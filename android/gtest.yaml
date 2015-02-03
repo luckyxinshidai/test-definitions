@@ -18,6 +18,7 @@ metadata:
         - ifc6410
 
 params:
+    # Use absolute path and modify the TESTS parameter in JSON file to run other or 64bit test programs.
     TESTS: '/data/nativetest/ion-unit-tests/ion-unit-tests /data/nativetest/backtrace_test/backtrace_test'
 
 run:

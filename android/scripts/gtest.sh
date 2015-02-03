@@ -13,8 +13,10 @@ pm install "$ScriptDIR/gparser.apk" || echo "gparser.apk installation failed"
 mkdir $FilesDIR
 
 for i in $TESTS; do
+    # Use the last field as test case name, NF refers to the
+    # number of fields of the whole string.
+    TestCaseName=`echo $i |awk -F '/' '{print $NF}'`
     chmod 755 $i
-    TestCaseName=`echo $i |awk -F '/' '{print $5}'`
     # Nonzero exit code will terminate test script, use "||true" as work around.
     $i --gtest_output="xml:$ScriptDIR/$TestCaseName.xml" || true
     if [ -f $ScriptDIR/$TestCaseName.xml ]; then
@@ -43,11 +45,9 @@ for i in $TESTS; do
     # Collect test results 
     while read line; do
             TestCaseID=`echo $line | awk '{print $1}'`
-            echo $TestCaseID
             TestResult=`echo $line | awk '{print $2}'`
-            echo $TestResult
             
-            # Use testcase name as prefix.
+            # Use test case name as prefix.
             lava-test-case $TestCaseName.$TestCaseID --result $TestResult
     done < $ScriptDIR/$TestCaseName.ParsedTestResults.txt
 done
