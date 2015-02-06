@@ -3,8 +3,8 @@ metadata:
     format: "Lava-Test-Shell Test Definition 1.0"
     description: "Run gtest based tests on Android"
     maintainer:
-        - milosz.wasilewski@linaro.org
         - chase.qi@linaro.org
+        - milosz.wasilewski@linaro.org
     os:
         - android
     scope:
@@ -23,4 +23,5 @@ params:
 
 run:
     steps:
+        - su
         - ./android/scripts/gtest.sh "$TESTS"

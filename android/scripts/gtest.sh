@@ -18,8 +18,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-# Author: Milosz Wasilewski <milosz.wasilewski@linaro.org>
-#         Chase Qi <chase.qi@linaro.org>
+# Author: Chase Qi <chase.qi@linaro.org>
+#         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #
 
 TESTS=$1
@@ -27,7 +27,7 @@ ScriptDIR=`pwd`
 FilesDIR="/data/data/org.linaro.gparser/files"
 
 # Download and install gparser.apk
-wget http://people.linaro.org/~chase.qi/apks/gparser.apk
+wget http://testdata.validation.linaro.org/tools/gparser.apk
 chmod -R 777 $ScriptDIR
 pm install "$ScriptDIR/gparser.apk"
 mkdir $FilesDIR
