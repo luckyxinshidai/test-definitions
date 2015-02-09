@@ -28,6 +28,7 @@ FilesDIR="/data/data/org.linaro.gparser/files"
 
 # Download and install gparser.apk
 wget http://testdata.validation.linaro.org/tools/gparser.apk
+getenforce
 setenforce 0
 chmod -R 777 $ScriptDIR
 pm install "$ScriptDIR/gparser.apk"
