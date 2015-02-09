@@ -30,7 +30,10 @@ FilesDIR="/data/data/org.linaro.gparser/files"
 wget http://testdata.validation.linaro.org/tools/gparser.apk
 chmod -R 777 $ScriptDIR
 pm install "$ScriptDIR/gparser.apk"
-logcat |tail -n 30
+logcat > /data/logcat.txt 2>&1 &
+sleep 180
+kill %1
+cat /data/logcat.txt |tail -n 50
 mkdir $FilesDIR
 
 for i in $TESTS; do
