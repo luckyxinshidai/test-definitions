@@ -31,11 +31,12 @@ wget http://testdata.validation.linaro.org/tools/gparser.apk
 setenforce 0
 chmod -R 777 $ScriptDIR
 pm install "$ScriptDIR/gparser.apk"
-logcat > /data/logcat.txt 2>&1 &
-sleep 180
-kill %1
-cat /data/logcat.txt |tail -n 50
-mkdir $FilesDIR
+if [ `pm list packages |grep org.linaro.gparser` ]; then
+    mkdir $FilesDIR
+else
+    lava-test-case gparser-apk-installation --result fail
+    exit 1
+fi
 
 for i in $TESTS; do
     # Use the last field as test case name, NF refers to the
