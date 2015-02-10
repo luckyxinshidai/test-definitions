@@ -22,7 +22,6 @@
 #         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #
 
-su
 TESTS=$1
 ScriptDIR=`pwd`
 FilesDIR="/data/data/org.linaro.gparser/files"
