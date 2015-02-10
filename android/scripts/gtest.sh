@@ -22,6 +22,7 @@
 #         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #
 
+su
 TESTS=$1
 ScriptDIR=`pwd`
 FilesDIR="/data/data/org.linaro.gparser/files"
@@ -29,9 +30,12 @@ FilesDIR="/data/data/org.linaro.gparser/files"
 # Download and install gparser.apk
 wget http://testdata.validation.linaro.org/tools/gparser.apk
 getenforce
-setenforce 0
+# setenforce 0
 chmod -R 777 $ScriptDIR
 pm install "$ScriptDIR/gparser.apk"
+logcat /data/logcat.txt 2>&1 &
+sleep 120
+cat /data/logcat.txt | tail -n 30
 if [ `pm list packages |grep org.linaro.gparser` ]; then
     mkdir $FilesDIR
 else
