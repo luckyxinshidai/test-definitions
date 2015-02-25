@@ -27,7 +27,7 @@ install:
         - time
 
 params:
-    TESTS: 'dd dd-tmpfs ddsync io-stutter-anon io-stutter-tmpfs io-threaded-fixed ku-latency libmicro'
+    TESTS: 'dd dd-tmpfs ddsync'
 
 run:
     steps:
