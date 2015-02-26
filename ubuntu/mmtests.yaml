@@ -3,8 +3,8 @@ metadata:
     format: "Lava-Test-Shell Test Definition 1.0"
     description: "Run mmtests suite on Ubuntu"
     maintainer:
-        - milosz.wasilewski@linaro.org
         - chase.qi@linaro.org
+        - milosz.wasilewski@linaro.org
         - naresh.kamboju@linaro.org
     os:
         - ubuntu

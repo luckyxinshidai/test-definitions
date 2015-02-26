@@ -1,7 +1,27 @@
 #!/bin/sh
-set -e
-set -x
-
+#
+# mmtests test case for Linux Linaro Ubuntu.
+#
+# Copyright (C) 2012 - 2014, Linaro Limited.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# Author: Chase Qi <chase.qi@linaro.org>
+#         Milosz Wasilewski <milosz.wasilewski@linaro.org>
+#         Naresh Kamboju <naresh.kamboju@linaro.org>
+#
 TESTS=$1
 KernelVersion=`uname -r`
 DIR=`pwd`
@@ -33,10 +53,10 @@ result_parse(){
             else
                # Use the final total average value as measurement
                ku_total_average=`grep "Total Average.*us" $DIR/work/log/ku_latency-$KernelVersion/noprofile/ku-latency.log \
-                             | tail -1 | awk '{print $6}'`
+                                 | tail -1 | awk '{print $6}'`
                # Use the final rolling average value as measurement
                ku_rolling_average=`grep "Rolling Average.*us" $DIR/work/log/ku_latency-$KernelVersion/noprofile/ku-latency.log \
-                               | tail -1 | awk '{print $6}'`
+                                   | tail -1 | awk '{print $6}'`
                lava-test-case $TEST_ID-total-average --result pass --measurement $ku_total_average --units us
                lava-test-case $TEST_ID-rolling-average --result pass --measurement $ku_rolling_average --units us
             fi
@@ -49,7 +69,8 @@ result_parse(){
                     # Get test name and usecs/call value in the 3th line of each test log.
                     libmicro_test_name=`sed -n 3p $i | awk '{print $1}'`
                     libmicro_test_result=`sed -n 3p $i | awk '{print $4}'`
-                    lava-test-case $TEST_ID-$libmicro_test_name-median --result pass --measurement $libmicro_test_result --units usecs/call
+                    lava-test-case $TEST_ID-$libmicro_test_name --result pass --measurement $libmicro_test_result --units usecs/call
+                    lava-test-case-attach test-attach $i text/plain
                 done
             fi
             ;;
