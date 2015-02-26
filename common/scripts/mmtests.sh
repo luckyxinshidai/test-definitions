@@ -70,7 +70,6 @@ result_parse(){
                     libmicro_test_name=`sed -n 3p $i | awk '{print $1}'`
                     libmicro_test_result=`sed -n 3p $i | awk '{print $4}'`
                     lava-test-case $TEST_ID-$libmicro_test_name --result pass --measurement $libmicro_test_result --units usecs/call
-                    lava-test-case-attach test-attach $i text/plain
                 done
             fi
             ;;
