@@ -27,7 +27,7 @@ install:
         - time
 
 params:
-    TESTS: 'dd dd-tmpfs ddsync'
+    TESTS: 'dd dd-tmpfs ddsync ku-latency'
 
 run:
     steps:
