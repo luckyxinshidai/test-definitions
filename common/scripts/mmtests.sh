@@ -24,7 +24,7 @@
 #
 TESTS=$1
 KernelVersion=`uname -r`
-DIR=`pwd`
+DIR="`pwd`/mmtests-0.16"
 
 # Download tests directly, rather than use the customized mirror.
 sed -i '/WEBROOT/s/^/#/' $DIR/shellpacks/common-config.sh

@@ -22,7 +22,7 @@ install:
     steps:
         - 'VERSION=v0.16'
         - 'curl -J -L -k https://github.com/gormanm/mmtests/archive/v0.16.tar.gz > v0.16.tar.gz'
-        - 'tar --strip-components=1 -zxf $VERSION.tar.gz'
+        - 'tar -zxf $VERSION.tar.gz'
     deps:
         - time
 
