@@ -78,7 +78,7 @@ result_parse(){
 
 ## Run tests
 for SUB_TEST in $TESTS; do
-    $DIR/run-mmtests.sh --no-monitor --config configs/config-global-dhp__$SUB_TEST $KernelVersion
+    $DIR/run-mmtests.sh --no-monitor --config $DIR/configs/config-global-dhp__$SUB_TEST $KernelVersion
     if [ $? -ne 0 ]; then
         lava-test-case $SUB_TEST --result fail
     else
