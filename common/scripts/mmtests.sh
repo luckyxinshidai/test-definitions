@@ -47,7 +47,7 @@ result_parser(){
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $dd_units
             fi
             ;;
-        preaddd()
+        preaddd)
             if [ -z `grep "Reading files back" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log` ]; then
                 lava-test-case $TEST_ID --result fail
             else
