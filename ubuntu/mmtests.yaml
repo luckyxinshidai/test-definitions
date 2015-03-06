@@ -13,21 +13,21 @@ metadata:
     devices:
         - panda
         - panda-es
-        - arndale
         - vexpress-a9
         - vexpress-tc2
-        - ifc6410
+        - juno
+        - beaglebone-black
 
 install:
     steps:
         - 'VERSION=v0.16'
-        - 'curl -J -L -k https://github.com/gormanm/mmtests/archive/v0.16.tar.gz > v0.16.tar.gz'
-        - 'tar -zxf $VERSION.tar.gz'
+        - 'wget https://github.com/gormanm/mmtests/archive/$VERSION.tar.gz'
+        - 'tar --strip-components=1 -zxf $VERSION.tar.gz'
     deps:
         - time
 
 params:
-    TESTS: 'dd dd-tmpfs ddsync ku-latency libmicro'
+    TESTS: 'dd dd-tmpfs ddsync preaddd ku-latency libmicro'
 
 run:
     steps:
