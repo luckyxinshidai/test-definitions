@@ -34,7 +34,7 @@ result_parser(){
     local TEST_ID=$1
     case $TEST_ID in
         dd|dd-tmpfs|ddsync)
-            if [ -z `grep copied $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log` ]; then
+            if [ -z "`grep copied $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                 dd_units=`grep copied $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
@@ -48,7 +48,7 @@ result_parser(){
             fi
             ;;
         preaddd)
-            if [ -z `grep "Reading files back" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log` ]; then
+            if [ -z "`grep "Reading files back" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                 preaddd_units=`grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
@@ -59,10 +59,10 @@ result_parser(){
                 lava-test-case $TEST_ID-min --result pass --measurement $min --units $preaddd_units
                 lava-test-case $TEST_ID-max --result pass --measurement $max --units $preaddd_units
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $preaddd_units
-            fi  
-            ;;   
+            fi
+            ;;
         ku-latency)
-            if [ -z `grep "Average.*us" $DIR/work/log/ku_latency-$KernelVersion/noprofile/ku-latency.log` ]; then
+            if [ -z "`grep "Average.*us" $DIR/work/log/ku_latency-$KernelVersion/noprofile/ku-latency.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                # Use the final total average value as measurement
@@ -76,7 +76,7 @@ result_parser(){
             fi
             ;;
         libmicro)
-            if [ -z `grep Running $DIR/work/log/libmicro-$KernelVersion/noprofile/mmtests.log` ]; then
+            if [ -z "`grep Running $DIR/work/log/libmicro-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                 for i in `ls $DIR/work/log/libmicro-$KernelVersion/noprofile/memset*`; do
@@ -87,16 +87,32 @@ result_parser(){
                 done
             fi
             ;;
+        preaddd)
+            if [ -z "`grep "Reading files back" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log`" ]; then
+                lava-test-case $TEST_ID --result fail
+            else
+                preaddd_units=`grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
+                # Get the min, max and mean scores of the 8 iterations
+                grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -8 | awk '{print $8}' > $DIR/$TEST_ID-data.txt
+                eval `awk '{if(min=="") {min=max=$1}; if($1>max) {max=$1}; if($1< min) {min=$1}; total+=$1; count+=1} \
+                      END {print "mean="total/count, "min="min, "max="max}' $DIR/$TEST_ID-data.txt`
+                lava-test-case $TEST_ID-min --result pass --measurement $min --units $preaddd_units
+                lava-test-case $TEST_ID-max --result pass --measurement $max --units $preaddd_units
+                lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $preaddd_units
+            fi
+            ;;
     esac
 }
 
 ## Run tests
 for SUB_TEST in $TESTS; do
+    rm -rf $DIR/work/testdisk/tmp
     $DIR/run-mmtests.sh --no-monitor --config $DIR/configs/config-global-dhp__$SUB_TEST $KernelVersion
     if [ $? -ne 0 ]; then
         lava-test-case $SUB_TEST --result fail
     else
         result_parser $SUB_TEST
     fi
+    umount $DIR/work/testdisk 
     rm -rf $DIR/work/testdisk/tmp
 done
