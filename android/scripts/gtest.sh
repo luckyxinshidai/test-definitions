@@ -25,7 +25,6 @@ set -e
 set -x
 
 TESTS=$1
-LOOPS=$2
 ScriptDIR=`pwd`
 FilesDIR="/data/data/org.linaro.gparser/files"
 
@@ -43,6 +42,7 @@ for i in $TESTS; do
     # number of fields of the whole string.
     TestCaseName=`echo $i |awk -F '/' '{print $NF}'`
     chmod 755 $i
+    LOOPS=$2
     Count=0
 
     while [ $LOOPS -ne 0 ]; do
