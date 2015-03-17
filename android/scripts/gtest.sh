@@ -44,8 +44,8 @@ for i in $TESTS; do
     LOOPS=$2
     Count=1
 
-    # Run tests.
     while [ $Count -le $LOOPS ]; do
+        # Run tests.
         echo "Running $TestCaseName tests (iteration $Count) . . ."
         # Nonzero exit code will terminate test script, use "||true" as work around.
         $i --gtest_output="xml:$ScriptDIR/$TestCaseName-$Count.xml" || true
