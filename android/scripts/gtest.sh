@@ -21,11 +21,9 @@
 # Author: Chase Qi <chase.qi@linaro.org>
 #         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #
-set -e
-set -x
 
 TESTS=$1
-ScriptDIR=`pwd`
+ScriptDIR="`pwd`"
 FilesDIR="/data/data/org.linaro.gparser/files"
 
 # Download and install gparser.apk
@@ -35,18 +33,20 @@ chmod -R 777 $ScriptDIR
 pm install "$ScriptDIR/gparser.apk"
 mkdir $FilesDIR
 # Print the most recent 30 lines and exit logcat
-logcat -t 30
+logcat -t 50
 
 for i in $TESTS; do
     # Use the last field as test case name, NF refers to the
     # number of fields of the whole string.
-    TestCaseName=`echo $i |awk -F '/' '{print $NF}'`
+    TestCaseName="`echo $i |awk -F '/' '{print $NF}'`"
+
     chmod 755 $i
     LOOPS=$2
     Count=1
 
+    # Run tests.
     while [ $LOOPS -ne 0 ]; do
-        echo "Running all $TestCaseName tests (iteration $Count) . . ."
+        echo "Running $TestCaseName tests (iteration $Count) . . ."
         # Nonzero exit code will terminate test script, use "||true" as work around.
         $i --gtest_output="xml:$ScriptDIR/$TestCaseName-$Count.xml" || true
         if [ -f $ScriptDIR/$TestCaseName-$Count.xml ]; then
@@ -60,7 +60,6 @@ for i in $TESTS; do
         # Parse test result.
         cp $ScriptDIR/$TestCaseName-$Count.xml $FilesDIR/TestResults.xml
         chmod -R 777 $FilesDIR
-
         # Start gparser MainActivity, TestResults.xml will be parsed automatically.
         # Parsed result will be saved as ParsedTestResults.txt under the same directory.
         am start -n org.linaro.gparser/.MainActivity
@@ -68,8 +67,7 @@ for i in $TESTS; do
         # Stop gparser for the next loop.
         am force-stop org.linaro.gparser
         # Print the most recent 30 lines and exit logcat
-        logcat -t 30
-
+        logcat -t 50
         if [ -f $FilesDIR/ParsedTestResults.txt ]; then
             echo "XML report parsed successfully."
             mv $FilesDIR/ParsedTestResults.txt $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
@@ -84,7 +82,6 @@ for i in $TESTS; do
                 TestCaseID="`echo $line | awk '{print $1}'`"
                 TestResult="`echo $line | awk '{print $2}'`"
                 TestDuration="`echo $line | awk '{print $3}'`"
-
                 # Use test case name as prefix to amend TestCaseID.
                 lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --units s
         done < $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
