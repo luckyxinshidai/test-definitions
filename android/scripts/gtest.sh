@@ -43,7 +43,7 @@ for i in $TESTS; do
     TestCaseName=`echo $i |awk -F '/' '{print $NF}'`
     chmod 755 $i
     LOOPS=$2
-    Count=0
+    Count=1
 
     while [ $LOOPS -ne 0 ]; do
         echo "======================================================="
@@ -53,7 +53,7 @@ for i in $TESTS; do
         if [ -f $ScriptDIR/$TestCaseName-$Count.xml ]; then
             echo "Generated XML report successfully."
         else
-            echo "$TestCaseName XML report NOT found."
+            echo "$TestCaseName-$Count XML report NOT found."
             lava-test-case $TestCaseName --result fail
             continue
         fi
@@ -75,16 +75,16 @@ for i in $TESTS; do
             echo "XML report parsed successfully."
             mv $FilesDIR/ParsedTestResults.txt $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
         else
-            echo "Failed to parse $TestCaseName test result."
+            echo "Failed to parse $TestCaseName-$Count test result."
             lava-test-case $TestCaseName --result fail
             continue
         fi
 
         # Collect test results.
         while read line; do
-                TestCaseID=`echo $line | awk '{print $1}'`
-                TestResult=`echo $line | awk '{print $2}'`
-                TestDuration=`echo $line | awk '{print $3}'`
+                TestCaseID="`echo $line | awk '{print $1}'`"
+                TestResult="`echo $line | awk '{print $2}'`"
+                TestDuration="`echo $line | awk '{print $3}'`"
 
                 # Use test case name as prefix to amend TestCaseID.
                 lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --unit s
