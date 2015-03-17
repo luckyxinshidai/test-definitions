@@ -86,8 +86,8 @@ for i in $TESTS; do
                 lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --units s
         done < $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
         
-        Count=`expr $Count + 1`
-        LOOPS=`expr $LOOPS - 1`
+        Count=$((Count+1))
+        LOOPS=$((LOOPS-1))
     done
 done
 
