@@ -20,7 +20,9 @@ metadata:
 params:
     # Use absolute path and modify the TESTS parameter in JSON file to run other or 64bit test programs.
     TESTS: '/data/nativetest/ion-unit-tests/ion-unit-tests /data/nativetest/backtrace_test/backtrace_test'
+    # Run one test program multiple times.
+    LOOPS: '3'
 
 run:
     steps:
-        - ./android/scripts/gtest.sh "$TESTS"
+        - ./android/scripts/gtest.sh "$TESTS" $LOOPS

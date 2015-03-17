@@ -21,70 +21,78 @@
 # Author: Chase Qi <chase.qi@linaro.org>
 #         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #
+set -e
+set -x
 
 TESTS=$1
+LOOPS=$2
 ScriptDIR=`pwd`
 FilesDIR="/data/data/org.linaro.gparser/files"
 
 # Download and install gparser.apk
-wget http://testdata.validation.linaro.org/tools/gparser.apk
-getenforce
-# setenforce 0
+# wget http://testdata.validation.linaro.org/tools/gparser.apk
+wget http://people.linaro.org/~chase.qi/gparser.apk
 chmod -R 777 $ScriptDIR
 pm install "$ScriptDIR/gparser.apk"
-logcat /data/logcat.txt 2>&1 &
-sleep 120
-cat /data/logcat.txt | tail -n 30
-if [ `pm list packages |grep org.linaro.gparser` ]; then
-    mkdir $FilesDIR
-else
-    lava-test-case gparser-apk-installation --result fail
-    exit 1
-fi
+mkdir $FilesDIR
+# Print the most recent 30 lines and exit logcat
+logcat -t 30
 
 for i in $TESTS; do
     # Use the last field as test case name, NF refers to the
     # number of fields of the whole string.
     TestCaseName=`echo $i |awk -F '/' '{print $NF}'`
     chmod 755 $i
-    # Nonzero exit code will terminate test script, use "||true" as work around.
-    $i --gtest_output="xml:$ScriptDIR/$TestCaseName.xml" || true
-    if [ -f $ScriptDIR/$TestCaseName.xml ]; then
-        echo "Generated XML report successfully."
-    else
-        echo "$TestCaseName XML report NOT found."
-        lava-test-case $TestCaseName --result fail
-        continue
-    fi
+    Count=0
 
-    # Parse test result.
-    cp $ScriptDIR/$TestCaseName.xml $FilesDIR/TestResults.xml
-    chmod -R 777 $FilesDIR
+    while [ $LOOPS -ne 0 ]; do
+        echo "======================================================="
+        echo "Running all $TestCaseName tests (iteration $Count) . . ."
+        # Nonzero exit code will terminate test script, use "||true" as work around.
+        $i --gtest_output="xml:$ScriptDIR/$TestCaseName-$Count.xml" || true
+        if [ -f $ScriptDIR/$TestCaseName-$Count.xml ]; then
+            echo "Generated XML report successfully."
+        else
+            echo "$TestCaseName XML report NOT found."
+            lava-test-case $TestCaseName --result fail
+            continue
+        fi
 
-    # Start gparser MainActivity, TestResults.xml will be parsed automatically.
-    # Parsed result will be saved as ParsedTestResults.txt under the same directory.
-    am start -n org.linaro.gparser/.MainActivity
-    sleep 15
-    # Stop gparser for the next loop.
-    am force-stop org.linaro.gparser
+        # Parse test result.
+        cp $ScriptDIR/$TestCaseName-$Count.xml $FilesDIR/TestResults.xml
+        chmod -R 777 $FilesDIR
 
-    if [ -f $FilesDIR/ParsedTestResults.txt ]; then
-        echo "XML report parsed successfully."
-        mv $FilesDIR/ParsedTestResults.txt $ScriptDIR/$TestCaseName.ParsedTestResults.txt
-    else
-        echo "Failed to parse $TestCaseName test result."
-        lava-test-case $TestCaseName --result fail
-        continue
-    fi
+        # Start gparser MainActivity, TestResults.xml will be parsed automatically.
+        # Parsed result will be saved as ParsedTestResults.txt under the same directory.
+        am start -n org.linaro.gparser/.MainActivity
+        sleep 15
+        # Stop gparser for the next loop.
+        am force-stop org.linaro.gparser
+        # Print the most recent 30 lines and exit logcat
+        logcat -t 30
 
-    # Collect test results.
-    while read line; do
-            TestCaseID=`echo $line | awk '{print $1}'`
-            TestResult=`echo $line | awk '{print $2}'`
+        if [ -f $FilesDIR/ParsedTestResults.txt ]; then
+            echo "XML report parsed successfully."
+            mv $FilesDIR/ParsedTestResults.txt $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
+        else
+            echo "Failed to parse $TestCaseName test result."
+            lava-test-case $TestCaseName --result fail
+            continue
+        fi
 
-            # Use test case name as prefix to amend TestCaseID.
-            lava-test-case $TestCaseName.$TestCaseID --result $TestResult
-    done < $ScriptDIR/$TestCaseName.ParsedTestResults.txt
+        # Collect test results.
+        while read line; do
+                TestCaseID=`echo $line | awk '{print $1}'`
+                TestResult=`echo $line | awk '{print $2}'`
+                TestDuration=`echo $line | awk '{print $3}'`
+
+                # Use test case name as prefix to amend TestCaseID.
+                lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --unit s
+        done < $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
+        
+        Count=`expr $Count + 1`
+        LOOPS=`expr $LOOPS - 1`
+    done
 done
 
 # Uninstall gparser
