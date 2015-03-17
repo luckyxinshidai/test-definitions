@@ -46,7 +46,6 @@ for i in $TESTS; do
     Count=1
 
     while [ $LOOPS -ne 0 ]; do
-        echo "======================================================="
         echo "Running all $TestCaseName tests (iteration $Count) . . ."
         # Nonzero exit code will terminate test script, use "||true" as work around.
         $i --gtest_output="xml:$ScriptDIR/$TestCaseName-$Count.xml" || true
@@ -87,7 +86,7 @@ for i in $TESTS; do
                 TestDuration="`echo $line | awk '{print $3}'`"
 
                 # Use test case name as prefix to amend TestCaseID.
-                lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --unit s
+                lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --units s
         done < $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
         
         Count=`expr $Count + 1`
