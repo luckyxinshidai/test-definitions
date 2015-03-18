@@ -46,6 +46,9 @@ result_parser(){
                 lava-test-case $TEST_ID-max --result pass --measurement $max --units $dd_units
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $dd_units
             fi
+            if [ "$TEST_ID" = "ddsync" ]; then
+                umount $DIR/work/testdisk
+            fi
             ;;
         ku-latency)
             if [ -z "`grep "ku_latency fine" $DIR/work/log/ku_latency-$KernelVersion/noprofile/mmtests.log`" ]; then
@@ -88,7 +91,7 @@ result_parser(){
             fi
             ;;
         vmscale)
-            if [ -z "`grep "vmscale fine" $DIR/work/log/vmscale-$KernelVersion/noprofile/mmtests.log`" ]; do
+            if [ -z "`grep "vmscale fine" $DIR/work/log/vmscale-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                 vmscale_units=`grep copied $DIR/work/log/vmscale-$KernelVersion/noprofile/lru-file-ddspread.log | tail -1 | awk '{print $9}'`
@@ -113,6 +116,4 @@ for SUB_TEST in $TESTS; do
     else
         result_parser $SUB_TEST
     fi
-    umount $DIR/work/testdisk 
-    rm -rf $DIR/work/testdisk/tmp
 done
