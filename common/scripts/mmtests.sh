@@ -34,7 +34,7 @@ result_parser(){
     local TEST_ID=$1
     case $TEST_ID in
         dd|dd-tmpfs|ddsync)
-            if [ -z "`grep copied $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log`" ]; then
+            if [ -z "`grep "loopdd fine" $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                 dd_units=`grep copied $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
@@ -47,22 +47,8 @@ result_parser(){
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $dd_units
             fi
             ;;
-        preaddd)
-            if [ -z "`grep "Reading files back" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log`" ]; then
-                lava-test-case $TEST_ID --result fail
-            else
-                preaddd_units=`grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
-                # Get the min, max and mean scores of the 8 iterations
-                grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -8 | awk '{print $8}' > $DIR/$TEST_ID-data.txt
-                eval `awk '{if(min=="") {min=max=$1}; if($1>max) {max=$1}; if($1< min) {min=$1}; total+=$1; count+=1} \
-                      END {print "mean="total/count, "min="min, "max="max}' $DIR/$TEST_ID-data.txt`
-                lava-test-case $TEST_ID-min --result pass --measurement $min --units $preaddd_units
-                lava-test-case $TEST_ID-max --result pass --measurement $max --units $preaddd_units
-                lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $preaddd_units
-            fi
-            ;;
         ku-latency)
-            if [ -z "`grep "Average.*us" $DIR/work/log/ku_latency-$KernelVersion/noprofile/ku-latency.log`" ]; then
+            if [ -z "`grep "ku_latency fine" $DIR/work/log/ku_latency-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                # Use the final total average value as measurement
@@ -76,7 +62,7 @@ result_parser(){
             fi
             ;;
         libmicro)
-            if [ -z "`grep Running $DIR/work/log/libmicro-$KernelVersion/noprofile/mmtests.log`" ]; then
+            if [ -z "`grep "libmicro fine" $DIR/work/log/libmicro-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                 for i in `ls $DIR/work/log/libmicro-$KernelVersion/noprofile/memset*`; do
@@ -88,7 +74,7 @@ result_parser(){
             fi
             ;;
         preaddd)
-            if [ -z "`grep "Reading files back" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log`" ]; then
+            if [ -z "`grep "preaddd fine" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
             else
                 preaddd_units=`grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
@@ -99,6 +85,20 @@ result_parser(){
                 lava-test-case $TEST_ID-min --result pass --measurement $min --units $preaddd_units
                 lava-test-case $TEST_ID-max --result pass --measurement $max --units $preaddd_units
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $preaddd_units
+            fi
+            ;;
+        vmscale)
+            if [ -z "`grep "vmscale fine" $DIR/work/log/vmscale-$KernelVersion/noprofile/mmtests.log`" ]; do
+                lava-test-case $TEST_ID --result fail
+            else
+                vmscale_units=`grep copied $DIR/work/log/vmscale-$KernelVersion/noprofile/lru-file-ddspread.log | tail -1 | awk '{print $9}'`
+                # Get the min, max and mean scores of all iterations, the number of iterations equal to the number of processors.
+                grep copied $DIR/work/log/vmscale-$KernelVersion/noprofile/lru-file-ddspread.log | awk '{print $8}' > $DIR/$TEST_ID-data.txt
+                eval `awk '{if(min=="") {min=max=$1}; if($1>max) {max=$1}; if($1< min) {min=$1}; total+=$1; count+=1} \
+                      END {print "mean="total/count, "min="min, "max="max}' $DIR/$TEST_ID-data.txt`
+                lava-test-case $TEST_ID-ddspread-min --result pass --measurement $min --units $vmscale_units
+                lava-test-case $TEST_ID-ddspread-max --result pass --measurement $max --units $vmscale_units
+                lava-test-case $TEST_ID-ddspread-mean --result pass --measurement $mean --units $vmscale_units
             fi
             ;;
     esac
