@@ -46,7 +46,7 @@ result_parser(){
                 lava-test-case $TEST_ID-max --result pass --measurement $max --units $dd_units
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $dd_units
             fi
-            if [ "$TEST_ID" = "ddsync" ]; then
+            if [ "$TEST_ID" = "dd-tmpfs" ]; then
                 umount $DIR/work/testdisk
             fi
             ;;
