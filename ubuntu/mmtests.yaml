@@ -27,7 +27,7 @@ install:
         - time
 
 params:
-    TESTS: 'dd dd-tmpfs ddsync ku-latency libmicro preaddd'
+    TESTS: 'dd dd-tmpfs ddsync ku-latency libmicro preaddd vmscale'
 
 run:
     steps:
