@@ -118,9 +118,9 @@ result_parser(){
                 lava-test-case $TEST_ID --result fail
             else
                 # Total number of CPU-seconds used by the system on behalf of the process (in kernel mode), in seconds.
-                timedalloc_kernel="`grep elapsed $DIR/work/log/timedalloc-$KernelVersion/noprofile/time | awk '{print substr($1, 1, 4)}'`"
+                timedalloc_kernel="`grep elapsed $DIR/work/log/timedalloc-$KernelVersion/noprofile/time | awk '{print substr($2, 1, 4)}'`"
                 # Total number of CPU-seconds that the process used directly (in user mode), in seconds.
-                timedalloc_user="`grep elapsed $DIR/work/log/timedalloc-$KernelVersion/noprofile/time | awk '{print substr($2, 1, 4)}'`"
+                timedalloc_user="`grep elapsed $DIR/work/log/timedalloc-$KernelVersion/noprofile/time | awk '{print substr($1, 1, 4)}'`"
                 lava-test-case $TEST_ID-kernel-mode --result pass --measurement $timedalloc_kernel --units seconds
                 lava-test-case $TEST_ID-user-mode --result pass --measurement $timedalloc_user --units seconds
             fi
@@ -134,20 +134,16 @@ result_parser(){
                     for INTERATION in 1 2 3; do
                         tiobench_sequential_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
                                                   | awk '{print $5}' | sed -n 1p`
-                        lava-test-case $TEST_ID-sequential-reads-thread-${THREAD}threads-iteration${ITERATION} \
-                                       --result pass --measurement $tiobench_sequential_reads --units MB/s
                         tiobench_random_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
                                               | awk '{print $5}' | sed -n 2p`
-                        lava-test-case $TEST_ID-random-reads-${THREAD}threads-iteration${ITERATION} \
-                                       --result pass --measurement $tiobench_random_reads --units MB/s
                         tiobench_sequential_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
                                                    | awk '{print $5}' | sed -n 3p`
-                        lava-test-case $TEST_ID-sequential-writes-${THREAD}threads-iteration${ITERATION} \
-                                       --result pass --measurement $tiobench_sequential_writes --units MB/s
                         tiobench_random_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
                                                | awk '{print $5}' | sed -n 4p`
-                        lava-test-case $TEST_ID-random-writes-${THREAD}threads-iteration${ITERATION} \
-                                       --result pass --measurement $tiobench_random_writes --units MB/s
+                        lava-test-case $TEST_ID-sequential-reads-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_sequential_reads --units MB/s
+                        lava-test-case $TEST_ID-random-reads-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_random_reads --units MB/s
+                        lava-test-case $TEST_ID-sequential-writes-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_sequential_writes --units MB/s
+                        lava-test-case $TEST_ID-random-writes-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_random_writes --units MB/s
                     done
                 done
             fi
