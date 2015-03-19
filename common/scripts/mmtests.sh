@@ -39,6 +39,7 @@ data_processing(){
 result_parser(){
     local TEST_ID=$1
     case $TEST_ID in
+        # dd bench
         dd|dd-tmpfs|ddsync)
             if [ -z "`grep copied $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
@@ -55,6 +56,7 @@ result_parser(){
                 umount $DIR/work/testdisk
             fi
             ;;
+        # Measuring latency in the Linux network stack between kernel and user space.
         ku-latency)
             if [ -z "`grep "Average.*us" $DIR/work/log/ku_latency-$KernelVersion/noprofile/ku-latency.log`" ]; then
                 lava-test-case $TEST_ID --result fail
@@ -69,6 +71,7 @@ result_parser(){
                lava-test-case $TEST_ID-rolling-average --result pass --measurement $ku_rolling_average --units us
             fi
             ;;
+        # Measure the performance of various system and library calls.
         libmicro)
             if [ -z "`grep Running $DIR/work/log/libmicro-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
@@ -81,6 +84,7 @@ result_parser(){
                 done
             fi
             ;;
+        # pread bench
         preaddd)
             if [ -z "`grep "Reading files back" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log`" ]; then
                 lava-test-case $TEST_ID --result fail
@@ -94,6 +98,7 @@ result_parser(){
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $preaddd_units
             fi
             ;;
+        # vm scalability test, measure spread of dd performance
         vmscale)
             if [ -z "`grep copied $DIR/work/log/vmscale-$KernelVersion/noprofile/lru-file-ddspread.log`" ]; then
                 lava-test-case $TEST_ID --result fail
@@ -107,6 +112,19 @@ result_parser(){
                 lava-test-case $TEST_ID-ddspread-mean --result pass --measurement $mean --units $vmscale_units
             fi
             ;;
+        # Time how long it takes to allocate a large buffer
+        timedalloc)
+        if [ -z "`grep elapsed $DIR/work/log/timedalloc-$KernelVersion/noprofile/time`" ]; then
+            lava-test-case $TEST_ID --result fail
+        else
+            # Total number of CPU-seconds used by the system on behalf of the process (in kernel mode), in seconds.
+            timedalloc_kernel="`grep elapsed $DIR/work/log/timedalloc-$KernelVersion/noprofile/time | awk '{print substr($1, 1, 4)}'`"
+            # Total number of CPU-seconds that the process used directly (in user mode), in seconds.
+            timedalloc_user="`grep elapsed $DIR/work/log/timedalloc-$KernelVersion/noprofile/time | awk '{print substr($2, 1, 4)}'`"
+            lava-test-case $TEST_ID-kernel-mode --result pass --measurement $timedalloc_kernel --units seconds
+            lava-test-case $TEST_ID-user-mode --result pass --measurement $timedalloc_user --units seconds
+        fi
+        ;;
     esac
 }
 

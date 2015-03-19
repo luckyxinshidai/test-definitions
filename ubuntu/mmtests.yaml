@@ -27,7 +27,7 @@ install:
         - time
 
 params:
-    TESTS: 'dd dd-tmpfs ddsync ku-latency libmicro preaddd vmscale'
+    TESTS: 'dd dd-tmpfs ddsync ku-latency libmicro preaddd vmscale timedalloc'
 
 run:
     steps:
