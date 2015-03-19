@@ -30,7 +30,7 @@ DIR=`pwd`
 sed -i '/WEBROOT/s/^/#/' $DIR/shellpacks/common-config.sh
 
 # Calculate the mean, min and max of data stored in a file
-data_processing(){
+min_max_mean(){
     eval `awk '{if(min=="") {min=max=$1}; if($1>max) {max=$1}; if($1< min) {min=$1}; total+=$1; count+=1} \
          END {print "mean="total/count, "min="min, "max="max}' $1`
 }
@@ -47,7 +47,7 @@ result_parser(){
                 dd_units=`grep copied $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
                 # Get the min, max and mean scores of the 30 iterations
                 grep copied $DIR/work/log/loopdd-$KernelVersion/noprofile/mmtests.log | awk '{print $8}' > $DIR/$TEST_ID-data.txt
-                data_processing $DIR/$TEST_ID-data.txt
+                min_max_mean $DIR/$TEST_ID-data.txt
                 lava-test-case $TEST_ID-min --result pass --measurement $min --units $dd_units
                 lava-test-case $TEST_ID-max --result pass --measurement $max --units $dd_units
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $dd_units
@@ -92,7 +92,7 @@ result_parser(){
                 preaddd_units=`grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
                 # Get the min, max and mean scores of the 8 iterations
                 grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -8 | awk '{print $8}' > $DIR/$TEST_ID-data.txt
-                data_processing $DIR/$TEST_ID-data.txt
+                min_max_mean $DIR/$TEST_ID-data.txt
                 lava-test-case $TEST_ID-min --result pass --measurement $min --units $preaddd_units
                 lava-test-case $TEST_ID-max --result pass --measurement $max --units $preaddd_units
                 lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $preaddd_units
@@ -106,7 +106,7 @@ result_parser(){
                 vmscale_units=`grep copied $DIR/work/log/vmscale-$KernelVersion/noprofile/lru-file-ddspread.log | tail -1 | awk '{print $9}'`
                 # Get the min, max and mean scores of all iterations, the number of iterations equal to the number of processors.
                 grep copied $DIR/work/log/vmscale-$KernelVersion/noprofile/lru-file-ddspread.log | awk '{print $8}' > $DIR/$TEST_ID-data.txt
-                data_processing $DIR/$TEST_ID-data.txt
+                min_max_mean $DIR/$TEST_ID-data.txt
                 lava-test-case $TEST_ID-ddspread-min --result pass --measurement $min --units $vmscale_units
                 lava-test-case $TEST_ID-ddspread-max --result pass --measurement $max --units $vmscale_units
                 lava-test-case $TEST_ID-ddspread-mean --result pass --measurement $mean --units $vmscale_units
@@ -134,16 +134,20 @@ result_parser(){
                     for INTERATION in 1 2 3; do
                         tiobench_sequential_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
                                                   | awk '{print $5}' | sed -n 1p`
-                        lava-test-case $TEST_ID-sequential-reads --result pass --measurement $tiobench_sequential_reads --units MB/s
+                        lava-test-case $TEST_ID-sequential-reads-thread-${THREAD}threads-iteration${ITERATION} \
+                                       --result pass --measurement $tiobench_sequential_reads --units MB/s
                         tiobench_random_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
                                               | awk '{print $5}' | sed -n 2p`
-                        lava-test-case $TEST_ID-random-reads --result pass --measurement $tiobench_random_reads --units MB/s
+                        lava-test-case $TEST_ID-random-reads-${THREAD}threads-iteration${ITERATION} \
+                                       --result pass --measurement $tiobench_random_reads --units MB/s
                         tiobench_sequential_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
                                                    | awk '{print $5}' | sed -n 3p`
-                        lava-test-case $TEST_ID-sequential-writes --result pass --measurement $tiobench_sequential_writes --units MB/s
+                        lava-test-case $TEST_ID-sequential-writes-${THREAD}threads-iteration${ITERATION} \
+                                       --result pass --measurement $tiobench_sequential_writes --units MB/s
                         tiobench_random_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
                                                | awk '{print $5}' | sed -n 4p`
-                        lava-test-case $TEST_ID-random-writes --result pass --measurement $tiobench_random_writes --units MB/s
+                        lava-test-case $TEST_ID-random-writes-${THREAD}threads-iteration${ITERATION} \
+                                       --result pass --measurement $tiobench_random_writes --units MB/s
                     done
                 done
             fi
