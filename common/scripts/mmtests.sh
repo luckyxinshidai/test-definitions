@@ -131,14 +131,14 @@ result_parser(){
                 lava-test-case $TEST_ID --result fail
             else
                 for THREAD in 1 2 4 8 16; do
-                    for INTERATION in 1 2 3; do
-                        tiobench_sequential_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
+                    for ITERATION in 1 2 3; do
+                        tiobench_sequential_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$ITERATION.log \
                                                   | awk '{print $5}' | sed -n 1p`
-                        tiobench_random_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
+                        tiobench_random_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$ITERATION.log \
                                               | awk '{print $5}' | sed -n 2p`
-                        tiobench_sequential_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
+                        tiobench_sequential_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$ITERATION.log \
                                                    | awk '{print $5}' | sed -n 3p`
-                        tiobench_random_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$INTERATION.log \
+                        tiobench_random_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$ITERATION.log \
                                                | awk '{print $5}' | sed -n 4p`
                         lava-test-case $TEST_ID-sequential-reads-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_sequential_reads --units MB/s
                         lava-test-case $TEST_ID-random-reads-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_random_reads --units MB/s
