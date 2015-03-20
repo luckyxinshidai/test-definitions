@@ -21,6 +21,8 @@
 # Author: Chase Qi <chase.qi@linaro.org>
 #         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #
+set -e
+set -x
 
 TESTS=$1
 ScriptDIR="`pwd`"
@@ -32,7 +34,7 @@ wget http://people.linaro.org/~chase.qi/gparser.apk
 chmod -R 777 $ScriptDIR
 pm install "$ScriptDIR/gparser.apk"
 mkdir $FilesDIR
-# Print the most recent 30 lines and exit logcat
+# Print the most recent 50 lines and exit logcat
 logcat -t 50
 
 for i in $TESTS; do
@@ -40,9 +42,15 @@ for i in $TESTS; do
     # number of fields of the whole string.
     TestCaseName="`echo $i |awk -F '/' '{print $NF}'`"
 
-    chmod 755 $i
-    LOOPS=$2
-    Count=1
+    if [ -f $i ]; then
+        chmod 755 $i
+        LOOPS=$2
+        Count=1
+    else
+        echo "$i file NOT found."
+        lava-test-case $TestCaseName --result fail
+        continue
+    fi
 
     while [ $Count -le $LOOPS ]; do
         # Run tests.
@@ -66,7 +74,7 @@ for i in $TESTS; do
         sleep 15
         # Stop gparser for the next loop.
         am force-stop org.linaro.gparser
-        # Print the most recent 30 lines and exit logcat
+        # Print the most recent 50 lines and exit logcat
         logcat -t 50
         if [ -f $FilesDIR/ParsedTestResults.txt ]; then
             echo "XML report parsed successfully."
@@ -85,7 +93,7 @@ for i in $TESTS; do
                 # Use test case name as prefix to amend TestCaseID.
                 lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --units s
         done < $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
-        
+
         Count=$((Count+1))
     done
 done
