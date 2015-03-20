@@ -22,6 +22,9 @@
 #         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #         Naresh Kamboju <naresh.kamboju@linaro.org>
 #
+set -x
+set -e
+
 TESTS=$1
 KernelVersion=`uname -r`
 DIR=`pwd`
@@ -154,10 +157,12 @@ result_parser(){
 # Run tests
 for SUB_TEST in $TESTS; do
     rm -rf $DIR/work/testdisk/tmp
+    df -h
     $DIR/run-mmtests.sh --no-monitor --config $DIR/configs/config-global-dhp__$SUB_TEST $KernelVersion
     if [ $? -ne 0 ]; then
         lava-test-case $SUB_TEST --result fail
     else
         result_parser $SUB_TEST
+    df -h
     fi
 done
