@@ -156,13 +156,22 @@ result_parser(){
 
 # Run tests
 for SUB_TEST in $TESTS; do
+    # Clean up and check disk space.
     rm -rf $DIR/work/testdisk/tmp
     df -h
+
+    # Amend test config to adapt test environment.
+    case $SUB_TEST in
+        io-threaded)
+            # Reduce TIOBENCH_SIZE to 1G(1073741824 bytes) to work around out of disk space issue.
+            sed -i 's/^export TIOBENCH_SIZE=.*/export TIOBENCH_SIZE=$((1073741824))/' $DIR/configs/config-global-dhp__$SUB_TEST
+        ;;
+    esac
+
     $DIR/run-mmtests.sh --no-monitor --config $DIR/configs/config-global-dhp__$SUB_TEST $KernelVersion
     if [ $? -ne 0 ]; then
         lava-test-case $SUB_TEST --result fail
     else
         result_parser $SUB_TEST
-    df -h
     fi
 done
