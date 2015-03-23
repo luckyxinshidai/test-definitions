@@ -166,6 +166,10 @@ for SUB_TEST in $TESTS; do
             # Reduce TIOBENCH_SIZE to 1G(1073741824 bytes) to work around out of disk space issue.
             sed -i 's/^export TIOBENCH_SIZE=.*/export TIOBENCH_SIZE=$((1073741824))/' $DIR/configs/config-global-dhp__$SUB_TEST
         ;;
+        preaddd)
+            # Reduce PREADDD_TARGETSIZE_MB to 1G(1024 MB) to work around out of disk space issue.
+            sed -i 's/^export PREADDD_TARGETSIZE_MB=.*/export PREADDD_TARGETSIZE_MB=$((1024))/' $DIR/configs/config-global-dhp__$SUB_TEST
+        ;;
     esac
 
     $DIR/run-mmtests.sh --no-monitor --config $DIR/configs/config-global-dhp__$SUB_TEST $KernelVersion
