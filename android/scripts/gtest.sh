@@ -21,7 +21,6 @@
 # Author: Chase Qi <chase.qi@linaro.org>
 #         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #
-set -e
 set -x
 
 TESTS=$1
@@ -53,6 +52,8 @@ for i in $TESTS; do
     fi
 
     while [ $Count -le $LOOPS ]; do
+        # debug
+        lava-test-case gtest pass --result pass --measurement 0 --units s
         # Run tests.
         echo "Running $TestCaseName tests (iteration $Count) . . ."
         # Nonzero exit code will terminate test script, use "||true" as work around.
@@ -91,7 +92,7 @@ for i in $TESTS; do
                 TestResult="`echo $line | awk '{print $2}'`"
                 TestDuration="`echo $line | awk '{print $3}'`"
                 # Use test case name as prefix to amend TestCaseID.
-                lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --units seconds
+                lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --units s
         done < $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
 
         Count=$((Count+1))
