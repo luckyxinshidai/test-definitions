@@ -91,7 +91,7 @@ for i in $TESTS; do
                 TestResult="`echo $line | awk '{print $2}'`"
                 TestDuration="`echo $line | awk '{print $3}'`"
                 # Use test case name as prefix to amend TestCaseID.
-                lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --units s
+                lava-test-case $TestCaseName.$TestCaseID --result $TestResult --measurement $TestDuration --units seconds
         done < $ScriptDIR/$TestCaseName-$Count.ParsedTestResults.txt
 
         Count=$((Count+1))
