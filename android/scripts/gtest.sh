@@ -53,7 +53,7 @@ for i in $TESTS; do
 
     while [ $Count -le $LOOPS ]; do
         # debug
-        lava-test-case gtest pass --result pass --measurement 0 --units s
+        lava-test-case gtest --result pass --measurement 0 --units s
         # Run tests.
         echo "Running $TestCaseName tests (iteration $Count) . . ."
         # Nonzero exit code will terminate test script, use "||true" as work around.
