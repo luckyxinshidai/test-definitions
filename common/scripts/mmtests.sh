@@ -86,7 +86,6 @@ result_parser(){
                 done
             fi
             ;;
-            ;;
         # vm scalability test, measure spread of dd performance
         vmscale)
             if [ -z "`grep copied $DIR/work/log/vmscale-$KernelVersion/noprofile/lru-file-ddspread.log`" ]; then
