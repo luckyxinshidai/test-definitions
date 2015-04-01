@@ -58,7 +58,7 @@ result_parser(){
                 umount $DIR/work/testdisk
             fi
             ;;
-        # Measuring latency in the Linux network stack between kernel and user space.
+        # Measure the latency in the Linux network stack between kernel and user space.
         ku-latency)
             if [ -z "`grep "Average.*us" $DIR/work/log/ku_latency-$KernelVersion/noprofile/ku-latency.log`" ]; then
                 lava-test-case $TEST_ID --result fail
