@@ -22,8 +22,9 @@
 #         Milosz Wasilewski <milosz.wasilewski@linaro.org>
 #         Naresh Kamboju <naresh.kamboju@linaro.org>
 #
-
 set -x
+set -e
+
 TESTS=$1
 KernelVersion=`uname -r`
 DIR=`pwd`
@@ -86,6 +87,19 @@ result_parser(){
                 done
             fi
             ;;
+        # pread bench
+        preaddd)
+            if [ -z "`grep "Reading files back" $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log`" ]; then
+                lava-test-case $TEST_ID --result fail
+            else
+                preaddd_units=`grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -1 | awk '{print $9}'`
+                # Get the min, max and mean scores of the 8 iterations
+                grep copied $DIR/work/log/preaddd-$KernelVersion/noprofile/mmtests.log | tail -8 | awk '{print $8}' > $DIR/$TEST_ID-data.txt
+                min_max_mean $DIR/$TEST_ID-data.txt
+                lava-test-case $TEST_ID-min --result pass --measurement $min --units $preaddd_units
+                lava-test-case $TEST_ID-max --result pass --measurement $max --units $preaddd_units
+                lava-test-case $TEST_ID-mean --result pass --measurement $mean --units $preaddd_units
+            fi
             ;;
         # vm scalability test, measure spread of dd performance
         vmscale)
@@ -114,6 +128,29 @@ result_parser(){
                 lava-test-case $TEST_ID-user-mode --result pass --measurement $timedalloc_user --units seconds
             fi
             ;;
+        # Tiobench is a file system benchmark especially designed to test I/O performance with multiple running threads.
+        io-threaded)
+            if [ -z "`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/mmtests.log`" ]; then
+                lava-test-case $TEST_ID --result fail
+            else
+                for THREAD in 1 2 4 8 16; do
+                    for ITERATION in 1 2 3; do
+                        tiobench_sequential_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$ITERATION.log \
+                                                  | awk '{print $5}' | sed -n 1p`
+                        tiobench_random_reads=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$ITERATION.log \
+                                              | awk '{print $5}' | sed -n 2p`
+                        tiobench_sequential_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$ITERATION.log \
+                                                   | awk '{print $5}' | sed -n 3p`
+                        tiobench_random_writes=`grep $KernelVersion $DIR/work/log/tiobench-$KernelVersion/noprofile/tiobench-$THREAD-$ITERATION.log \
+                                               | awk '{print $5}' | sed -n 4p`
+                        lava-test-case $TEST_ID-sequential-reads-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_sequential_reads --units MB/s
+                        lava-test-case $TEST_ID-random-reads-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_random_reads --units MB/s
+                        lava-test-case $TEST_ID-sequential-writes-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_sequential_writes --units MB/s
+                        lava-test-case $TEST_ID-random-writes-${THREAD}threads-iteration${ITERATION} --result pass --measurement $tiobench_random_writes --units MB/s
+                    done
+                done
+            fi
+            ;;
     esac
 }
 
@@ -123,7 +160,18 @@ for SUB_TEST in $TESTS; do
     rm -rf $DIR/work/testdisk/tmp
     df -h
 
-    # Run test by configuration.
+    # Amend test config to adapt test environment.
+    case $SUB_TEST in
+        io-threaded)
+            # Reduce TIOBENCH_SIZE to 1G(1073741824 bytes) to work around out of disk space issue.
+            sed -i 's/^export TIOBENCH_SIZE=.*/export TIOBENCH_SIZE=$((1073741824))/' $DIR/configs/config-global-dhp__$SUB_TEST
+        ;;
+        preaddd)
+            # Reduce PREADDD_TARGETSIZE_MB to 1G(1024 MB) to work around out of disk space issue.
+            sed -i 's/^export PREADDD_TARGETSIZE_MB=.*/export PREADDD_TARGETSIZE_MB=$((1024))/' $DIR/configs/config-global-dhp__$SUB_TEST
+        ;;
+    esac
+
     $DIR/run-mmtests.sh --no-monitor --config $DIR/configs/config-global-dhp__$SUB_TEST $KernelVersion
     if [ $? -ne 0 ]; then
         lava-test-case $SUB_TEST --result fail
