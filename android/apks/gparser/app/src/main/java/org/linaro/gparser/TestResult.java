@@ -6,9 +6,10 @@ package org.linaro.gparser;
  */
 public class TestResult {
 
-    private String testsuite = "empty";
-    private String testcase = "empty";
+    private String testsuite = "NA";
+    private String testcase = "NA";
     private String result = "pass";
+    private String time = "0";
 
     public String getTestSuite() {
         return testsuite;
@@ -28,9 +29,15 @@ public class TestResult {
     public void setResult(String result) {
         this.result = result;
     }
+    public String getTime() {
+        return time;
+    }
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     @Override
     public String toString() {
-        return testsuite + "." + testcase + "  " + result;
+        return testsuite + "." + testcase + "\t" + result + "\t" + time;
     }
 }

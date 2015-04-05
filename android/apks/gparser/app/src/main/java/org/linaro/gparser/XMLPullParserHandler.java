@@ -47,6 +47,9 @@ public class XMLPullParserHandler {
                             // get the classname attribute as testsuite name
                             String testsuite = xpp.getAttributeValue(3);
                             testresult.setTestSuite(testsuite);
+                            // get the value of time attribute as test duration
+                            String time = xpp.getAttributeValue(2);
+                            testresult.setTime(time);
                         }
                         break;
 
