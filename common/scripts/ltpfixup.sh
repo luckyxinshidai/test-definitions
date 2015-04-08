@@ -15,7 +15,15 @@ LTP_PATH=/opt/ltp
 while getopts T:S:P: arg
     do case $arg in
         T) TST_CMDFILES="$OPTARG";;
-        S) SKIPFILE="-S $SCRIPTPATH/ltp/$OPTARG";;
+        S) OPT=`echo $OPTARG | grep "http"`
+           if [ -z $OPT ] ; then
+             SKIPFILE="-S $SCRIPTPATH/ltp/$OPTARG"
+           else
+             wget $OPTARG
+             SKIPFILE=`echo "${OPTARG##*/}"`
+             SKIPFILE="-S `pwd`/$SKIPFILE"
+           fi
+           ;;
         P) LTP_PATH=$OPTARG;;
     esac
 done
@@ -33,7 +41,7 @@ if [ $? -ne 0 ]; then
     RESULT=fail
 fi
 lava-test-case LTP_$TST_CMDFILES --result $RESULT
-find $SCRIPTPATH -name "LTP_$TST_CMDFILES.log" -print0 |xargs -0 cat
+cat $SCRIPTPATH/LTP_*.log
 tar czfv $SCRIPTPATH/LTP_$TST_CMDFILES.tar.gz $SCRIPTPATH/LTP*
 lava-test-case-attach LTP_$TST_CMDFILES $SCRIPTPATH/LTP_$TST_CMDFILES.tar.gz
 exit 0
