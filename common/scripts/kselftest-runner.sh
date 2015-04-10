@@ -1,7 +1,8 @@
 #!/bin/sh
 # debug
 set -x
-ss -ap
+#ss -ap
+netstat -plnt
 
 TEST_NAME=$1
 COMMAND=$(basename "$2")
@@ -28,7 +29,8 @@ do
 done < ${LOG}
 
 # debug
-ss -ap
+# ss -ap
+netstat -plnt
 
 # clean exit so that lava-test-shell can trust the results
 exit 0
