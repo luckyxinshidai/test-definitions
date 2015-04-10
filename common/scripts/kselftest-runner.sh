@@ -4,6 +4,9 @@ set -x
 #ss -ap
 #netstat -plnt
 netstat -an | egrep 'Proto|LISTEN'
+echo "=========================="
+ifconfig -a
+echo "=========================="
 
 TEST_NAME=$1
 COMMAND=$(basename "$2")
@@ -33,6 +36,9 @@ done < ${LOG}
 # ss -ap
 # netstat -plnt
 netstat -an | egrep 'Proto|LISTEN'
+echo "=========================="
+ifconfig -a
+echo "=========================="
 
 # clean exit so that lava-test-shell can trust the results
 exit 0
