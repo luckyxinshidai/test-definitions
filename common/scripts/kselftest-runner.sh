@@ -2,7 +2,8 @@
 # debug
 set -x
 #ss -ap
-netstat -plnt
+#netstat -plnt
+netstat -an | grep 'Proto|LISTEN'
 
 TEST_NAME=$1
 COMMAND=$(basename "$2")
@@ -30,7 +31,8 @@ done < ${LOG}
 
 # debug
 # ss -ap
-netstat -plnt
+# netstat -plnt
+netstat -an | grep 'Proto|LISTEN'
 
 # clean exit so that lava-test-shell can trust the results
 exit 0
