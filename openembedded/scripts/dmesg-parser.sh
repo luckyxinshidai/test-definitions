@@ -1,5 +1,8 @@
 #!/bin/sh
 set -x
+echo "===dmesg_begin==="
+dmesg
+echo "===dmesg_end==="
 
 TMP_LOG="log.txt"
 
