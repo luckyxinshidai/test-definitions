@@ -18,6 +18,7 @@ metadata:
 run:
     steps:
         - 'dmesg > dmesg.log'
+        - 'du -h dmesg.log'
         - 'openembedded/scripts/dmesg-parser.sh dmesg.log'
         - 'lava-test-run-attach dmesg.log'
 
