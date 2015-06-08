@@ -36,4 +36,4 @@ params:
 run:
     steps:
         - 'cd lkp-tests'
-        - './common/scripts/lkp.py $JOBS'
+        - '../common/scripts/lkp.py $JOBS'
