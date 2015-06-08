@@ -31,7 +31,7 @@ Dist = str.lower(platform.dist()[0])
 Config = 'defconfig'
 Count = '0'
 
-# Test result will be saved to json file, can be parsed with python json module.
+# LKP save test scores to json file, it can be parsed by python json module.
 def JsonParser(ResultFile, SubTestCaseID):
     JsonData = open(ResultFile)
     Data = json.load(JsonData)
@@ -40,7 +40,7 @@ def JsonParser(ResultFile, SubTestCaseID):
     JsonData.close()
     return True
 
-# Use lava-test-case that provided by LAVA to save test result.
+# Use lava-test-case parse result of the execution of each step of lkp test run.
 def LavaTestCase(TestCommand, CommandName, TestCaseID):
     if call(TestCommand) == 0:
         call(['lava-test-case', str(CommandName) + '-' + str(TestCaseID), '--result', 'pass'])
@@ -68,7 +68,7 @@ for Job in Jobs:
         print '%s splitting filed, going to next loop' % (Job)
         continue
 
-    # Setup test environment.
+    # Setup test job.
     SubTests = glob.glob('*.yaml')
     print 'Sub-tests of %s: %s' % (Job, SubTests)
 
