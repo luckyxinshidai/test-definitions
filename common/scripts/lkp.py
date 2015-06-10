@@ -20,7 +20,7 @@
 #
 # Author: Chase Qi <chase.qi@linaro.org>
 #
-import os, sys, platform, glob, json
+import os, sys, platform, glob, json, pwd
 from subprocess import call
 
 Jobs = str.split(sys.argv[1])
