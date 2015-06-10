@@ -113,13 +113,13 @@ for Job in Jobs:
 
         # Result parsing.
         ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
-        TestRunsPath = glob.glob(ResultDir + '/[0-9]')
-        LastRunPath = max(TestRunsPath)
-        ResultFile = str(LastRunPath + '/' + Job + '.json')
-        print 'Looking for test result file: %s' % (ResultFile)
-        if os.path.isfile(ResultFile):
-            print 'Test result found: %s' % (ResultFile)
-            if JsonParser(ResultFile):
+        #TestRunsPath = glob.glob(ResultDir + '/[0-9]')
+        #LastRunPath = max(TestRunsPath)
+        ResultAvgFile = str(ResultDir + '/' + 'avg.json')
+        print 'Looking for test result file: %s' % (ResultAvgFile)
+        if os.path.isfile(ResultAvgFile):
+            print 'Test result found: %s' % (ResultAvgFile)
+            if JsonParser(ResultAvgFile):
                 call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'pass'])
             else:
                 call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])
