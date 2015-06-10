@@ -33,7 +33,6 @@ HostName = platform.node()
 KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
 Config = 'defconfig'
-Count = '0'
 
 # LKP save test scores to json file, it can be parsed by python json module.
 def JsonParser(ResultFile):
@@ -44,31 +43,46 @@ def JsonParser(ResultFile):
     JsonData.close()
     return True
 
-# Use lava-test-case parse result of the execution of each step of lkp test run.
-def LavaTestCase(TestCommand, CommandName, TestCaseID):
+# Collect result of the execution of each step of test runs.
+def LavaTestCase(TestCommand, TestCaseID):
     if call(TestCommand) == 0:
-        call(['lava-test-case', str(CommandName) + '-' + str(TestCaseID), '--result', 'pass'])
+        call(['lava-test-case', str(TestCaseID), '--result', 'pass'])
         return True
     else:
-        call(['lava-test-case', str(CommandName) + '-' + str(TestCaseID), '--result', 'fail'])
+        call(['lava-test-case', str(TestCaseID), '--result', 'fail'])
         return False
 
+# User existence check
+def finduser(name):
+     try:
+         return pwd.getpwnam(name)
+     except KeyError:
+         return None
+
 # pre-config
-call(['useradd', '--create-home', '--home-dir', '/home/lkp', 'lkp'])
-call(['mkdir', '-p', '/home/lkp'])
+if not finduser('lkp'):
+     print 'creating user lkp...'
+     call(['useradd', '--create-home', '--home-dir', '/home/lkp', 'lkp'])
+else:
+     print 'User lkp already exists.'
+
+if not os.path.exists('/home/lkp'):
+    call(['mkdir', '-p', '/home/lkp'])
 call(['chown', '-R', 'lkp:lkp', '/home/lkp'])
+
 f = open('/etc/apt/sources.list.d/multiverse.list','w')
 f.write('deb http://ports.ubuntu.com/ubuntu-ports/ vivid multiverse\n')
 f.close()
 call(['apt-get', 'update'])
 
+## Run jobs.
 for Job in Jobs:
     # Split test job.
     if not os.path.exists(WD + '/' + Job):
         os.makedirs(WD + '/' + Job)
     SplitJob = [LKPPath + '/sbin/split-job', '--no-defaults', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
     print 'Splitting job %s with command: %s' % (Job, SplitJob)
-    if LavaTestCase(SplitJob, 'split-job', Job) == True:
+    if LavaTestCase(SplitJob, 'split-job-' + Job) == True:
         print '%s split successfully' % (Job)
     else:
         print '%s split failed.' % (Job)
@@ -80,7 +94,7 @@ for Job in Jobs:
 
     SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
     print 'Set up %s test with command: %s' % (Job, SetupLocal)
-    if LavaTestCase(SetupLocal, 'setup-local', Job) == True:
+    if LavaTestCase(SetupLocal, 'setup-local-' + Job) == True:
         print '%s setup finished successfully' %(Job)
     else:
         print '%s setup failed.' %(Job)
@@ -91,7 +105,7 @@ for Job in Jobs:
         SubTestCaseID = os.path.basename(SubTest)[:-5]
         RunLocal = [LKPPath + '/bin/run-local', SubTest]
         print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
-        if LavaTestCase(RunLocal, 'run-local', SubTestCaseID) == True:
+        if LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID) == True:
             print '%s test finished successfully' % (SubTestCaseID)
         else:
             print '%s test finished abnormally' % (SubTestCaseID)
