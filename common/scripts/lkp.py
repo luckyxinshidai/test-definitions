@@ -108,7 +108,7 @@ for Job in Jobs:
             SubTestCaseID = os.path.basename(SubTest)[:-5]
             RunLocal = [LKPPath + '/bin/run-local', SubTest]
             print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
-            if LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + '-run' + count) == True:
+            if LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + '-run' + Count) == True:
                 print '%s test finished successfully' % (SubTestCaseID)
                 Count = Count + 1
             else:
