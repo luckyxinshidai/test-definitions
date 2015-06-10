@@ -35,4 +35,4 @@ params:
 
 run:
     steps:
-        - './common/scripts/lkp.py $JOBS $(readlink -f lkp-tests) $(pwd)'
+        - './common/scripts/lkp.py "$JOBS" $(readlink -f lkp-tests) $(pwd)'
