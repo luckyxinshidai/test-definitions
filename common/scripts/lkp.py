@@ -117,6 +117,8 @@ for Job in Jobs:
 
     # Result parsing.
     ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
+    call(['tar', 'caf', LKPPath + '/lkp-' + Job + '.tar.xz', ResultDir])
+    call(['lava-test-case-attach', 'test-attach-' + Job, LKPPath + '/lkp-' + Job + '.tar.xz'])
     #TestRunsPath = glob.glob(ResultDir + '/[0-9]')
     #LastRunPath = max(TestRunsPath)
     ResultAvgFile = str(ResultDir + '/' + 'avg.json')
