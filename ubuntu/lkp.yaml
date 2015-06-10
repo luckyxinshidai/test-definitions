@@ -31,9 +31,8 @@ install:
         - xz-utils
 
 params:
-    JOBS: aim9
+    JOBS: 'unixbench'
 
 run:
     steps:
-        - 'cd lkp-tests'
-        - '../common/scripts/lkp.py "$JOBS"'
+        - './common/scripts/lkp.py $JOBS $(readlink -f lkp-tests) $(pwd)'
