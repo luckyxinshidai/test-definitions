@@ -36,11 +36,11 @@ Config = 'defconfig'
 Count = '0'
 
 # LKP save test scores to json file, it can be parsed by python json module.
-def JsonParser(ResultFile, SubTestCaseID):
+def JsonParser(ResultFile):
     JsonData = open(ResultFile)
     Data = json.load(JsonData)
     for item in Data:
-        call(['lava-test-case', str(SubTestCaseID) + '-' + str(item), '--result', 'pass', '--measurement', str(Data[item][0])])
+        call(['lava-test-case', str(item), '--result', 'pass', '--measurement', str(Data[item][0])])
     JsonData.close()
     return True
 
@@ -105,7 +105,7 @@ for Job in Jobs:
         print 'Looking for test result file: %s' % (ResultFile)
         if os.path.isfile(ResultFile):
             print 'Test result found: %s' % (ResultFile)
-            if JsonParser(ResultFile, SubTestCaseID):
+            if JsonParser(ResultFile):
                 call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'pass'])
             else:
                 call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])
