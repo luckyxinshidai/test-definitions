@@ -29,6 +29,8 @@ LKPPath = str(sys.argv[2])
 print 'LKP test suite path: %s' % (LKPPath)
 WD = str(sys.argv[3])
 print 'Working directory: %s' % (WD)
+Loops = int(sys.argv[4])
+Count = 1
 HostName = platform.node() 
 KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
@@ -39,7 +41,7 @@ def JsonParser(ResultFile):
     JsonData = open(ResultFile)
     Data = json.load(JsonData)
     for item in Data:
-        call(['lava-test-case', str(item), '--result', 'pass', '--measurement', str(Data[item][0])])
+        call(['lava-test-case', str(item), '--result', 'pass', '--measurement', str(Data[item])])
     JsonData.close()
     return True
 
@@ -101,28 +103,30 @@ for Job in Jobs:
         continue
 
     # Run tests.
-    for SubTest in SubTests:
-        SubTestCaseID = os.path.basename(SubTest)[:-5]
-        RunLocal = [LKPPath + '/bin/run-local', SubTest]
-        print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
-        if LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID) == True:
-            print '%s test finished successfully' % (SubTestCaseID)
-        else:
-            print '%s test finished abnormally' % (SubTestCaseID)
-            continue
-
-        # Result parsing.
-        ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
-        #TestRunsPath = glob.glob(ResultDir + '/[0-9]')
-        #LastRunPath = max(TestRunsPath)
-        ResultAvgFile = str(ResultDir + '/' + 'avg.json')
-        print 'Looking for test result file: %s' % (ResultAvgFile)
-        if os.path.isfile(ResultAvgFile):
-            print 'Test result found: %s' % (ResultAvgFile)
-            if JsonParser(ResultAvgFile):
-                call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'pass'])
+    while (Count <= Loops):
+        for SubTest in SubTests:
+            SubTestCaseID = os.path.basename(SubTest)[:-5]
+            RunLocal = [LKPPath + '/bin/run-local', SubTest]
+            print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
+            if LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + '-run' + count) == True:
+                print '%s test finished successfully' % (SubTestCaseID)
+                Count = Count + 1
             else:
-                call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])
+                print '%s test finished abnormally' % (SubTestCaseID)
+                continue
+
+    # Result parsing.
+    ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
+    #TestRunsPath = glob.glob(ResultDir + '/[0-9]')
+    #LastRunPath = max(TestRunsPath)
+    ResultAvgFile = str(ResultDir + '/' + 'avg.json')
+    print 'Looking for test result file: %s' % (ResultAvgFile)
+    if os.path.isfile(ResultAvgFile):
+        print 'Test result found: %s' % (ResultAvgFile)
+        if JsonParser(ResultAvgFile):
+            call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'pass'])
         else:
-            print 'Test result file not found'
             call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])
+    else:
+        print 'Test result file not found'
+        call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])

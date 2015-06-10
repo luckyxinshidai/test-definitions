@@ -31,8 +31,9 @@ install:
         - xz-utils
 
 params:
+    LOOPS: 1
     JOBS: 'unixbench'
 
 run:
     steps:
-        - './common/scripts/lkp.py "$JOBS" $(readlink -f lkp-tests) $(pwd)'
+        - './common/scripts/lkp.py "$JOBS" $(readlink -f lkp-tests) $(pwd) $LOOPS'
