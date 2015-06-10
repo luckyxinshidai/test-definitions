@@ -25,6 +25,10 @@ from subprocess import call
 
 Jobs = str.split(sys.argv[1])
 print 'Jobs to run: %s' % (Jobs)
+LKPPath = str(sys.argv[2])
+print 'LKP test suite path: %s' % (LKPPath)
+WD = str(sys.argv[3])
+print 'Working directory: %s' % (WD)
 HostName = platform.node() 
 KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
@@ -60,19 +64,21 @@ call(['apt-get', 'update'])
 
 for Job in Jobs:
     # Split test job.
-    SplitJob = ['./sbin/split-job', '--no-defaults', './jobs/' + str(Job) + '.yaml']
+    if not os.path.exists(WD + '/' + Job):
+        os.makedirs(WD + '/' + Job)
+    SplitJob = [LKPPath + '/sbin/split-job', '--no-defaults', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
     print 'Splitting job %s with command: %s' % (Job, SplitJob)
     if LavaTestCase(SplitJob, 'split-job', Job) == True:
         print '%s split successfully' % (Job)
     else:
-        print '%s splitting filed, going to next loop' % (Job)
+        print '%s split failed.' % (Job)
         continue
 
     # Setup test job.
-    SubTests = glob.glob('*.yaml')
+    SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
     print 'Sub-tests of %s: %s' % (Job, SubTests)
 
-    SetupLocal = ['./bin/setup-local', str(SubTests[0])]
+    SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
     print 'Set up %s test with command: %s' % (Job, SetupLocal)
     if LavaTestCase(SetupLocal, 'setup-local', Job) == True:
         print '%s setup finished successfully' %(Job)
@@ -82,8 +88,8 @@ for Job in Jobs:
 
     # Run tests.
     for SubTest in SubTests:
-        SubTestCaseID = SubTest[:-5]
-        RunLocal = ['./bin/run-local', str(SubTest)]
+        SubTestCaseID = os.path.basename(SubTest)[:-5]
+        RunLocal = [LKPPath + '/bin/run-local', SubTest]
         print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
         if LavaTestCase(RunLocal, 'run-local', SubTestCaseID) == True:
             print '%s test finished successfully' % (SubTestCaseID)
@@ -92,8 +98,11 @@ for Job in Jobs:
             continue
 
         # Result parsing.
-        ResultFile = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion, Count, Job + '.json']))
-        print 'Location of test result file: %s' % (ResultFile)
+        ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
+        TestRunsPath = glob.glob(ResultDir + '/[0-9]')
+        LastRunPath = max(TestRunsPath)
+        ResultFile = str(LastRunPath + '/' + Job + '.json')
+        print 'Looking for test result file: %s' % (ResultFile)
         if os.path.isfile(ResultFile):
             print 'Test result found: %s' % (ResultFile)
             if JsonParser(ResultFile, SubTestCaseID):
@@ -101,5 +110,5 @@ for Job in Jobs:
             else:
                 call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])
         else:
-            print 'Test results file not found'
+            print 'Test result file not found'
             call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])
