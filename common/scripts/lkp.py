@@ -109,21 +109,22 @@ for SubTest in SubTests:
         Prefix = 'run' + str(Count)
         MatrixIndex = int(Count - 1)
         if not os.path.isfile(MatrixFile):
-            print '%s not found' % (ResultMatrixFile)
+            print '%s not found' % (MatrixFile)
             call(['lava-test-case', Prefix + '-' + SubTestCaseID + '-parsing', '--result', 'fail'])
         MatrixJsonData = open(MatrixFile)
         MatrixData = json.load(MatrixJsonData)
         for item in MatrixData:
-            call(['lava-test-case', Prefix + '-' + SubTestCaseID + '-' + str(item), '--result', 'pass', '--measurement', str(MatrixData[item][MatrixIndex])])
+            if item not in 'stats_source':
+                call(['lava-test-case', Prefix + '-' + SubTestCaseID + '-' + str(item), '--result', 'pass', '--measurement', str(MatrixData[item][MatrixIndex])])
         MatrixJsonData.close()
 
         Count = Count + 1
 
     # Decode avg.json for mutiple runs.
     if Loops > 1:
-        ResultAvgFile = str(ResultDir + '/' + 'avg.json')
-        if not os.path.isfile(ResultAvgFile):
-            print '%s not found' % (ResultAvgFile)
+        AvgFile = str(ResultDir + '/' + 'avg.json')
+        if not os.path.isfile(AvgFile):
+            print '%s not found' % (AvgFile)
             call(['lava-test-case', 'avg-' + '-' + SubTestCaseID + '-parsing', '--result', 'fail'])
         AvgJsonData = open(AvgFile)
         AvgData = json.load(AvgJsonData)
@@ -132,6 +133,5 @@ for SubTest in SubTests:
         AvgJsonData.close()
 
     # Compress and attach raw data
-    # call(['tar', 'caf', WD + '/lkp-result.tar.xz', '/result'])
     call(['tar', 'caf', WD + '/lkp-' + Job + '-result.tar.xz', '/result'])
     call(['lava-test-run-attach', WD + '/lkp-' + Job + '-result.tar.xz'])
