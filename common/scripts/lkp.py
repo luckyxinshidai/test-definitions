@@ -77,7 +77,7 @@ if LavaTestCase(SplitJob, 'split-job-' + Job) == True:
     print '%s split successfully' % (Job)
 else:
     print '%s split failed.' % (Job)
-    continue
+    sys.exit(1)
 
 # Setup test job.
 SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
@@ -89,7 +89,7 @@ if LavaTestCase(SetupLocal, 'setup-local-' + Job) == True:
     print '%s setup finished successfully' %(Job)
 else:
     print '%s setup failed.' %(Job)
-    continue
+    sys.exit(1)
 
 # Run tests.
 for SubTest in SubTests:
@@ -106,15 +106,15 @@ for SubTest in SubTests:
         # Decode matrix.json for each run.
         ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
         MatrixFile = str(ResultDir + '/' + 'Matrix.json')
-        TestCasePrefix = str('run' + Count)
+        Prefix = 'run' + str(Count)
         MatrixIndex = int(Count - 1)
         if not os.path.isfile(MatrixFile):
             print '%s not found' % (ResultMatrixFile)
-            call(['lava-test-case', TestCasePrefix + SubTestCaseID + 'parsing', '--result', 'fail'])
+            call(['lava-test-case', Prefix + '-' + SubTestCaseID + '-parsing', '--result', 'fail'])
         MatrixJsonData = open(MatrixFile)
         MatrixData = json.load(MatrixJsonData)
         for item in MatrixData:
-            call(['lava-test-case', str(Prefix) + '-' + str(item), '--result', 'pass', '--measurement', str(MatrixData[item][MatrixIndex])])
+            call(['lava-test-case', Prefix + '-' + SubTestCaseID + '-' + str(item), '--result', 'pass', '--measurement', str(MatrixData[item][MatrixIndex])])
         MatrixJsonData.close()
 
         Count = Count + 1
@@ -124,13 +124,14 @@ for SubTest in SubTests:
         ResultAvgFile = str(ResultDir + '/' + 'avg.json')
         if not os.path.isfile(ResultAvgFile):
             print '%s not found' % (ResultAvgFile)
-            call(['lava-test-case', TestCasePrefix + SubTestCaseID + 'parsing', '--result', 'fail'])
+            call(['lava-test-case', 'avg-' + '-' + SubTestCaseID + '-parsing', '--result', 'fail'])
         AvgJsonData = open(AvgFile)
         AvgData = json.load(AvgJsonData)
         for item in AvgData:
-            call(['lava-test-case', 'avg-' + str(item), '--result', 'pass', '--measurement', str(AvgData[item])])
+            call(['lava-test-case', 'avg-' + SubTestCaseID + '-' +  str(item), '--result', 'pass', '--measurement', str(AvgData[item])])
         AvgJsonData.close()
 
     # Compress and attach raw data
-    call(['tar', 'caf', WD + '/lkp-result.tar.xz', '/result'])
-    call(['lava-test-run-attach', 'lkp-result.tar.xz'])
+    # call(['tar', 'caf', WD + '/lkp-result.tar.xz', '/result'])
+    call(['tar', 'caf', WD + '/lkp-' + Job + '-result.tar.xz', '/result'])
+    call(['lava-test-run-attach', WD + '/lkp-' + Job + '-result.tar.xz'])
