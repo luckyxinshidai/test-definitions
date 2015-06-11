@@ -103,20 +103,17 @@ for SubTest in SubTests:
             print '%s test finished abnormally' % (SubTestCaseID)
             continue
 
-        # Decode matrix.json for each run.
+        # Decode status.json for each run.
         ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
-        MatrixFile = str(ResultDir + '/' + 'matrix.json')
-        Prefix = 'run' + str(Count)
-        MatrixIndex = int(Count - 1)
-        if not os.path.isfile(MatrixFile):
-            print '%s not found' % (MatrixFile)
-            call(['lava-test-case', Prefix + '-' + SubTestCaseID + '-parsing', '--result', 'fail'])
-        MatrixJsonData = open(MatrixFile)
-        MatrixData = json.load(MatrixJsonData)
-        for item in MatrixData:
-            if item not in 'stats_source':
-                call(['lava-test-case', Prefix + '-' + SubTestCaseID + '-' + str(item), '--result', 'pass', '--measurement', str(MatrixData[item][MatrixIndex])])
-        MatrixJsonData.close()
+        ResultFile = str(ResultDir + '/' + str(Count - 1) + '/'+ 'stats.json')
+        if not os.path.isfile(ResultFile):
+            print '%s not found' % (ResultFile)
+            call(['lava-test-case', SubTestCaseID + '-parsing' + '-run' + str(Count), '--result', 'fail'])
+        ResultJsonData = open(ResultFile)
+        ResultData = json.load(ResultJsonData)
+        for item in ResultData:
+            call(['lava-test-case', SubTestCaseID + '-' + str(item) + '-run' + str(Count), '--result', 'pass', '--measurement', str(ResultData[item])])
+        ResultJsonData.close()
 
         Count = Count + 1
 
@@ -125,11 +122,11 @@ for SubTest in SubTests:
         AvgFile = str(ResultDir + '/' + 'avg.json')
         if not os.path.isfile(AvgFile):
             print '%s not found' % (AvgFile)
-            call(['lava-test-case', 'avg-' + '-' + SubTestCaseID + '-parsing', '--result', 'fail'])
+            call(['lava-test-case', SubTestCaseID + '-parsing-avg', '--result', 'fail'])
         AvgJsonData = open(AvgFile)
         AvgData = json.load(AvgJsonData)
         for item in AvgData:
-            call(['lava-test-case', 'avg-' + SubTestCaseID + '-' +  str(item), '--result', 'pass', '--measurement', str(AvgData[item])])
+            call(['lava-test-case', SubTestCaseID + '-' +  str(item) + '-avg', '--result', 'pass', '--measurement', str(AvgData[item])])
         AvgJsonData.close()
 
     # Compress and attach raw data
