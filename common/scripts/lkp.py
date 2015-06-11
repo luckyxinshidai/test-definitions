@@ -30,7 +30,6 @@ print 'Working directory: %s' % (WD)
 Loops = int(sys.argv[3])
 Job = str(sys.argv[4])
 print 'Going to run %s %s times' % (Job, Loops)
-Count = 1
 HostName = platform.node() 
 KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
@@ -93,6 +92,7 @@ else:
 
 # Run tests.
 for SubTest in SubTests:
+    Count = 1
     while (Count <= Loops):
         SubTestCaseID = os.path.basename(SubTest)[:-5]
         RunLocal = [LKPPath + '/bin/run-local', SubTest]
