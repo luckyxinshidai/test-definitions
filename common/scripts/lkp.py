@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# PI stress test case for Linux Linaro ubuntu
+# Run LKP test suite on  Linux Linaro ubuntu
 #
 # Copyright (C) 2012 - 2014, Linaro Limited.
 #
@@ -130,5 +130,5 @@ for SubTest in SubTests:
         AvgJsonData.close()
 
     # Compress and attach raw data
-    call(['tar', 'caf', WD + '/lkp-' + Job + '-result.tar.xz', '/result'])
-    call(['lava-test-run-attach', WD + '/lkp-' + Job + '-result.tar.xz'])
+    call(['tar', 'caf', 'lkp-' + Job + '-result.tar.xz', '/result/' + Job])
+    call(['lava-test-run-attach', 'lkp-' + Job + '-result.tar.xz'])
