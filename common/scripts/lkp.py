@@ -23,27 +23,18 @@
 import os, sys, platform, glob, json, pwd
 from subprocess import call
 
-Jobs = str.split(sys.argv[1])
-print 'Jobs to run: %s' % (Jobs)
-LKPPath = str(sys.argv[2])
+LKPPath = str(sys.argv[1])
 print 'LKP test suite path: %s' % (LKPPath)
-WD = str(sys.argv[3])
+WD = str(sys.argv[2])
 print 'Working directory: %s' % (WD)
-Loops = int(sys.argv[4])
+Loops = int(sys.argv[3])
+Job = str(sys.argv[4])
+print 'Going to run %s %s times' % (Job, Loops)
 Count = 1
 HostName = platform.node() 
 KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
 Config = 'defconfig'
-
-# LKP save test scores to json file, it can be parsed by python json module.
-def JsonParser(ResultFile):
-    JsonData = open(ResultFile)
-    Data = json.load(JsonData)
-    for item in Data:
-        call(['lava-test-case', str(item), '--result', 'pass', '--measurement', str(Data[item])])
-    JsonData.close()
-    return True
 
 # Collect result of the execution of each step of test runs.
 def LavaTestCase(TestCommand, TestCaseID):
@@ -77,58 +68,69 @@ f.write('deb http://ports.ubuntu.com/ubuntu-ports/ vivid multiverse\n')
 f.close()
 call(['apt-get', 'update'])
 
-## Run jobs.
-for Job in Jobs:
-    # Split test job.
-    if not os.path.exists(WD + '/' + Job):
-        os.makedirs(WD + '/' + Job)
-    SplitJob = [LKPPath + '/sbin/split-job', '--no-defaults', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
-    print 'Splitting job %s with command: %s' % (Job, SplitJob)
-    if LavaTestCase(SplitJob, 'split-job-' + Job) == True:
-        print '%s split successfully' % (Job)
-    else:
-        print '%s split failed.' % (Job)
-        continue
+# Split test job.
+if not os.path.exists(WD + '/' + Job):
+    os.makedirs(WD + '/' + Job)
+SplitJob = [LKPPath + '/sbin/split-job', '--no-defaults', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
+print 'Splitting job %s with command: %s' % (Job, SplitJob)
+if LavaTestCase(SplitJob, 'split-job-' + Job) == True:
+    print '%s split successfully' % (Job)
+else:
+    print '%s split failed.' % (Job)
+    continue
 
-    # Setup test job.
-    SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
-    print 'Sub-tests of %s: %s' % (Job, SubTests)
+# Setup test job.
+SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
+print 'Sub-tests of %s: %s' % (Job, SubTests)
 
-    SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
-    print 'Set up %s test with command: %s' % (Job, SetupLocal)
-    if LavaTestCase(SetupLocal, 'setup-local-' + Job) == True:
-        print '%s setup finished successfully' %(Job)
-    else:
-        print '%s setup failed.' %(Job)
-        continue
+SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
+print 'Set up %s test with command: %s' % (Job, SetupLocal)
+if LavaTestCase(SetupLocal, 'setup-local-' + Job) == True:
+    print '%s setup finished successfully' %(Job)
+else:
+    print '%s setup failed.' %(Job)
+    continue
 
-    # Run tests.
+# Run tests.
+for SubTest in SubTests:
     while (Count <= Loops):
-        for SubTest in SubTests:
-            SubTestCaseID = os.path.basename(SubTest)[:-5]
-            RunLocal = [LKPPath + '/bin/run-local', SubTest]
-            print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
-            if LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + '-run' + str(Count)) == True:
-                print '%s test finished successfully' % (SubTestCaseID)
-                Count = Count + 1
-            else:
-                print '%s test finished abnormally' % (SubTestCaseID)
-                continue
-
-    # Result parsing.
-    ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
-    call(['tar', 'caf', WD + '/lkp-result.tar.xz', '/result'])
-    #call(['lava-test-case-attach', 'test-attach-' + Job, WD + '/lkp-' + Job + '.tar.xz'])
-    #TestRunsPath = glob.glob(ResultDir + '/[0-9]')
-    #LastRunPath = max(TestRunsPath)
-    ResultAvgFile = str(ResultDir + '/' + 'avg.json')
-    print 'Looking for test result file: %s' % (ResultAvgFile)
-    if os.path.isfile(ResultAvgFile):
-        print 'Test result found: %s' % (ResultAvgFile)
-        if JsonParser(ResultAvgFile):
-            call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'pass'])
+        SubTestCaseID = os.path.basename(SubTest)[:-5]
+        RunLocal = [LKPPath + '/bin/run-local', SubTest]
+        print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
+        if LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + '-run' + str(Count)) == True:
+            print '%s test finished successfully' % (SubTestCaseID)
         else:
-            call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])
-    else:
-        print 'Test result file not found'
-        call(['lava-test-case', 'result-parsing-' + SubTestCaseID, '--result', 'fail'])
+            print '%s test finished abnormally' % (SubTestCaseID)
+            continue
+
+        # Decode matrix.json for each run.
+        ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
+        MatrixFile = str(ResultDir + '/' + 'Matrix.json')
+        TestCasePrefix = str('run' + Count)
+        MatrixIndex = int(Count - 1)
+        if not os.path.isfile(MatrixFile):
+            print '%s not found' % (ResultMatrixFile)
+            call(['lava-test-case', TestCasePrefix + SubTestCaseID + 'parsing', '--result', 'fail'])
+        MatrixJsonData = open(MatrixFile)
+        MatrixData = json.load(MatrixJsonData)
+        for item in MatrixData:
+            call(['lava-test-case', str(Prefix) + '-' + str(item), '--result', 'pass', '--measurement', str(MatrixData[item][MatrixIndex])])
+        MatrixJsonData.close()
+
+        Count = Count + 1
+
+    # Decode avg.json for mutiple runs.
+    if Loops > 1:
+        ResultAvgFile = str(ResultDir + '/' + 'avg.json')
+        if not os.path.isfile(ResultAvgFile):
+            print '%s not found' % (ResultAvgFile)
+            call(['lava-test-case', TestCasePrefix + SubTestCaseID + 'parsing', '--result', 'fail'])
+        AvgJsonData = open(AvgFile)
+        AvgData = json.load(AvgJsonData)
+        for item in AvgData:
+            call(['lava-test-case', 'avg-' + str(item), '--result', 'pass', '--measurement', str(AvgData[item])])
+        AvgJsonData.close()
+
+    # Compress and attach raw data
+    call(['tar', 'caf', WD + '/lkp-result.tar.xz', '/result'])
+    call(['lava-test-run-attach', 'lkp-result.tar.xz'])

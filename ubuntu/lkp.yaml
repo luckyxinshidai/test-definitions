@@ -32,9 +32,8 @@ install:
 
 params:
     LOOPS: 1
-    JOBS: 'unixbench'
+    JOB: 'unixbench'
 
 run:
     steps:
-        - './common/scripts/lkp.py "$JOBS" $(readlink -f lkp-tests) $(pwd) $LOOPS'
-        - 'lava-test-run-attach lkp-result.tar.xz'
+        - './common/scripts/lkp.py $(readlink -f lkp-tests) $(pwd) $LOOPS $JOB'
