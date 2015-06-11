@@ -105,7 +105,7 @@ for SubTest in SubTests:
 
         # Decode matrix.json for each run.
         ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
-        MatrixFile = str(ResultDir + '/' + 'Matrix.json')
+        MatrixFile = str(ResultDir + '/' + 'matrix.json')
         Prefix = 'run' + str(Count)
         MatrixIndex = int(Count - 1)
         if not os.path.isfile(MatrixFile):
