@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Run LKP test suite on  Linux Linaro ubuntu
+# Run LKP test suite on Linaro ubuntu
 #
 # Copyright (C) 2012 - 2014, Linaro Limited.
 #

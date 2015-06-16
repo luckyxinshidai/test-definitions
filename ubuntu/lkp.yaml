@@ -1,7 +1,7 @@
 metadata:
     name: lkp
     format: "Lava-Test-Shell Test Definition 1.0"
-    description: "Run LKP test suite on Ubuntu"
+    description: "Run LKP test suite on Linaro Ubuntu"
     maintainer:
         - milosz.wasilewski@linaro.org
         - riku.voipio@linaro.org
