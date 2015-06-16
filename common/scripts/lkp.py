@@ -44,20 +44,30 @@ def LavaTestCase(TestCommand, TestCaseID):
         call(['lava-test-case', str(TestCaseID), '--result', 'fail'])
         return False
 
+def JsonPaser(ResultFile, TestCaseID, Suffix):
+    if not os.path.isfile(ResultFile):
+        print '%s not found' % (ResultFile)
+        call(['lava-test-case', SubTestCaseID + Suffix, '--result', 'fail'])
+    else:
+        JsonData = open(ResultFile)
+        Data = json.load(JsonData)
+        for item in Data:
+            call(['lava-test-case', SubTestCaseID + '-' +  item + Suffix, '--result', 'pass', '--measurement', str(Data[item])])
+        JsonData.close()
+
 # User existence check
-def finduser(name):
+def FindUser(name):
      try:
          return pwd.getpwnam(name)
      except KeyError:
          return None
 
 # pre-config
-if not finduser('lkp'):
+if not FindUser('lkp'):
      print 'creating user lkp...'
      call(['useradd', '--create-home', '--home-dir', '/home/lkp', 'lkp'])
 else:
      print 'User lkp already exists.'
-
 if not os.path.exists('/home/lkp'):
     call(['mkdir', '-p', '/home/lkp'])
 call(['chown', '-R', 'lkp:lkp', '/home/lkp'])
@@ -72,9 +82,7 @@ if not os.path.exists(WD + '/' + Job):
     os.makedirs(WD + '/' + Job)
 SplitJob = [LKPPath + '/sbin/split-job', '--no-defaults', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
 print 'Splitting job %s with command: %s' % (Job, SplitJob)
-if LavaTestCase(SplitJob, 'split-job-' + Job) == True:
-    print '%s split successfully' % (Job)
-else:
+if not LavaTestCase(SplitJob, 'split-job-' + Job):
     print '%s split failed.' % (Job)
     sys.exit(1)
 
@@ -84,9 +92,7 @@ print 'Sub-tests of %s: %s' % (Job, SubTests)
 
 SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
 print 'Set up %s test with command: %s' % (Job, SetupLocal)
-if LavaTestCase(SetupLocal, 'setup-local-' + Job) == True:
-    print '%s setup finished successfully' %(Job)
-else:
+if not LavaTestCase(SetupLocal, 'setup-local-' + Job):
     print '%s setup failed.' %(Job)
     sys.exit(1)
 
@@ -95,39 +101,29 @@ for SubTest in SubTests:
     Count = 1
     while (Count <= Loops):
         SubTestCaseID = os.path.basename(SubTest)[:-5]
+        # Add suffix for mutiple runs.
+        if Loops > 1:
+            Suffix = '-run' + str(Count)
+        else:
+            Suffix = ''
+
         RunLocal = [LKPPath + '/bin/run-local', SubTest]
         print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
-        if LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + '-run' + str(Count)) == True:
-            print '%s test finished successfully' % (SubTestCaseID)
-        else:
-            print '%s test finished abnormally' % (SubTestCaseID)
+        if not LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + Suffix):
+            print '%s%s test exited with error' % (SubTestCaseID, Suffix)
             continue
 
         # Decode status.json for each run.
         ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
-        ResultFile = str(ResultDir + '/' + str(Count - 1) + '/'+ 'stats.json')
-        if not os.path.isfile(ResultFile):
-            print '%s not found' % (ResultFile)
-            call(['lava-test-case', SubTestCaseID + '-parsing' + '-run' + str(Count), '--result', 'fail'])
-        ResultJsonData = open(ResultFile)
-        ResultData = json.load(ResultJsonData)
-        for item in ResultData:
-            call(['lava-test-case', SubTestCaseID + '-' + str(item) + '-run' + str(Count), '--result', 'pass', '--measurement', str(ResultData[item])])
-        ResultJsonData.close()
+        StatsFile = str(ResultDir + '/' + str(Count - 1) + '/'+ 'stats.json')
+        JsonPaser(StatsFile, SubTestCaseID, Suffix)
 
         Count = Count + 1
 
     # Decode avg.json for mutiple runs.
     if Loops > 1:
         AvgFile = str(ResultDir + '/' + 'avg.json')
-        if not os.path.isfile(AvgFile):
-            print '%s not found' % (AvgFile)
-            call(['lava-test-case', SubTestCaseID + '-parsing-avg', '--result', 'fail'])
-        AvgJsonData = open(AvgFile)
-        AvgData = json.load(AvgJsonData)
-        for item in AvgData:
-            call(['lava-test-case', SubTestCaseID + '-' +  str(item) + '-avg', '--result', 'pass', '--measurement', str(AvgData[item])])
-        AvgJsonData.close()
+        JsonPaser(AvgFile, SubTestCaseID, '-avg')
 
     # Compress and attach raw data
     call(['tar', 'caf', 'lkp-' + Job + '-result.tar.xz', '/result/' + Job])
