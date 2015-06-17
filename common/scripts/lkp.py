@@ -37,7 +37,9 @@ Config = 'defconfig'
 
 # If test failed, send result to LAVA for further investigation.
 def LavaTestCase(TestCommand, TestCaseID):
-    if not call(TestCommand) != 0:
+    if call(TestCommand) == 0:
+        print '%s passed' % (TestCaseID)
+    else:
         call(['lava-test-case', TestCaseID, '--result', 'fail'])
         print '%s failed' % (TestCaseID) 
         sys.exit(1)
