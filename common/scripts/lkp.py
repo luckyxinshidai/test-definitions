@@ -39,10 +39,11 @@ Config = 'defconfig'
 def LavaTestCase(TestCommand, TestCaseID):
     if call(TestCommand) == 0:
         print '%s passed' % (TestCaseID)
+        return True
     else:
-        call(['lava-test-case', TestCaseID, '--result', 'fail'])
         print '%s failed' % (TestCaseID) 
-        sys.exit(1)
+        call(['lava-test-case', TestCaseID, '--result', 'fail'])
+        return False
 
 # User existence check
 def FindUser(name):
@@ -71,14 +72,16 @@ if not os.path.exists(WD + '/' + Job):
     os.makedirs(WD + '/' + Job)
 SplitJob = [LKPPath + '/sbin/split-job', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
 print 'Splitting job %s with command: %s' % (Job, SplitJob)
-LavaTestCase(SplitJob, 'split-job-' + Job)
+if not LavaTestCase(SplitJob, 'split-job-' + Job):
+    sys.exit(1)
 
 # Setup test job.
 SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
 print 'Sub-tests of %s: %s' % (Job, SubTests)
 SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
 print 'Set up %s test with command: %s' % (Job, SetupLocal)
-LavaTestCase(SetupLocal, 'setup-local-' + Job)
+if not LavaTestCase(SetupLocal, 'setup-local-' + Job):
+    sys.exit(1)
 
 # Run tests.
 for SubTest in SubTests:
@@ -95,7 +98,6 @@ for SubTest in SubTests:
         RunLocal = [LKPPath + '/bin/run-local', SubTest]
         print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
         if not LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + Suffix):
-            print '%s%s test exited with error' % (SubTestCaseID, Suffix)
             continue
 
         # Decode Job.json for each run.
