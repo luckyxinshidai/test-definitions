@@ -30,30 +30,17 @@ print 'Working directory: %s' % (WD)
 Loops = int(sys.argv[3])
 Job = str(sys.argv[4])
 print 'Going to run %s %s times' % (Job, Loops)
-HostName = platform.node() 
+HostName = platform.node()
 KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
 Config = 'defconfig'
 
 # Collect result of the execution of each step of test runs.
 def LavaTestCase(TestCommand, TestCaseID):
-    if call(TestCommand) == 0:
-        call(['lava-test-case', str(TestCaseID), '--result', 'pass'])
-        return True
-    else:
-        call(['lava-test-case', str(TestCaseID), '--result', 'fail'])
-        return False
-
-def JsonPaser(ResultFile, TestCaseID, Suffix):
-    if not os.path.isfile(ResultFile):
-        print '%s not found' % (ResultFile)
-        call(['lava-test-case', SubTestCaseID + Suffix, '--result', 'fail'])
-    else:
-        JsonData = open(ResultFile)
-        Data = json.load(JsonData)
-        for item in Data:
-            call(['lava-test-case', SubTestCaseID + '-' +  item + Suffix, '--result', 'pass', '--measurement', str(Data[item])])
-        JsonData.close()
+    if not call(TestCommand) != 0:
+        call(['lava-test-case', TestCaseID, '--result', 'fail'])
+        print '%s failed' % (TestCaseID) 
+        sys.exit(1)
 
 # User existence check
 def FindUser(name):
@@ -80,21 +67,16 @@ call(['apt-get', 'update'])
 # Split test job.
 if not os.path.exists(WD + '/' + Job):
     os.makedirs(WD + '/' + Job)
-SplitJob = [LKPPath + '/sbin/split-job', '--no-defaults', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
+SplitJob = [LKPPath + '/sbin/split-job', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
 print 'Splitting job %s with command: %s' % (Job, SplitJob)
-if not LavaTestCase(SplitJob, 'split-job-' + Job):
-    print '%s split failed.' % (Job)
-    sys.exit(1)
+LavaTestCase(SplitJob, 'split-job-' + Job)
 
 # Setup test job.
 SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
 print 'Sub-tests of %s: %s' % (Job, SubTests)
-
 SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
 print 'Set up %s test with command: %s' % (Job, SetupLocal)
-if not LavaTestCase(SetupLocal, 'setup-local-' + Job):
-    print '%s setup failed.' %(Job)
-    sys.exit(1)
+LavaTestCase(SetupLocal, 'setup-local-' + Job)
 
 # Run tests.
 for SubTest in SubTests:
@@ -115,15 +97,35 @@ for SubTest in SubTests:
 
         # Decode status.json for each run.
         ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
-        StatsFile = str(ResultDir + '/' + str(Count - 1) + '/'+ 'stats.json')
-        JsonPaser(StatsFile, SubTestCaseID, Suffix)
+        ResultFile = str(ResultDir + '/' + str(Count - 1) + '/'+ Job + '.json')
+        if not os.path.isfile(ResultFile):
+            print '%s not found' % (ResultFile)
+            call(['lava-test-case', SubTestCaseID + Suffix, '--result', 'fail'])
+        else:
+            JsonData = open(ResultFile)
+            Data = json.load(JsonData)
+            for item in Data:
+                call(['lava-test-case', SubTestCaseID + '-' +  item + Suffix, '--result', 'pass', '--measurement', str(Data[item][0])])
+            JsonData.close()
 
         Count = Count + 1
 
     # Decode avg.json for mutiple runs.
     if Loops > 1:
         AvgFile = str(ResultDir + '/' + 'avg.json')
-        JsonPaser(AvgFile, SubTestCaseID, '-avg')
+        if not os.path.isfile(AvgFile):
+            print '%s not found' % (AvgFile)
+            call(['lava-test-case', SubTestCaseID + '-avg', '--result', 'fail'])
+        else:
+            JsonData = open(ResultFile)
+            AvgJsonData = open(AvgFile)
+            Dict = json.load(JsonData)
+            AvgDict = json.load(AvgJsonData)
+            for item in Dict:
+                if item in AvgDict:
+                    call(['echo', 'lava-test-case', SubTestCaseID + '-' + item + '-avg', '--result', 'pass', '--measurement', str(AvgDict[item])])
+            JsonData.close()
+            AvgJsonData.close()
 
     # Compress and attach raw data
     call(['tar', 'caf', 'lkp-' + Job + '-result.tar.xz', '/result/' + Job])
