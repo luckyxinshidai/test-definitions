@@ -35,14 +35,13 @@ KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
 Config = 'defconfig'
 
-# If test failed, send result to LAVA for further investigation.
-def LavaTestCase(TestCommand, TestCaseID):
+# For each step of test run, Print pass or fail to test log.
+def TestResult(TestCommand, TestCaseID):
     if call(TestCommand) == 0:
         print '%s passed' % (TestCaseID)
         return True
     else:
         print '%s failed' % (TestCaseID) 
-        call(['lava-test-case', TestCaseID, '--result', 'fail'])
         return False
 
 # User existence check
@@ -72,7 +71,7 @@ if not os.path.exists(WD + '/' + Job):
     os.makedirs(WD + '/' + Job)
 SplitJob = [LKPPath + '/sbin/split-job', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
 print 'Splitting job %s with command: %s' % (Job, SplitJob)
-if not LavaTestCase(SplitJob, 'split-job-' + Job):
+if not TestResult(SplitJob, 'split-job-' + Job):
     sys.exit(1)
 
 # Setup test job.
@@ -80,12 +79,13 @@ SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
 print 'Sub-tests of %s: %s' % (Job, SubTests)
 SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
 print 'Set up %s test with command: %s' % (Job, SetupLocal)
-if not LavaTestCase(SetupLocal, 'setup-local-' + Job):
+if not TestResult(SetupLocal, 'setup-local-' + Job):
     sys.exit(1)
 
 # Run tests.
 for SubTest in SubTests:
     Count = 1
+    Done = True
     SubTestCaseID = os.path.basename(SubTest)[:-5]
     ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
     while (Count <= Loops):
@@ -97,14 +97,15 @@ for SubTest in SubTests:
 
         RunLocal = [LKPPath + '/bin/run-local', SubTest]
         print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
-        if not LavaTestCase(RunLocal, 'run-local-' + SubTestCaseID + Suffix):
-            continue
+        if not TestResult(RunLocal, 'run-local-' + SubTestCaseID + Suffix):
+            Done = False
+            break
 
-        # Decode Job.json for each run.
+        # For each run, decode Job.json to pick up the scores produced by the benchmark itself.
         ResultFile = str(ResultDir + '/' + str(Count - 1) + '/'+ Job + '.json')
         if not os.path.isfile(ResultFile):
             print '%s not found' % (ResultFile)
-            call(['lava-test-case', SubTestCaseID + Suffix, '--result', 'fail'])
+            Done = False
         else:
             JsonData = open(ResultFile)
             Dict = json.load(JsonData)
@@ -114,12 +115,11 @@ for SubTest in SubTests:
 
         Count = Count + 1
 
-    # Decode avg.json for mutiple runs.
-    if Loops > 1:
+    # For mutiple runs, if all runs are completed and results found, decode avg.json.
+    if Loops > 1 and Done == True:
         AvgFile = str(ResultDir + '/' + 'avg.json')
         if not os.path.isfile(AvgFile):
             print '%s not found' % (AvgFile)
-            call(['lava-test-case', SubTestCaseID + '-avg', '--result', 'fail'])
         else:
             JsonData = open(ResultFile)
             AvgJsonData = open(AvgFile)
@@ -127,7 +127,7 @@ for SubTest in SubTests:
             AvgDict = json.load(AvgJsonData)
             for item in Dict:
                 if item in AvgDict:
-                    call(['echo', 'lava-test-case', SubTestCaseID + '-' + item + '-avg', '--result', 'pass', '--measurement', str(AvgDict[item])])
+                    call(['lava-test-case', SubTestCaseID + '-' + item + '-avg', '--result', 'pass', '--measurement', str(AvgDict[item])])
             JsonData.close()
             AvgJsonData.close()
 
