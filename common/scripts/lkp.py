@@ -35,7 +35,7 @@ KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
 Config = 'defconfig'
 
-# Collect result of the execution of each step of test runs.
+# If test failed, send result to LAVA for further investigation.
 def LavaTestCase(TestCommand, TestCaseID):
     if not call(TestCommand) != 0:
         call(['lava-test-case', TestCaseID, '--result', 'fail'])
@@ -81,9 +81,10 @@ LavaTestCase(SetupLocal, 'setup-local-' + Job)
 # Run tests.
 for SubTest in SubTests:
     Count = 1
+    SubTestCaseID = os.path.basename(SubTest)[:-5]
+    ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
     while (Count <= Loops):
-        SubTestCaseID = os.path.basename(SubTest)[:-5]
-        # Add suffix for mutiple runs.
+        # Use suffix for mutiple runs.
         if Loops > 1:
             Suffix = '-run' + str(Count)
         else:
@@ -95,17 +96,16 @@ for SubTest in SubTests:
             print '%s%s test exited with error' % (SubTestCaseID, Suffix)
             continue
 
-        # Decode status.json for each run.
-        ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
+        # Decode Job.json for each run.
         ResultFile = str(ResultDir + '/' + str(Count - 1) + '/'+ Job + '.json')
         if not os.path.isfile(ResultFile):
             print '%s not found' % (ResultFile)
             call(['lava-test-case', SubTestCaseID + Suffix, '--result', 'fail'])
         else:
             JsonData = open(ResultFile)
-            Data = json.load(JsonData)
-            for item in Data:
-                call(['lava-test-case', SubTestCaseID + '-' +  item + Suffix, '--result', 'pass', '--measurement', str(Data[item][0])])
+            Dict = json.load(JsonData)
+            for item in Dict:
+                call(['lava-test-case', SubTestCaseID + '-' +  item + Suffix, '--result', 'pass', '--measurement', str(Dict[item][0])])
             JsonData.close()
 
         Count = Count + 1
