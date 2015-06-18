@@ -113,7 +113,7 @@ for SubTest in SubTests:
             JsonData = open(ResultFile)
             Dict = json.load(JsonData)
             for item in Dict:
-                call(['lava-test-case', SubTestCaseID + '-' +  item + Suffix, '--result', 'pass', '--measurement', str(Dict[item][0])])
+                call(['lava-test-case', item + Suffix, '--result', 'pass', '--measurement', str(Dict[item][0])])
             JsonData.close()
 
         Count = Count + 1
@@ -132,7 +132,7 @@ for SubTest in SubTests:
             AvgDict = json.load(AvgJsonData)
             for item in Dict:
                 if item in AvgDict:
-                    call(['lava-test-case', SubTestCaseID + '-' + item + '-avg', '--result', 'pass', '--measurement', str(AvgDict[item])])
+                    call(['lava-test-case', item + '-avg', '--result', 'pass', '--measurement', str(AvgDict[item])])
             JsonData.close()
             AvgJsonData.close()
 
