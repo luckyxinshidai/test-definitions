@@ -20,7 +20,7 @@
 #
 # Author: Chase Qi <chase.qi@linaro.org>
 #
-import os, sys, platform, glob, json, pwd
+import os, sys, platform, glob, json, pwd, shutil
 from subprocess import call
 
 LKPPath = str(sys.argv[1])
@@ -36,7 +36,7 @@ Dist = str.lower(platform.dist()[0])
 Config = 'defconfig'
 
 # For each step of test run, Print pass or fail to test log.
-def TestResult(TestCommand, TestCaseID):
+def test_result(TestCommand, TestCaseID):
     if call(TestCommand) == 0:
         print '%s passed' % (TestCaseID)
         return True
@@ -45,14 +45,14 @@ def TestResult(TestCommand, TestCaseID):
         return False
 
 # User existence check
-def FindUser(name):
+def find_user(name):
      try:
          return pwd.getpwnam(name)
      except KeyError:
          return None
 
 # pre-config
-if not FindUser('lkp'):
+if not find_user('lkp'):
      print 'creating user lkp...'
      call(['useradd', '--create-home', '--home-dir', '/home/lkp', 'lkp'])
 else:
@@ -71,7 +71,7 @@ if not os.path.exists(WD + '/' + Job):
     os.makedirs(WD + '/' + Job)
 SplitJob = [LKPPath + '/sbin/split-job', '--output', WD + '/' + Job, LKPPath + '/jobs/' + Job + '.yaml']
 print 'Splitting job %s with command: %s' % (Job, SplitJob)
-if not TestResult(SplitJob, 'split-job-' + Job):
+if not test_result(SplitJob, 'split-job-' + Job):
     sys.exit(1)
 
 # Setup test job.
@@ -79,7 +79,7 @@ SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
 print 'Sub-tests of %s: %s' % (Job, SubTests)
 SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
 print 'Set up %s test with command: %s' % (Job, SetupLocal)
-if not TestResult(SetupLocal, 'setup-local-' + Job):
+if not test_result(SetupLocal, 'setup-local-' + Job):
     sys.exit(1)
 
 # Run tests.
@@ -87,7 +87,9 @@ for SubTest in SubTests:
     Count = 1
     Done = True
     SubTestCaseID = os.path.basename(SubTest)[:-5]
-    ResultDir = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
+    if os.path.exists('/result'):
+        shutil.rmtree('/result')
+    ResultRoot = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
     while (Count <= Loops):
         # Use suffix for mutiple runs.
         if Loops > 1:
@@ -96,13 +98,13 @@ for SubTest in SubTests:
             Suffix = ''
 
         RunLocal = [LKPPath + '/bin/run-local', SubTest]
-        print 'Running sub-test %s with command: %s' % (SubTestCaseID, RunLocal)
-        if not TestResult(RunLocal, 'run-local-' + SubTestCaseID + Suffix):
+        print 'Running sub-test %s%s with command: %s' % (SubTestCaseID, Suffix, RunLocal)
+        if not test_result(RunLocal, 'run-local-' + SubTestCaseID + Suffix):
             Done = False
             break
 
         # For each run, decode Job.json to pick up the scores produced by the benchmark itself.
-        ResultFile = str(ResultDir + '/' + str(Count - 1) + '/'+ Job + '.json')
+        ResultFile = ResultRoot + '/' + str(Count - 1) + '/'+ Job + '.json'
         if not os.path.isfile(ResultFile):
             print '%s not found' % (ResultFile)
             Done = False
@@ -117,9 +119,10 @@ for SubTest in SubTests:
 
     # For mutiple runs, if all runs are completed and results found, decode avg.json.
     if Loops > 1 and Done == True:
-        AvgFile = str(ResultDir + '/' + 'avg.json')
+        AvgFile = ResultRoot + '/' + 'avg.json'
         if not os.path.isfile(AvgFile):
             print '%s not found' % (AvgFile)
+            Done = False
         else:
             JsonData = open(ResultFile)
             AvgJsonData = open(AvgFile)
@@ -132,5 +135,10 @@ for SubTest in SubTests:
             AvgJsonData.close()
 
     # Compress and attach raw data
-    call(['tar', 'caf', 'lkp-' + Job + '-result.tar.xz', '/result/' + Job])
-    call(['lava-test-run-attach', 'lkp-' + Job + '-result.tar.xz'])
+    call(['tar', 'caf', 'lkp-result-' + Job + '.tar.xz', ResultRoot])
+    call(['lava-test-run-attach', 'lkp-result-' + Job + '.tar.xz'])
+
+if Done == False:
+    sys.exit(1)
+else:
+    sys.exit(0)
