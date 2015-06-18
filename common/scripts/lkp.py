@@ -89,8 +89,8 @@ for SubTest in SubTests:
     Count = 1
     Done = True
     SubTestCaseID = os.path.basename(SubTest)[:-5]
-    if os.path.exists('/result'):
-        shutil.rmtree('/result')
+    if os.path.exists('/result/'):
+        shutil.rmtree('/result/', ignore_errors=True)
     ResultRoot = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
     while (Count <= Loops):
         # Use suffix for mutiple runs.
@@ -121,7 +121,9 @@ for SubTest in SubTests:
     # For mutiple runs, if all runs are completed and results found, decode avg.json.
     if Loops > 1 and Done == True:
         AvgFile = ResultRoot + '/' + 'avg.json'
-        if not os.path.isfile(AvgFile):
+        if not os.path.isfile(ResultFile):
+            print '%s not found' % (ResultFile)
+        elif not os.path.isfile(AvgFile):
             print '%s not found' % (AvgFile)
         else:
             JsonData = open(ResultFile)
