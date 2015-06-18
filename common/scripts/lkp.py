@@ -35,30 +35,32 @@ KernelVersion = platform.release()
 Dist = str.lower(platform.dist()[0])
 Config = 'defconfig'
 
-# For each step of test run, Print pass or fail to test log.
+# For each step of test run, print pass or fail to test log.
 def test_result(TestCommand, TestCaseID):
     if call(TestCommand) == 0:
-        print '%s passed' % (TestCaseID)
+        print '%s pass' % (TestCaseID)
         return True
     else:
-        print '%s failed' % (TestCaseID) 
+        print '%s fail' % (TestCaseID)
         return False
 
-# User existence check
+# User existence check.
 def find_user(name):
      try:
          return pwd.getpwnam(name)
      except KeyError:
          return None
 
-# pre-config
+# pre-config.
 if not find_user('lkp'):
      print 'creating user lkp...'
      call(['useradd', '--create-home', '--home-dir', '/home/lkp', 'lkp'])
 else:
      print 'User lkp already exists.'
+
 if not os.path.exists('/home/lkp'):
     call(['mkdir', '-p', '/home/lkp'])
+
 call(['chown', '-R', 'lkp:lkp', '/home/lkp'])
 
 f = open('/etc/apt/sources.list.d/multiverse.list','w')
@@ -98,7 +100,7 @@ for SubTest in SubTests:
             Suffix = ''
 
         RunLocal = [LKPPath + '/bin/run-local', SubTest]
-        print 'Running sub-test %s%s with command: %s' % (SubTestCaseID, Suffix, RunLocal)
+        print 'Running test %s%s with command: %s' % (SubTestCaseID, Suffix, RunLocal)
         if not test_result(RunLocal, 'run-local-' + SubTestCaseID + Suffix):
             Done = False
             break
@@ -134,7 +136,7 @@ for SubTest in SubTests:
             JsonData.close()
             AvgJsonData.close()
 
-    # Compress and attach raw data
+    # Compress and attach raw data.
     call(['tar', 'caf', 'lkp-result-' + Job + '.tar.xz', ResultRoot])
     call(['lava-test-run-attach', 'lkp-result-' + Job + '.tar.xz'])
 
