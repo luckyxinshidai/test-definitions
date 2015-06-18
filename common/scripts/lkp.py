@@ -109,7 +109,6 @@ for SubTest in SubTests:
         ResultFile = ResultRoot + '/' + str(Count - 1) + '/'+ Job + '.json'
         if not os.path.isfile(ResultFile):
             print '%s not found' % (ResultFile)
-            Done = False
         else:
             JsonData = open(ResultFile)
             Dict = json.load(JsonData)
@@ -124,7 +123,6 @@ for SubTest in SubTests:
         AvgFile = ResultRoot + '/' + 'avg.json'
         if not os.path.isfile(AvgFile):
             print '%s not found' % (AvgFile)
-            Done = False
         else:
             JsonData = open(ResultFile)
             AvgJsonData = open(AvgFile)
