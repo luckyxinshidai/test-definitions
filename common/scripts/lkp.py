@@ -84,13 +84,15 @@ print 'Set up %s test with command: %s' % (Job, SetupLocal)
 if not test_result(SetupLocal, 'setup-local-' + Job):
     sys.exit(1)
 
+# Delete test results from last lava-test-shell-run.
+if os.path.exists('/result/'):
+    shutil.rmtree('/result/', ignore_errors=True)
+
 # Run tests.
 for SubTest in SubTests:
     Count = 1
     Done = True
     SubTestCaseID = os.path.basename(SubTest)[:-5]
-    if os.path.exists('/result/'):
-        shutil.rmtree('/result/', ignore_errors=True)
     ResultRoot = str('/'.join(['/result', Job, SubTestCaseID[int(len(Job) + 1):], HostName, Dist, Config, KernelVersion]))
     while (Count <= Loops):
         # Use suffix for mutiple runs.
