@@ -14,8 +14,8 @@ metadata:
         - mustang
 
 install:
-    steps:
-        - 'git clone https://github.com/suihkulokki/lkp-tests.git'
+    git-repos:
+        - url: https://github.com/suihkulokki/lkp-tests.git
     deps:
         - bc
         - build-essential
