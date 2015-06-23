@@ -158,7 +158,7 @@ for SubTest in SubTests:
             AvgJsonData.close()
 
     # Compress and attach raw data.
-    call(['tar', 'caf', 'lkp-result-' + Job + '.tar.xz', ResultRoot])
+    call(['tar', 'caf', 'lkp-result-' + Job + '.tar.xz', '/result/' + Job])
     call(['lava-test-run-attach', 'lkp-result-' + Job + '.tar.xz'])
 
 if not Done:
