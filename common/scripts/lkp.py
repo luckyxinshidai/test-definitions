@@ -34,17 +34,17 @@ LKPPath = str(sys.argv[1])
 print 'LKP test suite path: %s' % (LKPPath)
 WD = str(sys.argv[2])
 print 'Working directory: %s' % (WD)
-Loops = int(sys.argv[3])
-Job = str(sys.argv[4])
-print 'Going to run %s %s times' % (Job, Loops)
+LOOPS = int(sys.argv[3])
+JOB = str(sys.argv[4])
+print 'Going to run %s %s times' % (JOB, LOOPS)
 HostName = platform.node()
 KernelVersion = platform.release()
-Dist = str.lower(platform.dist()[0])
-Config = 'defconfig'
+DIST = str.lower(platform.dist()[0])
+CONFIG = 'defconfig'
 
 
-# For each step of test run, print pass or fail to test log.
 def test_result(TestCommand, TestCaseID):
+    # For each step of test run, print pass or fail to test log.
     if call(TestCommand) == 0:
         print '%s pass' % (TestCaseID)
         return True
@@ -53,8 +53,8 @@ def test_result(TestCommand, TestCaseID):
         return False
 
 
-# User existence check.
 def find_user(name):
+    # Create user 'lkp' if it doesn't exist.
     try:
         return pwd.getpwnam(name)
     except KeyError:
@@ -79,20 +79,20 @@ f.close()
 call(['apt-get', 'update'])
 
 # Split test job.
-if not os.path.exists(WD + '/' + Job):
-    os.makedirs(WD + '/' + Job)
-SplitJob = [LKPPath + '/sbin/split-job', '--output', WD + '/' + Job,
-            LKPPath + '/jobs/' + Job + '.yaml']
-print 'Splitting job %s with command: %s' % (Job, SplitJob)
-if not test_result(SplitJob, 'split-job-' + Job):
+if not os.path.exists(WD + '/' + JOB):
+    os.makedirs(WD + '/' + JOB)
+SplitJob = [LKPPath + '/sbin/split-job', '--output', WD + '/' + JOB,
+            LKPPath + '/jobs/' + JOB + '.yaml']
+print 'Splitting job %s with command: %s' % (JOB, SplitJob)
+if not test_result(SplitJob, 'split-job-' + JOB):
     sys.exit(1)
 
 # Setup test job.
-SubTests = glob.glob(WD + '/' + Job + '/*.yaml')
-print 'Sub-tests of %s: %s' % (Job, SubTests)
+SubTests = glob.glob(WD + '/' + JOB + '/*.yaml')
+print 'Sub-tests of %s: %s' % (JOB, SubTests)
 SetupLocal = [LKPPath + '/bin/setup-local', SubTests[0]]
-print 'Set up %s test with command: %s' % (Job, SetupLocal)
-if not test_result(SetupLocal, 'setup-local-' + Job):
+print 'Set up %s test with command: %s' % (JOB, SetupLocal)
+if not test_result(SetupLocal, 'setup-local-' + JOB):
     sys.exit(1)
 
 # Delete test results from last lava-test-shell-run.
@@ -101,44 +101,44 @@ if os.path.exists('/result/'):
 
 # Run tests.
 for SubTest in SubTests:
-    Count = 1
-    Done = True
+    COUNT = 1
+    DONE = True
     SubTestCaseID = os.path.basename(SubTest)[:-5]
-    ResultRoot = str('/'.join(['/result', Job,
-                               SubTestCaseID[int(len(Job) + 1):], HostName,
-                               Dist, Config, KernelVersion]))
-    while (Count <= Loops):
+    ResultRoot = str('/'.join(['/result', JOB,
+                               SubTestCaseID[int(len(JOB) + 1):], HostName,
+                               DIST, CONFIG, KernelVersion]))
+    while (COUNT <= LOOPS):
         # Use suffix for mutiple runs.
-        if Loops > 1:
-            Suffix = '-run' + str(Count)
+        if LOOPS > 1:
+            SUFFIX = '-run' + str(COUNT)
         else:
-            Suffix = ''
+            SUFFIX = ''
 
         RunLocal = [LKPPath + '/bin/run-local', SubTest]
-        print 'Running test %s%s with command: %s' % (SubTestCaseID, Suffix,
+        print 'Running test %s%s with command: %s' % (SubTestCaseID, SUFFIX,
                                                       RunLocal)
-        if not test_result(RunLocal, 'run-local-' + SubTestCaseID + Suffix):
-            Done = False
+        if not test_result(RunLocal, 'run-local-' + SubTestCaseID + SUFFIX):
+            DONE = False
             break
 
-        # For each run, decode Job.json to pick up the scores produced by the
+        # For each run, decode JOB.json to pick up the scores produced by the
         # benchmark itself.
-        ResultFile = ResultRoot + '/' + str(Count - 1) + '/' + Job + '.json'
+        ResultFile = ResultRoot + '/' + str(COUNT - 1) + '/' + JOB + '.json'
         if not os.path.isfile(ResultFile):
             print '%s not found' % (ResultFile)
         else:
             JsonData = open(ResultFile)
-            Dict = json.load(JsonData)
-            for item in Dict:
-                call(['lava-test-case', SubTestCaseID + '-' + item + Suffix,
-                      '--result', 'pass', '--measurement', str(Dict[item][0])])
+            DICT = json.load(JsonData)
+            for item in DICT:
+                call(['lava-test-case', SubTestCaseID + '-' + item + SUFFIX,
+                      '--result', 'pass', '--measurement', str(DICT[item][0])])
             JsonData.close()
 
-        Count = Count + 1
+        COUNT = COUNT + 1
 
     # For mutiple runs, if all runs are completed and results found, decode
     # avg.json.
-    if Loops > 1 and Done:
+    if LOOPS > 1 and DONE:
         AvgFile = ResultRoot + '/' + 'avg.json'
         if not os.path.isfile(ResultFile):
             print '%s not found' % (ResultFile)
@@ -147,9 +147,9 @@ for SubTest in SubTests:
         else:
             JsonData = open(ResultFile)
             AvgJsonData = open(AvgFile)
-            Dict = json.load(JsonData)
+            DICT = json.load(JsonData)
             AvgDict = json.load(AvgJsonData)
-            for item in Dict:
+            for item in DICT:
                 if item in AvgDict:
                     call(['lava-test-case',
                           SubTestCaseID + '-' + item + '-avg', '--result',
@@ -158,10 +158,10 @@ for SubTest in SubTests:
             AvgJsonData.close()
 
     # Compress and attach raw data.
-    call(['tar', 'caf', 'lkp-result-' + Job + '.tar.xz', '/result/' + Job])
-    call(['lava-test-run-attach', 'lkp-result-' + Job + '.tar.xz'])
+    call(['tar', 'caf', 'lkp-result-' + JOB + '.tar.xz', '/result/' + JOB])
+    call(['lava-test-run-attach', 'lkp-result-' + JOB + '.tar.xz'])
 
-if not Done:
+if not DONE:
     sys.exit(1)
 else:
     sys.exit(0)
