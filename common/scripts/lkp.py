@@ -81,8 +81,8 @@ call(['apt-get', 'update'])
 # Split test job.
 if not os.path.exists(WD + '/' + JOB):
     os.makedirs(WD + '/' + JOB)
-SplitJob = [LKPPath + '/sbin/split-job', '--output', WD + '/' + JOB,
-            LKPPath + '/jobs/' + JOB + '.yaml']
+SplitJob = [LKPPath + '/sbin/split-job', '--no-default', '--output',
+            WD + '/' + JOB, LKPPath + '/jobs/' + JOB + '.yaml']
 print 'Splitting job %s with command: %s' % (JOB, SplitJob)
 if not test_result(SplitJob, 'split-job-' + JOB):
     sys.exit(1)
