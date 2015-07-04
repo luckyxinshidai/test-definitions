@@ -78,6 +78,6 @@ for TEST in TESTS:
                        '--ts=' + TermSlash, TEST]
         print 'Running %s with command: %s' % (TEST, TestCommand)
         if call(TestCommand) == 0:
-            call(['echo', 'lava-test-case', TEST + SUFFIX, '--result', 'pass'])
+            call(['lava-test-case', TEST + SUFFIX, '--result', 'pass'])
         else:
-            call(['echo', 'lava-test-case', TEST + SUFFIX, '--result', 'fail'])
+            call(['lava-test-case', TEST + SUFFIX, '--result', 'fail'])
