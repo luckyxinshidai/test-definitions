@@ -1,6 +1,6 @@
 import os
 import sys
-from subprocess import call check_out
+import subproces
 
 TestSuitePath = sys.argv[1]
 TermSlashList = ['0', '1']
@@ -64,12 +64,12 @@ if os.path.isfile('/usr/bin/python3'):
     PYTHON = 'python3'
 else:
     PYTHON = 'python'
-PythonVersion = check_out([PYTHON, '--version'])
+PythonVersion = subprocess.check_output([PYTHON, '--version'])
 print 'Running tests with:' + PythonVersion
 
 for TEST in TESTS:
     for TermSlash in TermSlashList:
-        if TermSlash == 1:
+        if TermSlash == '1':
             SUFFIX = '-termslash'
         else:
             SUFFIX = ''
@@ -77,7 +77,9 @@ for TEST in TESTS:
         TestCommand = [PYTHON, TestSuitePath + '/run', '--ov',
                        '--ts=' + TermSlash, TEST]
         print 'Running %s with command: %s' % (TEST, TestCommand)
-        if call(TestCommand) == 0:
-            call(['lava-test-case', TEST + SUFFIX, '--result', 'pass'])
+        if subprocess.call(TestCommand) == 0:
+            subprocess.call(['lava-test-case', TEST + SUFFIX,
+                             '--result', 'pass'])
         else:
-            call(['lava-test-case', TEST + SUFFIX, '--result', 'fail'])
+            subprocess.call(['lava-test-case', TEST + SUFFIX,
+                             '--result', 'fail'])
