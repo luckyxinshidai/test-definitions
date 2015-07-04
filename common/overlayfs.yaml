@@ -1,13 +1,14 @@
 metadata:
     name: overlayfs
     format: "Lava-Test-Shell Test Definition 1.0"
-    description: "Run overlay filesystem test Linaro Ubuntu and OpenEmbedded"
+    description: "Run overlay filesystem test from unionmount testsuite on
+                  Linaro Ubuntu and OpenEmbedded"
     maintainer:
         - milosz.wasilewski@linaro.org
         - chase.qi@linaro.org
     os:
         - ubuntu
-        - openembeded
+        - openembedded
     scope:
         - functional
     devices:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
-# Run overlay filesystem test on Linaro ubuntu and OpenEmbeded.
+# Run overlay filesystem test from unionmount testsuite on Linaro ubuntu and
+# OpenEmbedded.
 #
 # Copyright (C) 2012 - 2014, Linaro Limited.
 #
@@ -87,7 +88,7 @@ if os.path.isfile('/usr/bin/python3'):
 else:
     PYTHON = 'python'
 PythonVersion = subprocess.check_output([PYTHON, '--version'])
-print 'Running tests with:' + PythonVersion
+print 'Running tests with: ' + PythonVersion
 
 for TEST in TESTS:
     for TermSlash in TermSlashList:
