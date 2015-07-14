@@ -40,11 +40,13 @@ else
     exit 1
 fi
 
+# Set dhclient timeout to 2 minutes.
+cp /etc/dhcp/dhclient.conf /etc/dhcp/dhclient.conf.original
 echo "timeout 120;" >> /etc/dhcp/dhclient.conf
 
 for INTERFACE in `ifconfig -a |grep eth |awk '{print $1}'`; do
-    # Do IP address on each interface. If IP is empty, use dhclient enable it,
-    # then check if IP address is empty again.
+    # Check IP address on each interface. If IP is empty, use dhclient request
+    # IP from dhcp server, then check if IP address is empty again.
     IP=$(ifconfig $INTERFACE | grep "inet addr" | awk '{print substr($2,6)}')
     if [ -z $IP ]; then
         dhclient $INTERFACE
@@ -77,3 +79,6 @@ for INTERFACE in `ifconfig -a |grep eth |awk '{print $1}'`; do
         lava-test-case $INTERFACE-ping-test --result fail
     fi
 done
+
+# Restore dhclient setting.
+mv /etc/dhcp/dhclient.conf.original /etc/dhcp/dhclient.conf
