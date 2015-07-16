@@ -73,9 +73,9 @@ if not os.path.exists('/home/lkp'):
 
 call(['chown', '-R', 'lkp:lkp', '/home/lkp'])
 
-f = open('/etc/apt/sources.list.d/multiverse.list', 'w')
-f.write('deb http://ports.ubuntu.com/ubuntu-ports/ vivid multiverse\n')
-f.close()
+# f = open('/etc/apt/sources.list.d/multiverse.list', 'w')
+# f.write('deb http://ports.ubuntu.com/ubuntu-ports/ vivid multiverse\n')
+# f.close()
 call(['apt-get', 'update'])
 
 # Split test job.
