@@ -15,7 +15,7 @@ metadata:
 
 install:
     git-repos:
-        - url: https://github.com/suihkulokki/lkp-tests.git
+        - url: git://git.kernel.org/pub/scm/linux/kernel/git/wfg/lkp-tests.git 
     deps:
         - bc
         - build-essential
@@ -26,14 +26,17 @@ install:
         - lsb-release
         - ruby
         - ruby-gnuplot
+        - ruby-term-ansicolor
         - sysstat
         - time
         - xz-utils
 
 params:
     LOOPS: 1
-    JOB: 'unixbench'
+    JOB: 'hackbench'
+    MONITORS: '--no-defaults'
 
 run:
     steps:
-        - './common/scripts/lkp.py $(readlink -f lkp-tests) $(pwd) $LOOPS $JOB'
+        - './common/scripts/lkp.py $(readlink -f lkp-tests) $(pwd) $LOOPS
+           $JOB $MONITORS'
