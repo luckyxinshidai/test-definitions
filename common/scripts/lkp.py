@@ -44,20 +44,20 @@ DIST = str.lower(platform.dist()[0])
 CONFIG = 'defconfig'
 
 
-def test_result(TEST_COMMAND, TEST_CASE_ID):
+def test_result(test_command, test_case_id):
     # For each step of test run, print pass or fail to test log.
-    if call(TEST_COMMAND) == 0:
-        print '%s pass' % (TEST_CASE_ID)
+    if call(test_command) == 0:
+        print '%s pass' % (test_case_id)
         return True
     else:
-        print '%s fail' % (TEST_CASE_ID)
+        print '%s fail' % (test_case_id)
         return False
 
 
-def find_user(NAME):
+def find_user(name):
     # Create user 'lkp' if it doesn't exist.
     try:
-        return pwd.getpwnam(NAME)
+        return pwd.getpwnam(name)
     except KeyError:
         return None
 
@@ -101,60 +101,60 @@ if os.path.exists('/result/'):
 
 # Run tests.
 SUB_TESTS = glob.glob(WD + '/' + JOB + '/*.yaml')
-for SUB_TEST in SUB_TESTS:
-    COUNT = 1
-    DONE = True
-    SUB_TEST_CASE_ID = os.path.basename(SUB_TEST)[:-5]
-    RESULT_ROOT = str('/'.join(['/result', JOB,
-                               SUB_TEST_CASE_ID[int(len(JOB) + 1):],
+for sub_test in SUB_TESTS:
+    count = 1
+    done = True
+    sub_test_case_id = os.path.basename(sub_test)[:-5]
+    result_root = str('/'.join(['/result', JOB,
+                               sub_test_case_id[int(len(JOB) + 1):],
                                HOST_NAME, DIST, CONFIG, KERNEL_VERSION]))
-    while COUNT <= LOOPS:
+    while count <= LOOPS:
         # Use suffix for mutiple runs.
         if LOOPS > 1:
-            SUFFIX = '-run' + str(COUNT)
+            suffix = '-run' + str(count)
         else:
-            SUFFIX = ''
+            suffix = ''
 
-        RUN_COMMAND = [LKP_PATH + '/bin/lkp run', SUB_TEST]
-        print 'Running test %s%s with command: %s' % (SUB_TEST_CASE_ID,
-                                                      SUFFIX, RUN_COMMAND)
-        if not test_result(RUN_COMMAND, 'run-' + SUB_TEST_CASE_ID + SUFFIX):
-            DONE = False
+        lkp_run = [LKP_PATH + '/bin/lkp run', sub_test]
+        print 'Running test %s%s with command: %s' % (sub_test_case_id,
+                                                      suffix, lkp_run)
+        if not test_result(lkp_run, 'run-' + sub_test_case_id + suffix):
+            done = False
             break
 
         # For each run, decode JOB.json to pick up the scores produced by the
         # benchmark itself.
-        RESULT_FILE = RESULT_ROOT + '/' + str(COUNT - 1) + '/' + JOB + '.json'
-        if not os.path.isfile(RESULT_FILE):
-            print '%s not found' % (RESULT_FILE)
+        result_file = result_root + '/' + str(count - 1) + '/' + JOB + '.json'
+        if not os.path.isfile(result_file):
+            print '%s not found' % (result_file)
         else:
-            json_data = open(RESULT_FILE)
-            DICT = json.load(json_data)
-            for item in DICT:
-                call(['lava-test-case', SUB_TEST_CASE_ID + '-' + item + SUFFIX,
-                      '--result', 'pass', '--measurement', str(DICT[item][0])])
+            json_data = open(result_file)
+            dict = json.load(json_data)
+            for item in dict:
+                call(['lava-test-case', sub_test_case_id + '-' + item + suffix,
+                      '--result', 'pass', '--measurement', str(dict[item][0])])
             json_data.close()
 
-        COUNT = COUNT + 1
+        count = count + 1
 
     # For mutiple runs, if all runs are completed and results found, decode
     # avg.json.
-    if LOOPS > 1 and DONE:
-        AVG_FILE = RESULT_ROOT + '/' + 'avg.json'
-        if not os.path.isfile(RESULT_FILE):
-            print '%s not found' % (RESULT_FILE)
-        elif not os.path.isfile(AVG_FILE):
-            print '%s not found' % (AVG_FILE)
+    if LOOPS > 1 and done:
+        avg_file = result_root + '/' + 'avg.json'
+        if not os.path.isfile(result_file):
+            print '%s not found' % (result_file)
+        elif not os.path.isfile(avg_file):
+            print '%s not found' % (avg_file)
         else:
-            json_data = open(RESULT_FILE)
-            avg_json_data = open(AVG_FILE)
-            DICT = json.load(json_data)
-            AVG_DICT = json.load(avg_json_data)
-            for item in DICT:
-                if item in AvgDict:
+            json_data = open(result_file)
+            avg_json_data = open(avg_file)
+            dict = json.load(json_data)
+            avg_dict = json.load(avg_json_data)
+            for item in dict:
+                if item in avg_dict:
                     call(['lava-test-case',
-                          SUB_TEST_CASE_ID + '-' + item + '-avg', '--result',
-                          'pass', '--measurement', str(AVG_DICT[item])])
+                          sub_test_case_id + '-' + item + '-avg', '--result',
+                          'pass', '--measurement', str(avg_dict[item])])
             json_data.close()
             avg_json_data.close()
 
@@ -162,7 +162,7 @@ for SUB_TEST in SUB_TESTS:
     call(['tar', 'caf', 'lkp-result-' + JOB + '.tar.xz', '/result/' + JOB])
     call(['lava-test-run-attach', 'lkp-result-' + JOB + '.tar.xz'])
 
-if not DONE:
+if not done:
     sys.exit(1)
 else:
     sys.exit(0)
