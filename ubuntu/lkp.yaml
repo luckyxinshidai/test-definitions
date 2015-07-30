@@ -12,6 +12,7 @@ metadata:
         - functional
     devices:
         - mustang
+        - juno
 
 install:
     git-repos:
@@ -32,11 +33,12 @@ install:
         - xz-utils
 
 params:
-    LOOPS: 1
     JOB: 'hackbench'
+    COMMIT: 'commit'
     MONITORS: '--no-defaults'
+    LOOPS: 1
 
 run:
     steps:
-        - './common/scripts/lkp.py $(readlink -f lkp-tests) $(pwd) $LOOPS
-           $JOB $MONITORS'
+        - './common/scripts/lkp.py $(readlink -f lkp-tests) $(pwd)
+           $JOB $COMMIT $MONITORS'

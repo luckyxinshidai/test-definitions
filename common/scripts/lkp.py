@@ -30,19 +30,18 @@ import pwd
 import shutil
 from subprocess import call
 
-LKP_PATH = str(sys.argv[1])
-print 'LKP test suite path: %s' % (LKP_PATH)
-WD = str(sys.argv[2])
-print 'Working directory: %s' % (WD)
-LOOPS = int(sys.argv[3])
-JOB = str(sys.argv[4])
+LKP_PATH = sys.argv[1]
+WD = sys.argv[2]
+JOB = sys.argv[3]
+COMMIT = sys.argv[4]
 MONITORS = str(sys.argv[5])
-print 'Going to run %s %s times' % (JOB, LOOPS)
+LOOPS = int(sys.argv[6])
 HOST_NAME = platform.node()
-KERNEL_VERSION = platform.release()
-DIST = str.lower(platform.dist()[0])
+DIST = platform.dist()[0]
 CONFIG = 'defconfig'
-
+COMPILER = os.readlink('/usr/bin/gcc')
+print 'Working directory: %s' % (WD)
+print 'LKP test suite path: %s' % (LKP_PATH)
 
 def test_result(test_command, test_case_id):
     # For each step of test run, print pass or fail to test log.
@@ -55,7 +54,6 @@ def test_result(test_command, test_case_id):
 
 
 def find_user(name):
-    # Create user 'lkp' if it doesn't exist.
     try:
         return pwd.getpwnam(name)
     except KeyError:
@@ -63,6 +61,7 @@ def find_user(name):
 
 
 # pre-config.
+# Create user 'lkp' if it doesn't exist.
 if not find_user('lkp'):
     print 'creating user lkp...'
     call(['useradd', '--create-home', '--home-dir', '/home/lkp', 'lkp'])
@@ -95,7 +94,7 @@ print 'Splitting job %s with command: %s' % (JOB, SPLIT_JOB)
 if not test_result(SPLIT_JOB, 'split-job-' + JOB):
     sys.exit(1)
 
-# Delete test results from last lava-test-shell-run.
+# Clean result root directory.
 if os.path.exists('/result/'):
     shutil.rmtree('/result/', ignore_errors=True)
 
@@ -105,9 +104,9 @@ for sub_test in SUB_TESTS:
     count = 1
     done = True
     sub_test_case_id = os.path.basename(sub_test)[:-5]
-    result_root = str('/'.join(['/result', JOB,
-                               sub_test_case_id[int(len(JOB) + 1):],
-                               HOST_NAME, DIST, CONFIG, KERNEL_VERSION]))
+    result_root = '/'.join(['/result', JOB,
+                            sub_test_case_id[int(len(JOB) + 1):],
+                            HOST_NAME, DIST, CONFIG, COMPILER, COMMIT]))
     while count <= LOOPS:
         # Use suffix for mutiple runs.
         if LOOPS > 1:
