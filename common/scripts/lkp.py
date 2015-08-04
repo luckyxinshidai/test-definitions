@@ -36,8 +36,8 @@ JOB = sys.argv[3]
 COMMIT = sys.argv[4]
 MONITORS = str(sys.argv[5])
 LOOPS = int(sys.argv[6])
-HOST_NAME = platform.node()
-DIST = platform.dist()[0]
+HOSTNAME = platform.node()
+ROOTFS = platform.dist()[0]
 CONFIG = 'defconfig'
 COMPILER = os.readlink('/usr/bin/gcc')
 print 'Working directory: %s' % (WD)
@@ -80,7 +80,7 @@ call(['chown', '-R', 'lkp:lkp', '/home/lkp'])
 call(['apt-get', 'update'])
 
 # Setup test job.
-SETUP_JOB = [LKP_PATH + '/bin/lkp install',
+SETUP_JOB = [LKP_PATH + '/bin/setup-local',
              LKP_PATH + '/jobs/' + JOB + '.yaml']
 print 'Setup %s test with command: %s' % (JOB, SETUP_JOB)
 if not test_result(SETUP_JOB, 'setup-' + JOB):
@@ -89,8 +89,8 @@ if not test_result(SETUP_JOB, 'setup-' + JOB):
 # Split test job.
 if not os.path.exists(WD + '/' + JOB):
     os.makedirs(WD + '/' + JOB)
-SPLIT_JOB = [LKP_PATH + '/bin/lkp split-job', MONITORS, '--output',
-            WD + '/' + JOB, LKP_PATH + '/jobs/' + JOB + '.yaml']
+SPLIT_JOB = [LKP_PATH + '/sbin/split-job', MONITORS, '--commit', COMMIT,
+             '--output', WD + '/' + JOB, LKP_PATH + '/jobs/' + JOB + '.yaml']
 print 'Splitting job %s with command: %s' % (JOB, SPLIT_JOB)
 if not test_result(SPLIT_JOB, 'split-job-' + JOB):
     sys.exit(1)
@@ -107,7 +107,7 @@ for sub_test in SUB_TESTS:
     sub_test_case_id = os.path.basename(sub_test)[:-5]
     result_root = '/'.join(['/result', JOB,
                             sub_test_case_id[int(len(JOB) + 1):],
-                            HOST_NAME, DIST, CONFIG, COMPILER, COMMIT])
+                            HOSTNAME, ROOTFS, CONFIG, COMPILER, COMMIT])
     while count <= LOOPS:
         # Use suffix for mutiple runs.
         if LOOPS > 1:
@@ -115,7 +115,8 @@ for sub_test in SUB_TESTS:
         else:
             suffix = ''
 
-        lkp_run = [LKP_PATH + '/bin/lkp run', sub_test]
+        lkp_run = [LKP_PATH + '/bin/run-local',
+                   '--set', "'compiler: + ' ' + COMPILER + '''", sub_test]
         print 'Running test %s%s with command: %s' % (sub_test_case_id,
                                                       suffix, lkp_run)
         if not test_result(lkp_run, 'run-' + sub_test_case_id + suffix):

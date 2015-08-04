@@ -16,9 +16,20 @@ metadata:
 
 install:
     git-repos:
-        - url: git://git.kernel.org/pub/scm/linux/kernel/git/wfg/lkp-tests.git 
+        - url: https://github.com/suihkulokki/lkp-tests.git
     deps:
         - bc
+        - build-essential
+        - gawk
+        - git
+        - kmod
+        - linux-tools
+        - lsb-release
+        - ruby
+        - ruby-gnuplot
+        - sysstat
+        - time
+        - xz-utils
 
 params:
     JOB: 'hackbench'
