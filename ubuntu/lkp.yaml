@@ -32,9 +32,13 @@ install:
         - xz-utils
 
 params:
+    # Used to specify jobs located in 'lkp-tests/jobs/'.
     JOB: 'hackbench'
+    # Used to specify all 40 commit hash characters.
     COMMIT: 'commit'
+    # Set MONITORS to '--no-defaults' to disable the default monitors.
     MONITORS: '--no-defaults'
+    # Set LOOPS to the times to run in the same lava_test_shell.
     LOOPS: 1
 
 run:

@@ -34,10 +34,10 @@ LKP_PATH = sys.argv[1]
 WD = sys.argv[2]
 JOB = sys.argv[3]
 COMMIT = sys.argv[4]
-MONITORS = str(sys.argv[5])
+MONITORS = sys.argv[5]
 LOOPS = int(sys.argv[6])
 HOSTNAME = platform.node()
-ROOTFS = platform.dist()[0]
+ROOTFS = str.lower(platform.dist()[0])
 CONFIG = 'defconfig'
 COMPILER = os.readlink('/usr/bin/gcc')
 print 'Working directory: %s' % (WD)
@@ -74,9 +74,9 @@ if not os.path.exists('/home/lkp'):
 
 call(['chown', '-R', 'lkp:lkp', '/home/lkp'])
 
-#f = open('/etc/apt/sources.list.d/multiverse.list', 'w')
-#f.write('deb http://ports.ubuntu.com/ubuntu-ports/ vivid multiverse\n')
-#f.close()
+f = open('/etc/apt/sources.list.d/multiverse.list', 'w')
+f.write('deb http://ports.ubuntu.com/ubuntu-ports/ vivid multiverse\n')
+f.close()
 call(['apt-get', 'update'])
 
 # Setup test job.
@@ -89,7 +89,7 @@ if not test_result(SETUP_JOB, 'setup-' + JOB):
 # Split test job.
 if not os.path.exists(WD + '/' + JOB):
     os.makedirs(WD + '/' + JOB)
-SPLIT_JOB = [LKP_PATH + '/sbin/split-job', MONITORS, '--commit', COMMIT,
+SPLIT_JOB = [LKP_PATH + '/sbin/split-job', MONITORS, '--kernel', COMMIT,
              '--output', WD + '/' + JOB, LKP_PATH + '/jobs/' + JOB + '.yaml']
 print 'Splitting job %s with command: %s' % (JOB, SPLIT_JOB)
 if not test_result(SPLIT_JOB, 'split-job-' + JOB):
@@ -104,7 +104,7 @@ SUB_TESTS = glob.glob(WD + '/' + JOB + '/*.yaml')
 for sub_test in SUB_TESTS:
     count = 1
     done = True
-    sub_test_case_id = os.path.basename(sub_test)[:-5]
+    sub_test_case_id = os.path.basename(sub_test)[:-46]
     result_root = '/'.join(['/result', JOB,
                             sub_test_case_id[int(len(JOB) + 1):],
                             HOSTNAME, ROOTFS, CONFIG, COMPILER, COMMIT])
@@ -116,7 +116,7 @@ for sub_test in SUB_TESTS:
             suffix = ''
 
         lkp_run = [LKP_PATH + '/bin/run-local',
-                   '--set', "'compiler: + ' ' + COMPILER + '''", sub_test]
+                   '--set', 'compiler: ' + COMPILER, sub_test]
         print 'Running test %s%s with command: %s' % (sub_test_case_id,
                                                       suffix, lkp_run)
         if not test_result(lkp_run, 'run-' + sub_test_case_id + suffix):
