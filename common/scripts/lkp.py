@@ -34,8 +34,8 @@ LKP_PATH = sys.argv[1]
 WD = sys.argv[2]
 JOB = sys.argv[3]
 COMMIT = sys.argv[4]
-MONITORS = sys.argv[5]
-LOOPS = sys.argv[6]
+LOOPS = int(sys.argv[5])
+MONITORS = sys.argv[6]
 HOSTNAME = platform.node()
 ROOTFS = str.lower(platform.dist()[0])
 CONFIG = 'defconfig'
@@ -43,6 +43,7 @@ COMPILER = os.readlink('/usr/bin/gcc')
 print 'Working directory: %s' % (WD)
 print 'LKP test suite path: %s' % (LKP_PATH)
 print 'About to run %s %s times' % (JOB, LOOPS)
+
 
 def test_result(test_command, test_case_id):
     # For each step of test run, print pass or fail to test log.
@@ -89,6 +90,8 @@ if not test_result(SETUP_JOB, 'setup-' + JOB):
 # Split test job.
 if not os.path.exists(WD + '/' + JOB):
     os.makedirs(WD + '/' + JOB)
+if MONITORS == 'default':
+    MONITORS = ''
 SPLIT_JOB = [LKP_PATH + '/sbin/split-job', MONITORS, '--kernel', COMMIT,
              '--output', WD + '/' + JOB, LKP_PATH + '/jobs/' + JOB + '.yaml']
 print 'Splitting job %s with command: %s' % (JOB, SPLIT_JOB)
