@@ -43,5 +43,4 @@ params:
 
 run:
     steps:
-        - './common/scripts/lkp.py $(readlink -f lkp-tests) $(pwd)
-           $JOB $COMMIT $MONITORS LOOPS'
+        - './common/scripts/lkp.py $(readlink -f lkp-tests) $(pwd) $JOB $COMMIT $MONITORS LOOPS'
