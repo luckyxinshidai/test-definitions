@@ -42,6 +42,7 @@ CONFIG = 'defconfig'
 COMPILER = os.readlink('/usr/bin/gcc')
 print 'Working directory: %s' % (WD)
 print 'LKP test suite path: %s' % (LKP_PATH)
+print 'About to run %s %s times' % (JOB, LOOPS)
 
 def test_result(test_command, test_case_id):
     # For each step of test run, print pass or fail to test log.
@@ -73,15 +74,15 @@ if not os.path.exists('/home/lkp'):
 
 call(['chown', '-R', 'lkp:lkp', '/home/lkp'])
 
-f = open('/etc/apt/sources.list.d/multiverse.list', 'w')
-f.write('deb http://ports.ubuntu.com/ubuntu-ports/ vivid multiverse\n')
-f.close()
+#f = open('/etc/apt/sources.list.d/multiverse.list', 'w')
+#f.write('deb http://ports.ubuntu.com/ubuntu-ports/ vivid multiverse\n')
+#f.close()
 call(['apt-get', 'update'])
 
 # Setup test job.
 SETUP_JOB = [LKP_PATH + '/bin/lkp install',
              LKP_PATH + '/jobs/' + JOB + '.yaml']
-print 'Set up %s test with command: %s' % (JOB, SETUP_JOB)
+print 'Setup %s test with command: %s' % (JOB, SETUP_JOB)
 if not test_result(SETUP_JOB, 'setup-' + JOB):
     sys.exit(1)
 
@@ -106,7 +107,7 @@ for sub_test in SUB_TESTS:
     sub_test_case_id = os.path.basename(sub_test)[:-5]
     result_root = '/'.join(['/result', JOB,
                             sub_test_case_id[int(len(JOB) + 1):],
-                            HOST_NAME, DIST, CONFIG, COMPILER, COMMIT]))
+                            HOST_NAME, DIST, CONFIG, COMPILER, COMMIT])
     while count <= LOOPS:
         # Use suffix for mutiple runs.
         if LOOPS > 1:
