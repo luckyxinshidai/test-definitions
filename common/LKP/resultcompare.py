@@ -5,6 +5,7 @@ import shutil
 import glob
 import subprocess
 import json
+import re
 from optparse import OptionParser
 
 LAVA_JOB1 = sys.argv[1]
@@ -65,21 +66,23 @@ for result_file in results_to_compare:
     json_data = open(result_file)
     dict = json.load(json_data)
     for item in dict:
-        diff = subprocess.check_output(['./lkp-tests/sbin/compare', '-f', item,
-                                        result_directory + '/' + commit1,
-                                        result_directory + '/' + commit2])
+        lkp_out = subprocess.check_output(['./lkp-tests/sbin/compare',
+                                           '-d', 'commit', '-f', item,
+                                           result_directory + '/' + commit1,
+                                           result_directory + '/' + commit2])
+        lkp_out = re.sub(' +',' ',lkp_out.split('\n')[5]).split(' ')
         key = subtest_id + '-' + item
-        result_dict[key] = diff.split('\n')[5] + '-' + subtest_id
+        result_dict[key] = lkp_out[2]
     json_data.close()
 
 # Print comparison results and save them to txt file.
 output = open(commit1[0:7] + '_' + commit2[0:7] + '_comparison.txt', 'w')
-header = LAVA_JOB1 + '-' + commit1[0:7] + '      %changes  ' + \
-    LAVA_JOB2 + '-' + commit2[0:7] + '  test_measurement-testcase'
+header = commit1[0:7] + '/' + commit2[0:7] + '\tmeasurement-testcase'
 print(header)
 output.write(header + '\n')
 for item in sorted(result_dict):
-    print result_dict[item]
-    output.write(result_dict[item] + '\n')
+    line = result_dict[item] + '\t\t' + item
+    print(line)
+    output.write(line + '\n')
 output.close()
 print('Result saved to %s_%s_comparison.txt' % (commit1[0:7], commit2[0:7]))
