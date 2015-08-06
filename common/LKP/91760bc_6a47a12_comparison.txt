@@ -1,11 +1,11 @@
-460662-91760bc      %changes  460661-6a47a12  test_measurement-testcase
-     24292           +20.5%      29268        hackbench.throughput-1600%-process-pipe
-     17798           +17.7%      20941        hackbench.throughput-1600%-process-socket
-     21619           +20.3%      26001        hackbench.throughput-1600%-threads-pipe
-     16835           +17.1%      19714        hackbench.throughput-1600%-threads-socket
-     16288           +15.9%      18883        hackbench.throughput-50%-process-pipe
-     12324           +16.6%      14372        hackbench.throughput-50%-process-socket
-     14866           +15.8%      17217        hackbench.throughput-50%-threads-pipe
-     11509           +16.3%      13382        hackbench.throughput-50%-threads-socket
-     11203           +10.4%      12365        netpipe.bigger_5M_Mbps.avg-tcp
-     15.04           -17.8%      12.37        netpipe.less_8K_usec.avg-tcp
+91760bc/6a47a12	measurement-testcase
++20.5%		1600%-process-pipe-hackbench.throughput
++17.7%		1600%-process-socket-hackbench.throughput
++20.3%		1600%-threads-pipe-hackbench.throughput
++17.1%		1600%-threads-socket-hackbench.throughput
++15.9%		50%-process-pipe-hackbench.throughput
++16.6%		50%-process-socket-hackbench.throughput
++15.8%		50%-threads-pipe-hackbench.throughput
++16.3%		50%-threads-socket-hackbench.throughput
++10.4%		tcp-netpipe.bigger_5M_Mbps.avg
+-17.8%		tcp-netpipe.less_8K_usec.avg
