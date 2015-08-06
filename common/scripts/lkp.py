@@ -71,8 +71,7 @@ else:
     print 'User lkp already exists.'
 
 if not os.path.exists('/home/lkp'):
-    call(['mkdir', '-p', '/home/lkp'])
-
+    os.makedirs('/home/lkp')
 call(['chown', '-R', 'lkp:lkp', '/home/lkp'])
 
 f = open('/etc/apt/sources.list.d/multiverse.list', 'w')
