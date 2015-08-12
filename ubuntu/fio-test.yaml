@@ -25,6 +25,8 @@ params:
 
 run:
     steps:
+        - "chown root:root /usr/bin/sudo"
+        - "chmod 4755 /usr/bin/sudo"
         - "cd ubuntu/scripts; ./fio-test.py $DeviceID"
 
 parse:
