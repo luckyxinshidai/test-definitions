@@ -31,7 +31,7 @@ os.chdir(home_path)
 print os.getcwd()
 
 # Save partition layout to a local file for reference
-commands.getstatusoutput("sudo fdisk -l > partition_layout.txt 2>&1")
+commands.getstatusoutput("fdisk -l > partition_layout.txt 2>&1")
 device_name = sys.argv[1]
 
 
