@@ -20,7 +20,7 @@ metadata:
 install:
     steps:
         - 'VERSION=20150420'
-        - 'rm -rf /opt/ltp'
+        - 'test -d /opt/ltp/ && rm -rf /opt/ltp'
         - 'mkdir -p /opt/ltp'
         - 'cd /opt/ltp'
         - 'wget http://sourceforge.net/projects/ltp/files/LTP%20Source/ltp-$VERSION/ltp-full-$VERSION.tar.xz'
