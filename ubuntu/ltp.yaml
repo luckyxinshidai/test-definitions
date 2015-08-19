@@ -29,7 +29,6 @@ install:
         - './configure --prefix=$(readlink -f build)'
         - 'make all'
         - 'make SKIP_IDCHECK=1 install'
-        - 'cd -'
     deps:
         - bzip2
         - flex
