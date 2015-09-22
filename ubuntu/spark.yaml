@@ -23,7 +23,6 @@ run:
         - 'cd jdk8-server-release-1508/jre/lib/security'
         - 'mv cacerts cacerts-original'
         - 'ln -svf /etc/ssl/certs/java/cacerts .'
-        - 'cd'
         - 'export JAVA_HOME=$PWD/jdk8-server-release-1508'
         - 'export PATH=$PATH:$PWD/jdk8-server-release-1508/bin'
         - 'git clone git://github.com/apache/spark.git -b branch-1.4'
