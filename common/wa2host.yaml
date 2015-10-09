@@ -1,0 +1,41 @@
+metadata:
+    name: Workload Automatioin
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Run Workload Automation test suite on Linaro Ubuntu"
+    maintainer:
+        - chase.qi@linaro.org
+    os:
+        - ubuntu
+    scope:
+        - functional
+        - performance
+    devices:
+        - mustang
+        - juno
+
+install:
+    deps:
+        - build-essential
+        - git
+        - linux-tools
+        - sysstat
+        - time
+        - xz-utils
+        - python-pip
+        - python-dev
+        - openssh-client
+        - openssh-server
+
+params:
+    # Specify a workload spec ID from an agenda to run. This option may be used
+    # to specify multiple IDs.
+    ID: 'all'
+    AGENDA: 'wa2-linux-agenda.yaml'
+
+run:
+    steps:
+        - 'lava-wait ipv4'
+        - 'ipdata=$(cat /tmp/lava_multi_node_cache.txt | cut -d = -f 2)'
+        - 'pip install --upgrade pip setuptools'
+        - 'pip install pexpect pyserial pyyaml docutils python-dateutil wlauto'
+        - './common/scripts/wa2.py $ID $AGENDA $ipdata'

@@ -1,0 +1,14 @@
+config:
+        instrumentation: [~execution_time]
+        result_processors: [json]
+global:
+        iterations: 2
+workloads:
+        - id: 01_dhry
+          name: dhrystone
+          params:
+                mloops: 5
+                threads: 1
+        - id: 02_memc
+          name: memcpy
+ 
