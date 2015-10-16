@@ -17,7 +17,6 @@ install:
     deps:
         - build-essential
         - git
-        - linux-tools
         - sysstat
         - time
         - xz-utils
