@@ -26,10 +26,10 @@ install:
         - openssh-client
         - openssh-server
 
-params:
-
 run:
     steps:
-        - echo "root:linarolinaro" | chpasswd 
+        - echo "root:linarolinaro" | chpasswd
+        - sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+        - service ssh restart
         - ip=$(ifconfig eth0 |grep "inet addr:" |awk '{print substr($2, 6)}')
         - lava-send ipv4 $ip 

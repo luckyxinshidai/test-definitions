@@ -35,7 +35,7 @@ run:
     steps:
         - 'lava-wait ipv4'
         - 'ipdata=$(cat /tmp/lava_multi_node_cache.txt | cut -d = -f 2)'
-        - 'sed -i s/target_ipdata/$ip/ wa2-linux-config.py'
+        - 'sed -i s/target_ip/$ip/ wa2-linux-config.py'
         - 'pip install --upgrade pip setuptools'
         - 'pip install pexpect pyserial pyyaml docutils python-dateutil wlauto'
-        - 'wa run $AGENDA --config wa2-linux-config.py'
+        - 'wa run ./commont/$AGENDA --config ./common/wa2-linux-config.py'
