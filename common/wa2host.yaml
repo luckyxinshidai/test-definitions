@@ -29,13 +29,13 @@ install:
 params:
     # Specify a workload spec ID from an agenda to run. This option may be used
     # to specify multiple IDs.
-    ID: 'all'
     AGENDA: 'wa2-linux-agenda.yaml'
 
 run:
     steps:
         - 'lava-wait ipv4'
         - 'ipdata=$(cat /tmp/lava_multi_node_cache.txt | cut -d = -f 2)'
+        - 'sed -i s/target_ipdata/$ip/ wa2-linux-config.py'
         - 'pip install --upgrade pip setuptools'
         - 'pip install pexpect pyserial pyyaml docutils python-dateutil wlauto'
-        - './common/scripts/wa2.py $ID $AGENDA $ipdata'
+        - 'wa run $AGENDA --config wa2-linux-config.py'

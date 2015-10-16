@@ -1,8 +1,8 @@
-reboot_policy = 'as_needed'
+reboot_policy = 'never'
 execution_order = 'by_iteration'
 device = 'generic_linux'
 device_config = dict(
-    host = '10.0.0.13',
+    host = 'target_ip',
     username = 'root',
     password = 'linarolinaro'
 )
