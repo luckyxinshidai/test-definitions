@@ -1,0 +1,35 @@
+metadata:
+    name: wa2-target
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Run Workload Automation test suite on Linaro Ubuntu"
+    maintainer:
+        - chase.qi@linaro.org
+    os:
+        - ubuntu
+    scope:
+        - functional
+        - performance
+    devices:
+        - mustang
+        - juno
+
+install:
+    deps:
+        - build-essential
+        - git
+        - linux-tools
+        - sysstat
+        - time
+        - xz-utils
+        - python-pip
+        - python-dev
+        - openssh-client
+        - openssh-server
+
+run:
+    steps:
+        - echo "root:linarolinaro" | chpasswd
+        - sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+        - service ssh restart
+        - ip=$(ifconfig eth0 |grep "inet addr:" |awk '{print substr($2, 6)}')
+        - lava-send ipv4 $ip 
