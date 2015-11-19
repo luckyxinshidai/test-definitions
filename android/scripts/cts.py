@@ -32,6 +32,8 @@ import threading
 import urllib
 import xml.etree.ElementTree as ET
 import zipfile
+import pexpect
+import time
 
 CTS_STDOUT = "cts_stdout.txt"
 CTS_LOGCAT = "cts_logcat.txt"
@@ -159,23 +161,54 @@ target_device = sys.argv[2]
 cts_stdout = open(CTS_STDOUT, 'w')
 command = 'android-cts/tools/cts-tradefed ' + ' '.join([str(para) for para in sys.argv[3:]])
 print command
-return_check = subprocess.Popen(shlex.split(command), stdout=cts_stdout)
+
+if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
+# On Fast Models, CTS test will exit abnormally when pipe used, use pexpect
+# module here as a work around.
+    fvp = True
+    return_check = pexpect.spawn(command, logfile=cts_stdout)
+else:
+    return_check = subprocess.Popen(shlex.split(command), stdout=cts_stdout)
+
 cts_logcat_out = open(CTS_LOGCAT, 'w')
 cts_logcat_command = "adb logcat"
 cts_logcat = subprocess.Popen(shlex.split(cts_logcat_command), stdout=cts_logcat_out)
-# start heartbeat process
-heartbeat = Heartbeat(target_device, [return_check, cts_logcat])
-heartbeat.daemon=True
-heartbeat.start()
-if return_check.wait() != 0:
-    # even though the whole command may not run successfully, continue to submit the existing result anyway
-    # add test case CTS-Command-Check to indicate this incident
-    print 'CTS command: ' + command + ' run failed!'
-    #collect_result(testcase_id='CTS-Command-Check', result='fail')
-    subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
-heartbeat.shutdown()
-cts_stdout.close()
+
+if fvp:
+    # Since fvp is slow, give it some time to start the test.
+    print 'Starting CTS %s test...' % command.split(' ')[4]
+    time.sleep(180)
+    # Send exit command to cts-tf shell, so that TF will exit when remaining
+    # tests complete.
+    try:
+        if not return_check.expect('cts-tf >'):
+            return_check.sendline('exit')
+    except pexpect.TIMEOUT:
+        subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
+        sys.exit(1)
+    # When expect([pexpect.EOF]) returns 0, isalive() will be set to Flase. Use
+    # it as a simple hearbeat, but there is no additional adb check here. 
+    while return_check.isalive():
+        try:
+	    return_check.expect([pexpect.EOF], timeout=30)
+	except pexpect.TIMEOUT:
+	    print '%s is running...' % command.split(' ')[4]
+    cts_logcat.kill()
+else:
+    # start heartbeat process
+    heartbeat = Heartbeat(target_device, [return_check, cts_logcat])
+    heartbeat.daemon=True
+    heartbeat.start()
+    if return_check.wait() != 0:
+        # even though the whole command may not run successfully, continue to submit the existing result anyway
+        # add test case CTS-Command-Check to indicate this incident
+        print 'CTS command: ' + command + ' run failed!'
+        #collect_result(testcase_id='CTS-Command-Check', result='fail')
+        subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
+    heartbeat.shutdown()
+
 cts_logcat_out.close()
+cts_stdout.close()
 
 # compress then attach the CTS stdout file to LAVA bundle
 with open(CTS_STDOUT, 'rb') as f_in, gzip.open(CTS_STDOUT + '.gz', 'wb') as f_out:
