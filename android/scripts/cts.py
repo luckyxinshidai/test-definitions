@@ -175,8 +175,9 @@ cts_logcat_command = "adb logcat"
 cts_logcat = subprocess.Popen(shlex.split(cts_logcat_command), stdout=cts_logcat_out)
 
 if fvp:
-    # Since fvp is slow, give it some time to start the test.
     print 'Starting CTS %s test...' % command.split(' ')[4]
+    print 'Start time: %s' % datetime.datetime.now()
+    # Since fvp is slow, give it some time to start the test.
     time.sleep(180)
     # Send exit command to cts-tf shell, so that TF will exit when remaining
     # tests complete.
@@ -193,6 +194,7 @@ if fvp:
 	    return_check.expect([pexpect.EOF], timeout=30)
 	except pexpect.TIMEOUT:
 	    print '%s is running...' % command.split(' ')[4]
+    print 'End time: %s' % datetime.datetime.now()
     cts_logcat.kill()
 else:
     # start heartbeat process
