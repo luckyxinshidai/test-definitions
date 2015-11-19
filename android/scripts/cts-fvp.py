@@ -178,17 +178,20 @@ heartbeat.daemon=True
 heartbeat.start()
 
 if fvp:
+    # Send exit command to cts-tf shell, so that TF will exit when remaining
+    # tests complete.
     try:
-        if not child.expect('cts-tf >'):
-            child.sendline('exit')
-        else:
-            subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
-            sys.exit(1)
+        if not return_check.expect('cts-tf >'):
+            return_check.sendline('exit')
+    except pexpect.TIMEOUT:
+        subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
+        sys.exit(1)
+    # When expect([pexpect.EOF]) returns 0, isalive() will be set to Flase
     while return_check.isalive():
         try:
-	    p.pexpect([pexpect.EOF], timeout=30)
+	    return_check.expect([pexpect.EOF], timeout=30)
 	except pexpect.TIMEOUT:
-	    print('CTS test on fvp is running...')
+	    pass
 else return_check.wait() != 0:
     # even though the whole command may not run successfully, continue to submit the existing result anyway
     # add test case CTS-Command-Check to indicate this incident
