@@ -178,7 +178,7 @@ if fvp:
     print 'Starting CTS %s test...' % command.split(' ')[4]
     print 'Start time: %s' % datetime.datetime.now()
     # Since fvp is slow, give it some time to start the test.
-    time.sleep(180)
+    time.sleep(300)
     # Send exit command to cts-tf shell, so that TF will exit when remaining
     # tests complete.
     try:
@@ -191,7 +191,7 @@ if fvp:
     # it as a simple hearbeat, but there is no additional adb check here. 
     while return_check.isalive():
         try:
-	    return_check.expect([pexpect.EOF], timeout=30)
+	    return_check.expect([pexpect.EOF], timeout=60)
 	except pexpect.TIMEOUT:
 	    print '%s is running...' % command.split(' ')[4]
     print 'End time: %s' % datetime.datetime.now()
