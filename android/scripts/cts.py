@@ -165,7 +165,6 @@ print command
 if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
 # On Fast Models, CTS test will exit abnormally when pipe used, use pexpect
 # module here as a work around.
-    fvp = True
     return_check = pexpect.spawn(command, logfile=cts_stdout)
 else:
     return_check = subprocess.Popen(shlex.split(command), stdout=cts_stdout)
@@ -174,7 +173,7 @@ cts_logcat_out = open(CTS_LOGCAT, 'w')
 cts_logcat_command = "adb logcat"
 cts_logcat = subprocess.Popen(shlex.split(cts_logcat_command), stdout=cts_logcat_out)
 
-if fvp:
+if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
     print 'Starting CTS %s test...' % command.split(' ')[4]
     print 'Start time: %s' % datetime.datetime.now()
     # Since fvp is slow, give it some time to start the test.
