@@ -163,6 +163,11 @@ command = 'android-cts/tools/cts-tradefed ' + ' '.join([str(para) for para in sy
 print command
 
 if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
+    fvp = True
+else:
+    fvp = False
+
+if fvp:
 # On Fast Models, CTS test will exit abnormally when pipe used, use pexpect
 # module here as a work around.
     return_check = pexpect.spawn(command, logfile=cts_stdout)
@@ -173,7 +178,7 @@ cts_logcat_out = open(CTS_LOGCAT, 'w')
 cts_logcat_command = "adb logcat"
 cts_logcat = subprocess.Popen(shlex.split(cts_logcat_command), stdout=cts_logcat_out)
 
-if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
+if fvp:
     print 'Starting CTS %s test...' % command.split(' ')[4]
     print 'Start time: %s' % datetime.datetime.now()
     # Since fvp is slow, give it some time to start the test.
