@@ -176,6 +176,7 @@ if 'fvp' in lava_cache.read():
     fvp = True
 lava_cache.close()
 if fvp:
+    sys.exit(1)
     return_check = pexpect.spawn(command, logfile=cts_stdout)
     print 'Starting CTS %s test...' % command.split(' ')[4]
     print 'Start time: %s' % datetime.datetime.now()
