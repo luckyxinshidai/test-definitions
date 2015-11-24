@@ -170,13 +170,7 @@ cts_logcat = subprocess.Popen(shlex.split(cts_logcat_command), stdout=cts_logcat
 
 # On Fast Models, CTS test will exit abnormally when pipe used(Bug 1904), use
 # pexpect here as a work around.
-fvp = False
-lava_cache = open('/tmp/lava_multi_node_cache.txt')
-if 'fvp' in lava_cache.read():
-    fvp = True
-lava_cache.close()
-if fvp:
-    sys.exit(1)
+if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
     return_check = pexpect.spawn(command, logfile=cts_stdout)
     print 'Starting CTS %s test...' % command.split(' ')[4]
     print 'Start time: %s' % datetime.datetime.now()
