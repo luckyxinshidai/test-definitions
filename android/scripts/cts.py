@@ -168,10 +168,10 @@ cts_logcat_out = open(CTS_LOGCAT, 'w')
 cts_logcat_command = "adb logcat"
 cts_logcat = subprocess.Popen(shlex.split(cts_logcat_command), stdout=cts_logcat_out)
 
-# On Fast Models, CTS test will exit abnormally when pipe used(Bug 1904), use
-# pexpect here as a work around.
 if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
-    return_check = pexpect.spawn(command, logfile=cts_stdout)
+    # On Fast Models, CTS test will exit abnormally when pipe used(Bug 1904), use
+    # pexpect here as a work around.
+    child = pexpect.spawn(command, logfile=cts_stdout)
     print 'Starting CTS %s test...' % command.split(' ')[4]
     print 'Start time: %s' % datetime.datetime.now()
     # Since fvp is slow, give it some time to start the test.
@@ -179,21 +179,25 @@ if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
     # Send exit command to cts-tf shell, so that TF will exit when remaining
     # tests complete.
     try:
-        if not return_check.expect('cts-tf >'):
-            return_check.sendline('exit')
+        if not child.expect('cts-tf >'):
+            child.sendline('exit')
     except pexpect.TIMEOUT:
-        subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
+        subprocess.call(['lava-test-case', 'CTS-Command-Check',
+                         '--result', 'fail'])
         sys.exit(1)
-    while return_check.isalive():
+    while child.isalive():
         # When expect([pexpect.EOF]) returns 0, isalive() will be set to Flase.
         try:
-            subprocess.check_output(['adb', '-s', target_device,
-                                     'shell', 'echo', 'OK'])
+            subprocess.check_output(['adb', '-s', target_device, 'shell',
+                                     'echo', 'OK'])
         except subprocess.CalledProcessError:
             print 'Terminating CTS test as adb connection is lost'
-            return_check.terminate(force=True)
+            child.terminate(force=True)
+            subprocess.call(['lava-test-case', 'CTS-Command-Check',
+                             '--result', 'fail'])
+            break
         try:
-            return_check.expect([pexpect.EOF], timeout=60)
+            child.expect([pexpect.EOF], timeout=60)
         except pexpect.TIMEOUT:
             print '%s is running...' % command.split(' ')[4]
     print 'End time: %s' % datetime.datetime.now()
