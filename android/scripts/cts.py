@@ -175,7 +175,7 @@ if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
     print 'Starting CTS %s test...' % command.split(' ')[4]
     print 'Start time: %s' % datetime.datetime.now()
     # Since fvp is slow, give it some time to start the test.
-    time.sleep(300)
+    time.sleep(120)
     # Send exit command to cts-tf shell, so that TF will exit when remaining
     # tests complete.
     try:
