@@ -193,7 +193,7 @@ if fvp:
         # When expect([pexpect.EOF]) returns 0, isalive() will be set to Flase.
         try:
             subprocess.check_output(['adb', '-s', target_device,
-                                     'shell', 'echo', 'ADB is OK'])
+                                     'shell', 'echo', 'OK'])
         except subprocess.CalledProcessError:
             print 'Terminating CTS test as adb connection is lost'
             return_check.terminate(force=True)
