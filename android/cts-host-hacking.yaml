@@ -18,14 +18,16 @@ install:
         - xz-utils
         - python-lxml
         - python-setuptools
+        - python-pexpect
         - android-tools-adb
         - android-tools-fastboot
         - zip
         - libc6:i386
         - libncurses5:i386
         - libstdc++6:i386
-        - android-tools-adb
-        - android-tools-fastboot
+        - lib32z1-dev
+        - libc6-dev-i386
+        - lib32gcc1
     steps:
         - apt-get install -y $JDK $JRE
 
@@ -33,11 +35,17 @@ params:
     JDK: "default-jdk"
     JRE: "default-jre"
     CTS_URL: "http://testdata.validation.linaro.org/cts/android-cts-5.0-armv8.zip"
+    BUILD_TOOLS_URL: "http://testdata.validation.linaro.org/apks/workload-automation/build-tools.tar.gz"
     TEST_NAME: "android-cts-5.0-armv8"
     TEST_PARAMS: "run cts --package android.aadb --disable-reboot"
 
 run:
     steps:
+        - wget $BUILD_TOOLS_URL -O build-tools.tar.gz
+        - tar zxvf build-tools.tar.gz
+        - AAPT_HOME=`pwd`/build-tools
+        - PATH=${AAPT_HOME}/android-4.4/:${PATH}
+        - export PATH
         - lava-wait $TEST_NAME-send-ip
         - IPADDR=`awk -F '=' '{print $2}' /tmp/lava_multi_node_cache.txt`
         - if [ $IPADDR != "_MISSING_" ]
@@ -48,9 +56,9 @@ run:
         - echo $TEST_PARAMS
         - adb -s $IPADDR wait-for-device
         - adb devices
-        - "./android/scripts/cts.py $CTS_URL $IPADDR $TEST_PARAMS"
+        - ./android/scripts/cts.py $CTS_URL $IPADDR $TEST_PARAMS
         - echo "processes running"
         - ps
         - fi
-        #- lava-sync $TEST_NAME-finished
-
+        # - lava-sync $TEST_NAME-finished
+        # - rm -fr build-tools.tar.gz ${AAPT_HOME}
