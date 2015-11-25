@@ -182,19 +182,16 @@ if 'fvp' in open('/tmp/lava_multi_node_cache.txt').read():
         if not child.expect('cts-tf >'):
             child.sendline('exit')
     except pexpect.TIMEOUT:
-        subprocess.call(['lava-test-case', 'CTS-Command-Check',
-                         '--result', 'fail'])
+        subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
+        print 'Failed to launch CTS shell, exiting...'
         sys.exit(1)
     while child.isalive():
         # When expect([pexpect.EOF]) returns 0, isalive() will be set to Flase.
-        try:
-            subprocess.check_output(['adb', '-s', target_device, 'shell',
-                                     'echo', 'OK'])
-        except subprocess.CalledProcessError:
+        fvp_adb_check = subprocess.Popen(['adb', '-s', target_device, 'shell', 'echo', 'OK'])
+        if fvp_adb_check.wait() != 0:
             print 'Terminating CTS test as adb connection is lost'
             child.terminate(force=True)
-            subprocess.call(['lava-test-case', 'CTS-Command-Check',
-                             '--result', 'fail'])
+            subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
             break
         try:
             child.expect([pexpect.EOF], timeout=60)

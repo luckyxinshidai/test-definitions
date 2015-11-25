@@ -56,8 +56,7 @@ run:
         - echo $TEST_PARAMS
         - adb -s $IPADDR wait-for-device
         - adb devices
-        - ./android/scripts/cts-debug.py $CTS_URL $IPADDR $TEST_PARAMS
-        #- ./android/scripts/cts.py $CTS_URL $IPADDR $TEST_PARAMS
+        - ./android/scripts/cts.py $CTS_URL $IPADDR $TEST_PARAMS
         - echo "processes running"
         - ps
         - fi
