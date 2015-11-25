@@ -183,21 +183,18 @@ if 'tc2' in open('/tmp/lava_multi_node_cache.txt').read():
         if not child.expect('cts-tf >'):
             child.sendline('exit')
     except pexpect.TIMEOUT:
-        subprocess.call(['lava-test-case', 'CTS-Command-Check',
-                         '--result', 'fail'])
+        subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
         sys.exit(1)
     while child.isalive():
         # When expect([pexpect.EOF]) returns 0, isalive() will be set to Flase.
-        try:
-            print 'debug2: about to run adb check'
-            subprocess.check_output(['adb', '-s', target_device, 'shell',
-                                     'echo', 'OK'])
-        except subprocess.CalledProcessError:
-            print 'Terminating CTS test as adb connection is lost'
-            child.terminate(force=True)
-            subprocess.call(['lava-test-case', 'CTS-Command-Check',
-                             '--result', 'fail'])
-            break
+        #try:
+            #print 'debug2: about to run adb check'
+            #subprocess.check_output(['adb', '-s', target_device, 'shell', 'echo', 'OK'])
+        #except subprocess.CalledProcessError:
+            #print 'Terminating CTS test as adb connection is lost'
+            #child.terminate(force=True)
+            #subprocess.call(['lava-test-case', 'CTS-Command-Check', '--result', 'fail'])
+            #break
         try:
             print 'debug3: about to check pexpect output'
             child.expect([pexpect.EOF], timeout=60)
