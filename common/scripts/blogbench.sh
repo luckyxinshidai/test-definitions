@@ -36,9 +36,9 @@ for test in writes reads
 do
     score=$(grep "Final score for $test" blogbench.txt | awk '{print $NF}')
     if [ -n $score ]; then
-        lava-test-case blogbench-$i --result pass --measurement $score --units none
+        lava-test-case blogbench-$test --result pass --measurement $score --units none
     else
-        lava-test-case blogbench-$i --result fail --measurement $score --units none
+        lava-test-case blogbench-$test --result fail --measurement $score --units none
     fi
 done 
 
