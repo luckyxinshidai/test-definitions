@@ -13,6 +13,7 @@ metadata:
     devices:
         - hi6220-hikey
         - apq8016-sbc
+        - mustang
 
 install:
     steps:
@@ -27,7 +28,8 @@ install:
         - wget
 
 params:
-    ITERATION: 10
+    # Blogbench run 30 iterations by default.
+    ITERATION: 30
 
 run:
     steps:
