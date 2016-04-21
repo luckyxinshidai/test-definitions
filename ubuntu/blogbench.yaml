@@ -30,7 +30,8 @@ install:
 params:
     # Blogbench run 30 iterations by default.
     ITERATION: 30
-    # Specify disk partition for nfsrootfs boot.
+    # Specify a local disk partition for nfsrootfs boot.
+    # For example: /dev/sda1
     PARTITION: ''
 
 run:
