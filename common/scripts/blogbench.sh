@@ -21,6 +21,18 @@
 # Author: Chase Qi <chase.qi@linaro.org>
 
 iteration=$1
+partition=$2
+
+# Set the directory for blogbench test.
+if [ -n "$partition" ]; then
+    if [ -z "$(mount | grep $partition)" ]; then
+        mount $partition /mnt
+        cd /mnt/
+    else
+        mount_point=$(mount | grep $partition | awk '{print $3}')
+        cd $mount_point
+    fi
+fi
 mkdir ./bench
 
 # Run blogbench test.
@@ -35,7 +47,7 @@ fi
 for test in writes reads
 do
     score=$(grep "Final score for $test" blogbench.txt | awk '{print $NF}')
-    if [ -n $score ]; then
+    if [ -n "$score" ]; then
         lava-test-case blogbench-$test --result pass --measurement $score --units none
     else
         lava-test-case blogbench-$test --result fail --measurement $score --units none
