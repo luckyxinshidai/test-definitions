@@ -1,5 +1,5 @@
 metadata:
-    name: xtest
+    name: optee-xtest
     format: "Lava-Test-Shell Test Definition 1.0"
     description: "OP-TEE sanity test suite"
     maintainer:
@@ -21,4 +21,4 @@ params:
 
 run:
     steps:
-        - './android/scripts/xtest.sh $LEVEL $TEST_SUITE'
+        - '/system/bin/sh ./android/scripts/xtest.sh $LEVEL $TEST_SUITE'
