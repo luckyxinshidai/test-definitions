@@ -76,22 +76,24 @@ benchmark_parser() {
 stats_parser() {
     for i in "subtests" "test cases"; do
         stats=$(egrep "^[0-9]+ $i of which [0-9]+ failed" \
-                "${TEST_SUITE}"_output.txt)
+            "${TEST_SUITE}"_output.txt)
         total=$(echo "${stats}" | awk '{print $1}')
         fails=$(echo "${stats}" | awk '{print $(NF-1)}')
         passes=$(( total - fails ))
 
         test "$i" = "test cases" && i="tests"
-        lava-test-case "xtest-$i-fails" --result "pass" --measurement "${fails}"
+        lava-test-case "xtest-$i-fails" --result "pass" \
+            --measurement "${fails}" --units "tests"
         lava-test-case "xtest-$i-passes" --result "pass" \
-            --measurement "${passes}"
+            --measurement "${passes}" --units "tests"
         lava-test-case "xtest-$i-fail-rate" --result "pass" \
-            --measurement "${fails}"/"${total}"
+            --measurement "${fails}"/"${total}" --units "percent"
     done
 
     skip=$(egrep "^[0-9]+ test case was skipped" \
-           "${TEST_SUITE}"_output.txt | awk '{print $1}')
-    lava-test-case xtest-tests-skipped --result "pass" --measurement "${skip}"
+        "${TEST_SUITE}"_output.txt | awk '{print $1}')
+    lava-test-case xtest-tests-skipped --result "pass" \
+        --measurement "${skip}" --units "tests"
 
 }
 
