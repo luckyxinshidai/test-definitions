@@ -2,7 +2,7 @@
 #
 # Run OP-TEE sanity test suite.
 #
-# Copyright (C) 2010 - 2014, Linaro Limited.
+# Copyright (C) 2010 - 2016, Linaro Limited.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -73,6 +73,21 @@ benchmark_parser() {
     done < "${TEST_SUITE}"_result.txt
 }
 
+stats_parser() {
+    for i in "subtests" "test cases"; do
+        stats=$(egrep "^[0-9]+ $i of which [0-9]+ failed" \
+                "${TEST_SUITE}"_output.txt)
+        total=$(echo "${stats}" | awk '{print $1}')
+        fails=$(echo "${stats}" | awk '{print $(NF-1)}')
+        passes=$(( total - fails ))
+
+        test "$i" = "test cases" && i="test"
+        lava-test-case xtest-$i-fails --result pass --measurement "${fails}"
+        lava-test-case xtest-$i-passes --result pass --measurement "${passes}"
+        lava-test-case xtest-$i-fail-rate --result pass --measurement "${fails}"/"${total}"
+    done
+}
+
 # Run xtest
 xtest -l "${LEVEL}" -t "${TEST_SUITE}" 2>&1 | tee "${TEST_SUITE}"_output.txt
 if [ $? -eq 0 ]; then
@@ -82,6 +97,7 @@ else
 fi
 
 # Parse test result.
+stats_parser
 if [ "${TEST_SUITE}" = "regression" ]; then
     pass_fail_parser 3
 elif [ "${TEST_SUITE}" = "benchmark" ]; then
