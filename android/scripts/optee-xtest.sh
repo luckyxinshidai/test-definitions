@@ -82,9 +82,10 @@ stats_parser() {
         passes=$(( total - fails ))
 
         test "$i" = "test cases" && i="tests"
-        lava-test-case xtest-$i-fails --result "pass" --measurement "${fails}"
-        lava-test-case xtest-$i-passes --result "pass" --measurement "${passes}"
-        lava-test-case xtest-$i-fail-rate --result "pass" \
+        lava-test-case "xtest-$i-fails" --result "pass" --measurement "${fails}"
+        lava-test-case "xtest-$i-passes" --result "pass" \
+            --measurement "${passes}"
+        lava-test-case "xtest-$i-fail-rate" --result "pass" \
             --measurement "${fails}"/"${total}"
     done
 
