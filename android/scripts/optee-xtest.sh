@@ -81,11 +81,17 @@ stats_parser() {
         fails=$(echo "${stats}" | awk '{print $(NF-1)}')
         passes=$(( total - fails ))
 
-        test "$i" = "test cases" && i="test"
-        lava-test-case xtest-$i-fails --result pass --measurement "${fails}"
-        lava-test-case xtest-$i-passes --result pass --measurement "${passes}"
-        lava-test-case xtest-$i-fail-rate --result pass --measurement "${fails}"/"${total}"
+        test "$i" = "test cases" && i="tests"
+        lava-test-case xtest-$i-fails --result "pass" --measurement "${fails}"
+        lava-test-case xtest-$i-passes --result "pass" --measurement "${passes}"
+        lava-test-case xtest-$i-fail-rate --result "pass" \
+            --measurement "${fails}"/"${total}"
     done
+
+    skip=$(egrep "^[0-9]+ test case was skipped" \
+           "${TEST_SUITE}"_output.txt | awk '{print $1}')
+    lava-test-case xtest-tests-skipped --result "pass" --measurement "${skip}"
+
 }
 
 # Run xtest
