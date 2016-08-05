@@ -133,10 +133,15 @@ parse_output(){
     fi
 }
 
-
+# Test run.
 ! check_root && error_msg "This script must be run as root"
+
+pkgs="e2fsprogs dosfstools"
+install_deps "${pkgs}"
+
 [ -f "${RESULT_FILE}" ] && \
 mv "${RESULT_FILE}" "${RESULT_FILE}_$(date +%Y%m%d%H%M%S)"
+
 prepare_partition
 info_msg "dd test directory: $(pwd)"
 dd_write
