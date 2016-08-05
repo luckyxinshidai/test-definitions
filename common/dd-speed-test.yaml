@@ -9,6 +9,8 @@ metadata:
         - fedora
     devices:
         - mustang
+        - hi6220-hikey
+        - apq8016-sbc
     scope:
         - performance
     environment:

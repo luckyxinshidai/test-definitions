@@ -23,7 +23,9 @@
 . ./common/scripts/include/sh-test-lib
 
 WD="$(pwd)"
+info_msg "Wroking directory: ${WD}"
 RESULT_FILE="${WD}/result.txt"
+info_msg "Result will be saved to: ${RESULT_FILE}"
 ITERATION="5"
 while getopts "p:t:i:" o; do
   case "$o" in
@@ -33,6 +35,7 @@ while getopts "p:t:i:" o; do
     # CAUTION: if FS_TYPE not equal to the existing fs type of the partition
     # specified with '-p', the partition will be formatted.
     t) FS_TYPE="${OPTARG}" ;;
+    # You may need to run dd test 4-5 times for an accurate evaluation.
     i) ITERATION="${OPTARG}" ;;
   esac
 done
@@ -56,7 +59,7 @@ prepare_partition(){
                 if [ $? -ne 0 ]; then
                     error_msg "unable to format ${PARTITION}"
                 else
-                    info_msg "${PARTITION} formatted successfully"
+                    info_msg "${PARTITION} formatted to ${FS_TYPE}"
                 fi
             fi
         fi
@@ -69,7 +72,7 @@ prepare_partition(){
              if [ $? -ne 0 ]; then
                  error_msg "Unable to mount ${PARTITIOIN}"
              else
-                 info_msg "${PARTITION} mounted successfully"
+                 info_msg "${PARTITION} mounted to ${mount_point}"
              fi
          fi
          cd "${mount_point}"
@@ -104,12 +107,19 @@ dd_read(){
 
 parse_output(){
     local test="$1"
+    local test_case_id="${test}"
+    [ -n "${FS_TYPE}" ] && test_case_id="${FS_TYPE}-${test_case_id}"
+    if [ -n "${PARTITION}" ]; then
+        partition_no="$(echo "${PARTITION}" |awk -F '/' '{print $NF}')"
+        test_case_id="${partition_no}-${test_case_id}"
+    fi
+
     itr=1
     while read line; do
         if echo "${line}" | egrep -q "(M|G)B/s"; then
             measurement="$(echo "${line}" | awk '{print $(NF-1)}')"
             units="$(echo "${line}" | awk '{print $NF}')"
-            add_metric "${test}-itr${itr}" "${measurement}" "${units}"
+            add_metric "${test_case_id}-itr${itr}" "${measurement}" "${units}"
             itr=$(( itr + 1 ))
         fi
     done < "${WD}/${test}"-output.txt
@@ -127,9 +137,9 @@ parse_output(){
                             print "units="units
                        }' "${WD}/${test}"-output.txt)"
 
-        add_metric "${test}-mean" "${mean}" "${units}"
-        add_metric "${test}-min" "${min}" "${units}"
-        add_metric "${test}-max" "${max}" "${units}"
+        add_metric "${test_case_id}-mean" "${mean}" "${units}"
+        add_metric "${test_case_id}-min" "${min}" "${units}"
+        add_metric "${test_case_id}-max" "${max}" "${units}"
     fi
 }
 
