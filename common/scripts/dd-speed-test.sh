@@ -23,13 +23,13 @@
 . ./common/scripts/include/sh-test-lib
 
 WD="$(pwd)"
-info_msg "Wroking directory: ${WD}"
+info_msg "Working directory: ${WD}"
 RESULT_FILE="${WD}/result.txt"
 info_msg "Result will be saved to: ${RESULT_FILE}"
 ITERATION="5"
 while getopts "p:t:i:" o; do
   case "$o" in
-    # The currenty working directory will be used by default.
+    # The current working directory will be used by default.
     # Use '-p' specify partition that used for dd test.
     p) PARTITION="${OPTARG}" ;;
     # CAUTION: if FS_TYPE not equal to the existing fs type of the partition
@@ -52,10 +52,16 @@ prepare_partition(){
         # Try to format the partition if it is unformatted or not the same as
         # the filesystem type specified with parameter '-t'.
         if [ -n "${FS_TYPE}" ]; then
-            [ "${FS_TYPE}" = "fat32" ] && FS_TYPE="vfat"
             if [ "${FS_TYPE}" != "${fs_type}" ]; then
                 umount "${PARTITION}" > /dev/null 2>&1
-                echo "y" | mkfs -t "${FS_TYPE}" "${PARTITION}"
+                info_msg "Formatting ${PARTITION} to ${FS_TYPE}..."
+
+                if [ "${FS_TYPE}" = "fat32" ]; then
+                    echo "y" | mkfs -t vfat -F 32 "${PARTITION}"
+                else
+                    echo "y" | mkfs -t "${FS_TYPE}" "${PARTITION}"
+                fi
+
                 if [ $? -ne 0 ]; then
                     error_msg "unable to format ${PARTITION}"
                 else

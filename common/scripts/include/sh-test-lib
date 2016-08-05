@@ -71,7 +71,7 @@ check_return() {
     local exit_code="$?"
     local test="$1"
 
-    test -z "${test}" && error_msg "Test case name is required"
+    test -z "${test}" && warn_msg "Test name is empty"
 
     if [ "${exit_code}" -ne 0 ]; then
         echo "${test} fail" | tee -a "${RESULT_FILE}"
@@ -85,9 +85,9 @@ add_metric() {
     local measurement="$2"
     local units="$3"
 
-    test -z "${test}" && error_msg "Test case name is required"
-    test -z "${measurement}" && error_msg "Measurement is required"
-    test -z "${units}" && error_msg "Units is required"
+    test -z "${test}" && warn_msg "Test name is empty"
+    test -z "${measurement}" && warn_msg "Test measurement is empty"
+    test -z "${units}" && warn_msg "Test units is empty"
 
     echo "${test} pass ${measurement} ${units}" | tee -a "${RESULT_FILE}"
 }
