@@ -21,12 +21,18 @@
 # Author: Chase Qi <chase.qi@linaro.org>
 
 . ./common/scripts/include/sh-test-lib
-
+LANG=C
+export LANG
 WD="$(pwd)"
-info_msg "Working directory: ${WD}"
 RESULT_FILE="${WD}/result.txt"
-info_msg "Result will be saved to: ${RESULT_FILE}"
 ITERATION="5"
+UNITS="MB/s"
+
+usage() {
+    echo "Usage: $0 [-p <partition>] [-t <type>] [-i <iteration>]" 1>&2
+    exit 1
+}
+
 while getopts "p:t:i:" o; do
   case "$o" in
     # The current working directory will be used by default.
@@ -37,10 +43,11 @@ while getopts "p:t:i:" o; do
     t) FS_TYPE="${OPTARG}" ;;
     # You may need to run dd test 4-5 times for an accurate evaluation.
     i) ITERATION="${OPTARG}" ;;
+    *) usage ;;
   esac
 done
 
-prepare_partition(){
+prepare_partition() {
     if [ -n "${PARTITION}" ]; then
         device_attribute="$(blkid | grep "${PARTITION}")"
         [ -z "${device_attribute}" ] && error_msg "${PARTITION} NOT found"
@@ -85,7 +92,7 @@ prepare_partition(){
     fi
 }
 
-dd_write(){
+dd_write() {
     echo
     echo "--- dd write speed test ---"
     rm -f dd-write-output.txt
@@ -98,7 +105,7 @@ dd_write(){
     done
 }
 
-dd_read(){
+dd_read() {
     echo
     echo "--- dd read speed test ---"
     rm -f dd-read-output.txt
@@ -111,7 +118,7 @@ dd_read(){
     rm -f dd.img
 }
 
-parse_output(){
+parse_output() {
     local test="$1"
     local test_case_id="${test}"
     [ -n "${FS_TYPE}" ] && test_case_id="${FS_TYPE}-${test_case_id}"
@@ -120,32 +127,41 @@ parse_output(){
         test_case_id="${partition_no}-${test_case_id}"
     fi
 
+    # Parse raw output and add results to result.txt.
     itr=1
     while read line; do
         if echo "${line}" | egrep -q "(M|G)B/s"; then
             measurement="$(echo "${line}" | awk '{print $(NF-1)}')"
             units="$(echo "${line}" | awk '{print $NF}')"
-            add_metric "${test_case_id}-itr${itr}" "${measurement}" "${units}"
+
+            if [ "${units}" = "GB/s" ]; then
+                measurement=$(( measurement * 1024 ))
+            elif [ "${units}" = "KB/s" ]; then
+                measurement=$(( measurement / 1024 ))
+            fi
+
+            add_metric "${test_case_id}-itr${itr}" "${measurement}" "${UNITS}"
             itr=$(( itr + 1 ))
         fi
     done < "${WD}/${test}"-output.txt
 
+    # For mutiple times dd test, calculate the mean, min and max values.
+    # Save them to result.txt.
     if [ "${ITERATION}" -gt 1 ]; then
-        # Calculate the mean, min and max of input $1.
-        eval "$(awk '/(M|G)B\/s/ {
-                           if(min=="") {min=max=$8};
-                           if($8>max) {max=$8};
-                           if($8< min) {min=$8};
-                           total+=$8; count+=1; units=$9
-                       }
-                   END {
-                            print "mean="total/count, "min="min, "max="max;
-                            print "units="units
-                       }' "${WD}/${test}"-output.txt)"
+        eval "$(grep "${test}" "${WD}"/result.txt \
+            | awk '{
+                       if(min=="") {min=max=$3};
+                       if($3>max) {max=$3};
+                       if($3< min) {min=$3};
+                       total+=$3; count+=1;
+                   }
+               END {
+                       print "mean="total/count, "min="min, "max="max;
+                   }')"
 
-        add_metric "${test_case_id}-mean" "${mean}" "${units}"
-        add_metric "${test_case_id}-min" "${min}" "${units}"
-        add_metric "${test_case_id}-max" "${max}" "${units}"
+        add_metric "${test_case_id}-mean" "${mean}" "${UNITS}"
+        add_metric "${test_case_id}-min" "${min}" "${UNITS}"
+        add_metric "${test_case_id}-max" "${max}" "${UNITS}"
     fi
 }
 
@@ -157,6 +173,10 @@ install_deps "${pkgs}"
 
 [ -f "${RESULT_FILE}" ] && \
 mv "${RESULT_FILE}" "${RESULT_FILE}_$(date +%Y%m%d%H%M%S)"
+echo
+info_msg "About to run dd test..."
+info_msg "Working directory: ${WD}"
+info_msg "Result will be saved to: ${RESULT_FILE}"
 
 prepare_partition
 info_msg "dd test directory: $(pwd)"
