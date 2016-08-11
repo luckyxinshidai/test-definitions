@@ -22,32 +22,46 @@
 
 LANG=C
 export LANG
-. ./include/sh-test-lib
+. ./common/scripts/include/sh-test-lib
 WD="$(pwd)"
-RESULT_FILE="${WD}/result.txt"
+RESULT_FILE="${WD}/disk-partitioning-test-result.txt"
+DISKLABEL="gpt"
+FILESYSTEM="ext4"
+SKIP_INSTALL="false"
 
 usage() {
-    echo "Usage: $0 [-d <device>] [-l <disklabel>] [-f <filesystem>] [-s <true|false>]" 1>&2
+    echo "Usage: $0 [-d <device>] [-l <disklabel>] [-f <filesystem>]
+          [-r <result_file>] [-s <true|false>]" 1>&2
     exit 1
 }
 
-while getopts "d:l:f:s:" o; do
+while getopts "d:l:f:r:s:" o; do
   case "$o" in
     # The existing disk label on the device will be destroyed,
     # and all data on this disk will be lost.
     d) DEVICE="${OPTARG}" ;;
     l) DISKLABEL="${OPTARG}" ;;
     f) FILESYSTEM="${OPTARG}" ;;
+    r) RESULT_FILE="${WD}/${OPTARG}" ;;
     s) SKIP_INSTALL="${OPTARG}" ;;
     *) usage ;;
   esac
 done
 
-# Post process constants.
 [ -z "${DEVICE}" ] && error_msg "Please specify test device with '-d'"
 DISKLABEL=${DISKLABEL:-"gpt"}
 FILESYSTEM=${FILESYSTEM:-"ext4"}
 SKIP_INSTALL=${SKIP_INSTALL:-"false"}
+
+install() {
+    if "${SKIP_INSTALL}"; then
+        info_msg "install_deps skipped"
+    else
+        pkgs="parted e2fsprogs dosfstools"
+        info_msg "Installing ${pkgs}"
+        install_deps "${pkgs}"
+    fi
+}
 
 create_disklabel() {
     echo
@@ -59,6 +73,9 @@ create_disklabel() {
     # If mklabel fails, skip the following tests.
     check_return "create-disklabel" \
         || error_msg "Partitioning, formatting, and smoke tests skipped"
+
+    sync
+    sleep 10
 }
 
 create_partition() {
@@ -68,6 +85,9 @@ create_partition() {
 
     check_return "create-partition" \
         || error_msg "Formatting, and smoke tests skipped"
+
+    sync
+    sleep 10
 }
 
 format_partition() {
@@ -79,8 +99,10 @@ format_partition() {
         echo "y" | mkfs -t "${FILESYSTEM}" "${DEVICE}1"
     fi
 
-    check_return "format-partition" \
-        || error_msg "Smoke test skipped"
+    check_return "format-partition" || error_msg "Smoke test skipped"
+
+    sync
+    sleep 10
 }
 
 partition_smoke_test() {
@@ -88,8 +110,7 @@ partition_smoke_test() {
     echo "Running mount/umoun tests..."
     umount /mnt > /dev/null 2>&1
     mount "${DEVICE}1" /mnt
-    check_return "mount-partition" \
-        || error_msg "umount test skipped"
+    check_return "mount-partition" || error_msg "umount test skipped"
 
     umount "${DEVICE}1"
     check_return "umount-partition"
@@ -97,25 +118,16 @@ partition_smoke_test() {
 
 # Test run.
 ! check_root && error_msg "This script must be run as root"
+[ -f "${RESULT_FILE}" ] \
+     && mv "${RESULT_FILE}" "${RESULT_FILE}_$(date +%Y%m%d%H%M%S)"
 
-if "${SKIP_INSTALL}"; then
-    info_msg "install_deps skipped"
-else
-    pkgs="gparted e2fsprogs dosfstools"
-    install_deps "${pkgs}"
-fi
-
-[ -f "${RESULT_FILE}" ] && \
-mv "${RESULT_FILE}" "${RESULT_FILE}_$(date +%Y%m%d%H%M%S)"
 echo
 info_msg "About to run disk partitioning test..."
 info_msg "Working directory: ${WD}"
 info_msg "Result will be saved to: ${RESULT_FILE}"
 
+install
 create_disklabel
-sleep 5
 create_partition
-sleep 5
 format_partition
-sleep 5
 partition_smoke_test

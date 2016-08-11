@@ -26,6 +26,5 @@ params:
 
 run:
     steps:
-        - cd ./common/scripts/
-        - ./disk-partitioning-test.sh -d "${DEVICE}" -l "${DISKLABEL}" -f "${FILESYSTEM}"
-        - ./send-to-lava.sh "result.txt"
+        - ./common/scripts/disk-partitioning-test.sh -d "${DEVICE}" -l "${DISKLABEL}" -f "${FILESYSTEM}" -r "result.txt"
+        - ./common/scripts/send-to-lava.sh "result.txt"
