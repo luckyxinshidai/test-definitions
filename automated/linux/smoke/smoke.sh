@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
@@ -21,8 +22,8 @@ done
 install() {
     dist_name
     case "${dist}" in
-      Debian|Ubuntu) pkgs="lsb-release usbutils" ;;
-      Fedora|CentOS) pkgs="redhat-lsb-core usbutils" ;;
+      Debian|Ubuntu) pkgs="lsb-release" ;;
+      Fedora|CentOS) pkgs="redhat-lsb-core" ;;
     esac
 
     install_deps "${pkgs}" "${SKIP_INSTALL}"
@@ -49,4 +50,3 @@ run "ip a"
 run "lscpu"
 run "vmstat"
 run "lsblk"
-run "lsusb"
