@@ -1,5 +1,4 @@
 #!/bin/sh
-set -x
 
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
@@ -50,5 +49,3 @@ run "ip a"
 run "lscpu"
 run "vmstat"
 run "lsblk"
-
-exit 0

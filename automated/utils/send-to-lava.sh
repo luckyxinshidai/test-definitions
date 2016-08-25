@@ -29,5 +29,3 @@ if [ -f "${RESULT_FILE}" ]; then
 else
     echo "WARNING: result file is missing!"
 fi
-
-exit 0
