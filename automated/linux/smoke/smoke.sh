@@ -50,3 +50,5 @@ run "ip a"
 run "lscpu"
 run "vmstat"
 run "lsblk"
+
+exit 0
