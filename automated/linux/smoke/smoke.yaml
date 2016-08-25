@@ -25,4 +25,4 @@ run:
         - set -x
         - cd ./automated/linux/smoke/
         - ./smoke.sh -s "${SKIP_INSTALL}"
-        #- ../../utils/send-to-lava.sh ./output/result.txt
+        - ../../utils/send-to-lava.sh ./output/result.txt
