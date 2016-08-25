@@ -22,6 +22,6 @@ params:
 
 run:
     steps:
-        - cd ./linux/smoke/
+        - cd ./automated/linux/smoke/
         - ./smoke.sh -s "${SKIP_INSTALL}"
         - ../../utils/send-to-lava.sh ./output/result.txt

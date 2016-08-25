@@ -9,11 +9,11 @@ requirements:
   owner: first.last@linaro.org
   tests:
     manual:
-      - path: linux/test1.yaml
+      - path: manual/linux/test1.yaml
     automated:
-        - path: linux/smoke/smoke.yaml
+        - path: automated/linux/smoke/smoke.yaml
           timeout: 1800
-        - path: linux/smoke/smoke.yaml
+        - path: automated/linux/smoke/smoke.yaml
           timeout: 1800
           params:
               SKIP_INSTALL: True

@@ -1,8 +1,8 @@
 Getting started
 ===============
     git clone https://git.linaro.org/qa/test-definitions.git
-    cd ./test-definitions/automated
-    . ./bin/setenv.sh
+    cd ./test-definitions
+    . ./automated/bin/setenv.sh
     test-runner -h
 
 Running test
@@ -22,13 +22,13 @@ Test definition file in YAML format created for each test to
 Running test script
 ------------------
 linux:
-    cd linux/smoke/
+    cd ./automated/linux/smoke/
     ./smoke.sh
     # skip package installation.
     ./smoke.sh -s true
 
 android:
-    cd android/dd-wr-speed/
+    cd ./automated/android/dd-wr-speed/
     ./dd-wr-speed.sh
     # Specify SN when more than one device connected.
     ./dd-wr-speed.sh -s "serial_no"
@@ -38,18 +38,19 @@ android:
 Using test-runner
 ----------------
 single test run:
-    test-runner -d linux/smoke/smoke.yaml
+    test-runner -d ./automated/linux/smoke/smoke.yaml
     # skip package install
-    test-runner -d linux/smoke/smoke.yaml -s
+    test-runner -d ./automated/linux/smoke/smoke.yaml -s
 
 running test plan:
     # Run a set of tests defined in agenda file.
-    test-runner -a <path>/linux-example.yaml
+    test-runner -a ./plans/linux-example.yaml
 
 Collecting result
 =================
 Please find test results in the following locations.
  - ${OUTPUT} and ${RESULT_FILE} for each test are defined in the test case.
  - test-runner parse stdout.log and save result to ${test_path}
- - test-runner combines results of executed tests in ${OUTPUT}/results.csv,
- - ${OUTPUT} of test runner can be modified with '-o'
+ - test-runner combines results of executed tests and save them in
+   ${OUTPUT}/results.csv,
+ - ${OUTPUT} path of test-runner can be modified with '-o'

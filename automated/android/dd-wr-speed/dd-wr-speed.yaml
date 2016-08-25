@@ -27,6 +27,6 @@ params:
 
 run:
     steps:
-        - cd ./android/dd-wr-speed
+        - cd ./automated/android/dd-wr-speed
         - ./dd-wr-speed.sh -p "${PARTITION}" -i "${ITERATION}" -s "${SN}"
         - ../../utils/send-to-lava.sh ./output/result.txt
