@@ -2,9 +2,7 @@
 
 . ../../lib//sh-test-lib
 OUTPUT="$(pwd)/output"
-mkdir -p "${OUTPUT}"
 RESULT_FILE="${OUTPUT}/result.txt"
-export RESULT_FILE
 ITERATION="5"
 UNITS="MB/s"
 
@@ -36,6 +34,9 @@ prepare_partition() {
             | grep "TYPE=" \
             | awk '{print $3}' \
             | awk -F '"' '{print $2}')
+
+        # If PARTITION specified, its FS_TYPE needs to be specified explicitly.
+        [ -z "${FS_TYPE}" ] && error_msg "Please specify ${FS_TYPE} explicitly"
 
         # Try to format the partition if it is unformatted or not the same as
         # the filesystem type specified with parameter '-t'.
@@ -102,13 +103,18 @@ dd_read() {
 parse_output() {
     local test="$1"
     local test_case_id="${test}"
+    if ! [ -f "${OUTPUT}/${test}-output.txt" ]; then
+        warn_msg "output file is missing"
+        return 1
+    fi
+
+    # Fixup test-case-id with filesystem type and partion name.
     [ -n "${FS_TYPE}" ] && test_case_id="${FS_TYPE}-${test_case_id}"
     if [ -n "${PARTITION}" ]; then
         partition_no="$(echo "${PARTITION}" |awk -F '/' '{print $NF}')"
         test_case_id="${partition_no}-${test_case_id}"
     fi
 
-    # Parse raw output and add results to result.txt.
     itr=1
     while read line; do
         if echo "${line}" | egrep -q "(M|G)B/s"; then
@@ -121,10 +127,10 @@ parse_output() {
                 measurement=$(( measurement / 1024 ))
             fi
 
-            add_metric "${test_case_id}-itr${itr}" "${measurement}" "${UNITS}"
+            add_metric "${test_case_id}-itr${itr}" "pass" "${measurement}" "${UNITS}"
             itr=$(( itr + 1 ))
         fi
-    done < "${OUTPUT}/${test}"-output.txt
+    done < "${OUTPUT}/${test}-output.txt"
 
     # For mutiple times dd test, calculate the mean, min and max values.
     # Save them to result.txt.
@@ -140,17 +146,16 @@ parse_output() {
                        print "mean="total/count, "min="min, "max="max;
                    }')"
 
-        add_metric "${test_case_id}-mean" "${mean}" "${UNITS}"
-        add_metric "${test_case_id}-min" "${min}" "${UNITS}"
-        add_metric "${test_case_id}-max" "${max}" "${UNITS}"
+        add_metric "${test_case_id}-mean"  "pass" "${mean}" "${UNITS}"
+        add_metric "${test_case_id}-min" "pass" "${min}" "${UNITS}"
+        add_metric "${test_case_id}-max" "pass" "${max}" "${UNITS}"
     fi
 }
 
 # Test run.
 ! check_root && error_msg "This script must be run as root"
-
-[ -f "${OUTPUT}" ] && \
-mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
+[ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
+mkdir -p "${OUTPUT}"
 
 info_msg "About to run dd test..."
 info_msg "Output directory: ${OUTPUT}"
