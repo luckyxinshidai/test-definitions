@@ -2,10 +2,14 @@
 
 ITERATION="$1"
 PARTITION="$2"
-OUTPUT="/data/dd-wr-speed"
+OUTPUT="$3"
 
-[ -d "${OUTPUT}" ] \
-    && mv "${OUTPUT}" "${OUTPUT}-$(date +%Y%m%d%H%M%S)"
+if [ "$#" -ne 3 ]; then
+    echo "ERROR: Usage: $0 ITERATION PARTITION OUTPUT"
+    exit 1
+fi
+
+[ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}-$(date +%Y%m%d%H%M%S)"
 mkdir -p "${OUTPUT}" && cd "${OUTPUT}"
 
 # If partition specified, format it to vfat, and mount it to /mnt/dd_test.
@@ -43,7 +47,7 @@ fi
 # Run dd write/read test.
 for i in $(seq "${ITERATION}"); do
     echo
-    echo "INFO: Running dd wrtie test [$i/${ITERATION}]"
+    echo "INFO: Running dd write test [$i/${ITERATION}]"
     echo 3 > /proc/sys/vm/drop_caches
     busybox dd if=/dev/zero of=dd.img bs=1048576 count=1024 conv=fsync 2>&1 \
         | tee  -a "${OUTPUT}"/dd-write-output.txt

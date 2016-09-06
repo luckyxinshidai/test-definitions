@@ -1,11 +1,10 @@
 #!/bin/sh
 
+HOST_OUTPUT="$(pwd)/output"
+DEVICE_OUTPUT="/sdcard/tests/dd-wr-speed"
+RESULT_FILE="${HOST_OUTPUT}/result.txt"
 ITERATION="5"
 PARTITION=""
-HOST_OUTPUT="$(pwd)/output"
-DEVICE_OUTPUT="/data/dd-wr-speed"
-RESULT_FILE="${HOST_OUTPUT}/result.txt"
-export RESULT_FILE
 
 usage() {
     echo "Usage: $0 [-p <partition>] [-i <iteration>] [-s <sn>]" 1>&2
@@ -15,7 +14,7 @@ usage() {
 while getopts "p:i:s:" o; do
   case "$o" in
     # "/data" partition will be used by default. Use '-p' to specify an
-    # external partition as needed, the partition will be formattet to vfat,
+    # external partition as needed, the partition will be formatted to vfat,
     # and all data will be lost.
     p) PARTITION="${OPTARG}" ;;
     # You may need to run dd test 4-5 times for an accurate evaluation.
@@ -46,7 +45,7 @@ parse_output() {
     else
         filesystem="$(adb -s "${SN}" shell mount \
             | grep "/data" | awk '{print $3}')"
-        test_case_id="/data-${filesystem}-${test_case_id}"
+        test_case_id="emmc-${filesystem}-${test_case_id}"
     fi
 
     # Parse raw output and add results to ${RESULT_FILE}.
@@ -54,7 +53,7 @@ parse_output() {
     info_msg "Parsing ${test} output..."
     while read line; do
         if echo "${line}" | egrep -q "(M|G)B/s"; then
-            # busybox dd print test reuslt in the format "39.8MB/s".
+            # busybox dd print test result in the format "39.8MB/s".
             result="$(echo "${line}" | awk '{print $NF}')"
             units="$(printf "%s" "${result}" | tail -c 4)"
             measurement="$(printf "%s" "${result}" | tr -d "${units}")"
@@ -65,12 +64,12 @@ parse_output() {
                 measurement=$(( measurement / 1024 ))
             fi
 
-            add_metric "${test_case_id}-itr${itr}" "${measurement}" "${UNITS}"
+            add_metric "${test_case_id}-itr${itr}" "pass" "${measurement}" "${UNITS}"
             itr=$(( itr + 1 ))
         fi
     done < "${HOST_OUTPUT}/${test}"-output.txt
 
-    # For mutiple times dd test, calculate the mean, min and max values.
+    # For multiple times dd test, calculate the mean, min and max values.
     # Save them to ${RESULT_FILE}.
     if [ "${ITERATION}" -gt 1 ]; then
         eval "$(grep "${test}" "${HOST_OUTPUT}"/result.txt \
@@ -84,15 +83,14 @@ parse_output() {
                        print "mean="total/count, "min="min, "max="max;
                    }')"
 
-        add_metric "${test_case_id}-mean" "${mean}" "${UNITS}"
-        add_metric "${test_case_id}-min" "${min}" "${UNITS}"
-        add_metric "${test_case_id}-max" "${max}" "${UNITS}"
+        add_metric "${test_case_id}-mean" "pass" "${mean}" "${UNITS}"
+        add_metric "${test_case_id}-min" "pass" "${min}" "${UNITS}"
+        add_metric "${test_case_id}-max" "pass" "${max}" "${UNITS}"
     fi
 }
 
 # Test run.
-[ -d "${HOST_OUTPUT}" ] && \
-    mv "${HOST_OUTPUT}" "${HOST_OUTPUT}-$(date +%Y%m%d%H%M%S)"
+[ -d "${HOST_OUTPUT}" ] && mv "${HOST_OUTPUT}" "${HOST_OUTPUT}-$(date +%Y%m%d%H%M%S)"
 mkdir -p "${HOST_OUTPUT}"
 
 initialize_adb
@@ -101,8 +99,8 @@ install "../../bin/${abi}/busybox"
 install "./device-script.sh"
 
 info_msg "About to run dd speed test on device ${SN}"
-adb -s "${SN}" shell device-script.sh "${ITERATION}" "${PARTITION}" 2>&1 \
-    | tee "${HOST_OUTPUT}"/run.log
+adb -s "${SN}" shell device-script.sh "${ITERATION}" "${PARTITION}" "${DEVICE_OUTPUT}" 2>&1 \
+    | tee "${HOST_OUTPUT}"/device-run.log
 
 pull_output "${DEVICE_OUTPUT}" "${HOST_OUTPUT}"
 

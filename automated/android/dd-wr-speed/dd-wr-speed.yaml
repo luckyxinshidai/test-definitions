@@ -21,7 +21,7 @@ params:
     PARTITION: ""
     # You may need to run dd test 4-5 times for an accurate evaluation.
     ITERATION: "5"
-    # Specify device serial number for adb connection if more then one device
+    # Specify device serial number for adb connection if more than one device
     # connected.
     SN: ""
 
