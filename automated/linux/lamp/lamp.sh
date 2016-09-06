@@ -31,6 +31,13 @@ case "${dist}" in
     systemctl start httpd.service
     systemctl start mariadb
     ;;
+  Fedora)
+    title="Test Page for the Apache HTTP Server on Fedora"
+    pkgs="curl httpd mariadb-server mariadb php php-mysql"
+    install_deps "${pkgs}"
+    systemctl start httpd.service
+    systemctl start mariadb
+    ;;
   *)
     error_msg "Unsupported distribution!"
 esac
