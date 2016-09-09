@@ -19,8 +19,11 @@ metadata:
         - d02
         - d03
 
+params:
+    SKIP_INSTALL: "False"
+
 run:
     steps:
         - cd ./automated/linux/lamp/
-        - ./lamp.sh
+        - ./lamp.sh -s "${SKIP_INSTALL}"
         - ../../utils/send-to-lava.sh ./output/result.txt
