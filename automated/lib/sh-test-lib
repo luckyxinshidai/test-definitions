@@ -7,7 +7,7 @@ error_msg() {
     local msg="$1"
     [ -z "${msg}" ] && msg="Unknown error"
     printf "ERROR: %s\n" "${msg}" >&2
-    exit 1
+    exit 0
 }
 
 warn_msg() {
@@ -32,11 +32,21 @@ check_root() {
 
 exit_on_fail() {
     local exit_code="$?"
-    [ "$#" -ne 1 ] && error_msg "Usage: exit_on_fail test"
+    [ "$#" -lt 1 ] && error_msg "Usage: exit_on_fail test [skip_list]"
     local test="$1"
+    local skip_list="$2"
 
     if [ "${exit_code}" -ne 0 ]; then
         echo "${test} fail" | tee -a "${RESULT_FILE}"
+
+        # skip_list is a list of tests sepereated by space. This might be
+        # useful when exiting on prerequisite not met.
+        if [ -n "${skip_list}" ]; then
+            for i in ${skip_list}; do
+                echo "$i skip" | tee -a "${RESULT_FILE}"
+            done
+        fi
+
         # Exit normally to continue to run the following steps defined in test
         # definition file.
         exit 0
@@ -58,6 +68,18 @@ check_return() {
         echo "${test} pass" | tee -a "${RESULT_FILE}"
         return 0
     fi
+}
+
+report_pass() {
+    [ "$#" -ne 1 ] && error_msg "Usage: report_pass test"
+    local test="$1"
+    echo "${test} pass" | tee -a "${RESULT_FILE}"
+}
+
+report_fail() {
+    [ "$#" -ne 1 ] && error_msg "Usage: report_fail test"
+    local test="$1"
+    echo "${test} fail" | tee -a "${RESULT_FILE}"
 }
 
 add_metric() {
@@ -118,5 +140,38 @@ install_deps() {
             warn_msg "Unsupported distro: package install skipped"
             ;;
         esac
+    fi
+}
+
+# Return the exit code of the first command.
+pipe0_status() {
+    [ "$#" -ne 2 ] && error_msg "Usage: pipe0_status cmd1 cmd2"
+    local cmd1="$1"
+    local cmd2="$2"
+
+    exec 4>&1
+    ret_val=$({ { eval "${cmd1}" 3>&-; echo "$?" 1>&3; } 4>&- \
+        | eval "${cmd2}" 1>&4; } 3>&1)
+    exec 4>&-
+
+    return "${ret_val}"
+}
+
+validate_check_sum() {
+    if [ "$#" -ne 2 ]; then
+        warn_msg "The number of parameters should be 2"
+        error_msg "Usage: validate_check_sum filename known_sha256sum"
+        return 1
+    fi
+    OUTPUT_FILE_NAME="$1"
+    SHA256SUM_CHECK="$2"
+    # Get sha256sum of output_file
+    GET_SHA256SUM=$(sha256sum ${OUTPUT_FILE_NAME} | awk '{print $1}')
+    echo "GET_SHA256SUM is "${GET_SHA256SUM}""
+    if [ "${SHA256SUM_CHECK}" = "${GET_SHA256SUM}" ] ; then
+        return 0
+    else
+        echo "checksum did not match"
+        return 1
     fi
 }
