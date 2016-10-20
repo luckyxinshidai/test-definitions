@@ -18,7 +18,7 @@ while getopts "v:s:" o; do
   esac
 done
 
-! check_root && error_msg "This script must be run as root"
+! check_root && error_msg "You need to be root to run this script."
 [ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
 mkdir -p "${OUTPUT}"
 
@@ -40,7 +40,7 @@ for link in java javac; do
     path="$(update-alternatives --display "${link}" \
         | egrep "^/usr/lib/jvm/java-(${VERSION}|1.${VERSION}.0)" \
         | awk '{print $1}')"
-    update-alternatives --set "${link}" "${path}" 
+    update-alternatives --set "${link}" "${path}"
 done
 
 java -version 2>&1 | grep "version \"1.${VERSION}"
@@ -61,5 +61,5 @@ EOL
 javac HelloWorld.java
 check_return "compile-HelloWorld"
 
-java HelloWorld
+java HelloWorld | grep "Hello, World"
 check_return "execute-HelloWorld"

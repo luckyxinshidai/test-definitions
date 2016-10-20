@@ -62,20 +62,20 @@ format_partition() {
     sleep 10
 }
 
-smoke_test() {
+disk_mount() {
     echo
-    echo "Running mount/umoun tests..."
+    echo "Running mount/umount tests..."
     umount /mnt > /dev/null 2>&1
     skip_list="umount-partition"
     mount "${DEVICE}1" /mnt
     exit_on_fail "mount-partition" "${skip_list}"
 
     umount "${DEVICE}1"
-    exit_on_fail "umount-partition" "${skip_list}"
+    check_return "umount-partition"
 }
 
 # Test run.
-[ -z "${DEVICE}" ] && error_msg "Please specify test device with '-d'"
+[ -b "${DEVICE}" ] && error_msg "Please specify a block device with '-d'"
 ! check_root && error_msg "You need to be root to run this script."
 [ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
 mkdir -p "${OUTPUT}"
@@ -86,4 +86,4 @@ install_deps "${pkgs}" "${SKIP_INSTALL}"
 create_disklabel
 create_partition
 format_partition
-smoke_test
+disk_mount

@@ -20,7 +20,9 @@ done
 [ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
 mkdir -p "${OUTPUT}"
 
-# Install lamp.
+# Install lamp and use systemctl for service management. Tested on Ubuntu 16.04,
+# Debian 8, CentOS 7 and Fedora 24. systemctl should available on newer releases
+# as well.
 if [ "${SKIP_INSTALL}" = "True" ] || [ "${SKIP_INSTALL}" = "true" ]; then
     warn_msg "LAMP package installation skipped"
 else
