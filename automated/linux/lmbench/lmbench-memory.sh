@@ -5,9 +5,6 @@ OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 export RESULT_FILE
 
-[ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
-mkdir -p "${OUTPUT}"
-
 bandwidth_test() {
     test_list="rd wr rdwr cp frd fwr fcp bzero bcopy"
     for test in ${test_list}; do
@@ -42,6 +39,10 @@ latency_test() {
       | awk '{printf("main-memory-read-latency pass %s ns\n", $2)}' \
       | tee -a "${RESULT_FILE}"
 }
+
+# Test run.
+[ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
+mkdir -p "${OUTPUT}"
 
 detect_abi
 bandwidth_test
