@@ -29,14 +29,13 @@ requirements:
         timeout: 3600
       - path: automated/linux/openssl/openssl-speed.yaml
         timeout: 3600
-      - path: automated/linux/dd-wr-speed/dd-wr-speed.yaml
-        timeout: 3600
-        params:
-          SKIP_INSTALL: False
-          ITERATION: 5
       - path: automated/linux/device-read-perf/device-read-perf.yaml
         timeout: 3600
       - path: automated/linux/blogbench/blogbench.yaml
         timeout: 3600
+      - path: automated/linux/dd-wr-speed/dd-wr-speed.yaml
+        timeout: 3600
       - path: automated/linux/fio-test/fio-test.yaml
         timeout: 3600
+        params:
+          BLK_DEV_PARTITION: /dev/sdb1
