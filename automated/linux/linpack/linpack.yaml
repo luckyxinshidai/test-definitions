@@ -1,7 +1,8 @@
 metadata:
     format: Lava-Test Test Definition 1.0
-    name: lmbench-memory
-    description: "Run lmbench memory bandwidth and latency tests."
+    name: linpack
+    description: "Linpack benchmark calculates fLoating point operations per
+                  second(FLOPS)."
     maintainer:
         - chase.qi@linaro.org
     os:
@@ -19,8 +20,12 @@ metadata:
         - thunderX
         - d03
         - d05
+
+params:
+    ARRAY_SIZE: "200"
+
 run:
     steps:
-        - cd ./automated/linux/lmbench/
-        - ./lmbench-memory.sh
+        - cd ./automated/linux/linpack/
+        - ./linpack.sh -a "${ARRAY_SIZE}"
         - ../../utils/send-to-lava.sh ./output/result.txt

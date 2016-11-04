@@ -50,7 +50,7 @@ parser() {
 mkdir -p "${OUTPUT}"
 
 command -v tee-supplicant && command -v xtest
-exit_on_fail xtest-existence-check
+exit_on_fail "xtest-existence-check"
 
 tee-supplicant &
 tee_supplicant_pid="$!"

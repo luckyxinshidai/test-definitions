@@ -5,9 +5,8 @@ metadata:
     maintainer:
         - chase.qi@linaro.org
     os:
-        - debian
-        - centos
         - openembedded
+        - debian
     scope:
         - functional
         - performance

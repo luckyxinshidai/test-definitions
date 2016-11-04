@@ -1,0 +1,42 @@
+metadata:
+  name: EE performance test plan
+  description: Performance test plan for EE RPB.
+  os: CentOS
+  devices:
+    - d03
+    - d05
+    - thunderX
+    - moonshot
+    - mustang
+  maintainer:
+    - chase.qi@linaro.org
+  format: Linaro Test Plan v1
+
+requirements:
+  name: SBBR compliance
+  owner: first.last@linaro.org
+  tests:
+    automated:
+      - path: automated/linux/linpack/linpack.yaml
+        timeout: 3600
+      - path: automated/linux/lmbench/lmbench-memory.yaml
+        timeout: 3600
+      - path: automated/linux/stream/stream-uniprocessor.yaml
+        timeout: 3600
+      - path: automated/linux/hackbench/hackbench.yaml
+        timeout: 3600
+      - path: automated/linux/apache-bench/apache-bench.yaml
+        timeout: 3600
+      - path: automated/linux/openssl/openssl-speed.yaml
+        timeout: 3600
+      - path: automated/linux/dd-wr-speed/dd-wr-speed.yaml
+        timeout: 3600
+        params:
+          SKIP_INSTALL: False
+          ITERATION: 5
+      - path: automated/linux/device-read-perf/device-read-perf.yaml
+        timeout: 3600
+      - path: automated/linux/blogbench/blogbench.yaml
+        timeout: 3600
+      - path: automated/linux/fio-test/fio-test.yaml
+        timeout: 3600

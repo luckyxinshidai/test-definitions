@@ -1,8 +1,12 @@
 metadata:
   name: linux-test-plan-example
+  description: Test plan for foo
   os: debian
   devices:
     - hi6220-hikey
+  maintainer:
+    - first.last@linaro.org
+  format: Linaro Test Plan v1
 
 requirements:
   name: my 1st requirement
