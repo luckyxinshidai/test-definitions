@@ -28,6 +28,6 @@ params:
 
 run:
     steps:
-        - cd ./automated/linux/apache-apache-bench/
+        - cd ./automated/linux/apache-bench/
         - ./apache-bench.sh -s "${SKIP_INSTALL}" -n "${NUMBER}" -c "${CONCURENT}"
         - ../../utils/send-to-lava.sh ./output/result.txt
