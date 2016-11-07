@@ -1,0 +1,28 @@
+metadata:
+  name: EE performance test plan
+  description: Performance test plan.
+  os:
+    - CentOS
+    - Debian
+  devices:
+    - x86
+  maintainer:
+    - chase.qi@linaro.org
+  format: Linaro Test Plan v1
+
+requirements:
+  name: x86 tests
+  owner: chase.qi@linaro.org
+  tests:
+    automated:
+      - path: automated/linux/smoke/smoke.yaml
+        timeout: 1800
+        params:
+          SKIP_INSTALL: True
+      - path: automated/linux/device-read-perf/device-read-perf.yaml
+        timeout: 3600
+      - path: automated/linux/dd-wr-speed/dd-wr-speed.yaml
+        timeout: 3600
+        params:
+          ITERATION: 1
+          SKIP_INSTALL: True
