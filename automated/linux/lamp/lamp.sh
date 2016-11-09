@@ -47,6 +47,7 @@ else
         ;;
       *)
         error_msg "Unsupported distribution!"
+        ;;
     esac
 fi
 
