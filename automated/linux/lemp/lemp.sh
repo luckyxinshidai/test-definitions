@@ -6,86 +6,84 @@ OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 export RESULT_FILE
 
-usage() {
-    echo "Usage: $0 [-s <true|false>]" 1>&2
-    exit 1
-}
-
-while getopts "s:" o; do
-  case "$o" in
-    s) SKIP_INSTALL="${OPTARG}" ;;
-    *) usage ;;
-  esac
-done
-
 ! check_root && error_msg "This script must be run as root"
 [ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
 mkdir -p "${OUTPUT}"
 
 # Install LEMP and use systemctl to start/restart services.
 # systemctl available on Debian 8, CentOS 7 and newer releases.
-if [ "${SKIP_INSTALL}" = "True" ] || [ "${SKIP_INSTALL}" = "true" ]; then
-    warn_msg "LAMP package installation skipped"
-else
-    dist_name
-    # shellcheck disable=SC2154
-    case "${dist}" in
-        Debian)
-            pkgs="nginx mysql-server php5-mysql php5-fpm"
-            install_deps "curl ${pkgs}"
+dist_name
+# shellcheck disable=SC2154
+case "${dist}" in
+    Debian)
+        # Install packages.
+        pkgs="nginx mysql-server php5-mysql php5-fpm curl"
+        install_deps "${pkgs}"
 
-            # Stop apache server in case it is installed and running.
-            systemctl stop apache2 > /dev/null 2>&1
-            systemctl restart nginx
-            systemctl restart mysql
+        # Copy pre-defined html/php files to root directory.
+        mv /usr/share/nginx/html /usr/share/nginx/html.bak
+        mkdir -p /usr/share/nginx/html
+        cp ./html/* /usr/share/nginx/html/
 
-            # Config PHP.
-            sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php5/fpm/php.ini
-            systemctl restart php5-fpm
+        # Stop apache server in case it is installed and running.
+        systemctl stop apache2 > /dev/null 2>&1 || true
 
-            # Configure NGINX for PHP.
-            mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
-            cp ./debian-nginx.conf /etc/nginx/sites-available/default
-            systemctl restart nginx
-            ;;
-        CentOS)
-            install_deps "epel-release"
-            pkgs="nginx mariadb-server mariadb php php-mysql php-fpm"
-            install_deps "curl ${pkgs}"
+        systemctl restart nginx
+        systemctl restart mysql
 
-            # Stop apache server in case it is installed and running.
-            systemctl stop httpd.service > /dev/null 2>&1
-            systemctl restart nginx
-            systemctl restart mariadb
+        # Config PHP.
+        cp /etc/php5/fpm/php.ini /etc/php5/fpm/php.ini.bak
+        sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php5/fpm/php.ini
+        systemctl restart php5-fpm
 
-            # Configure PHP.
-            sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php.ini
-            sed -i "s/listen.allowed_clients = 127.0.0.1/listen = \/run\/php-fpm\/php-fpm.sock/" /etc/php-fpm.d/www.conf
-            sed -i "s/;listen.owner = nobody/listen.owner = nginx/" /etc/php-fpm.d/www.conf
-            sed -i "s/;listen.group = nobody/listen.group = nginx/" /etc/php-fpm.d/www.conf
-            sed -i "s/user = apache/user = nginx/" /etc/php-fpm.d/www.conf
-            sed -i "s/group = apache/group = nginx/" /etc/php-fpm.d/www.conf
-            # This creates the needed php-fpm.sock file
-            systemctl restart php-fpm
-            chmod 666 /run/php-fpm/php-fpm.sock
-            chown nginx:nginx /run/php-fpm/php-fpm.sock
-            systemctl restart php-fpm
+        # Configure NGINX for PHP.
+        mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+        cp ./debian-nginx.conf /etc/nginx/sites-available/default
+        systemctl restart nginx
+        ;;
+    CentOS)
+        # Install packages. x86_64 nginx package can be installed from epel
+        # repo. However, epel project doesn't support ARM arch yet.
+        # TODO: check on RPB build if nginx available.
+        install_deps "epel-release"
+        pkgs="nginx mariadb-server mariadb php php-mysql php-fpm curl"
+        install_deps "${pkgs}"
 
-            # Configure NGINX for PHP.
-            cp ./centos-nginx.conf /etc/nginx/default.d/default.conf
-            systemctl restart nginx
-            ;;
-        *)
-            info_msg "Supported distributions: Debian, CentOS"
-            error_msg "Unsupported distribution: ${dist}"
-            ;;
-    esac
-fi
+        # Copy pre-defined html/php files to root directory.
+        mv /usr/share/nginx/www /usr/share/nginx/www.bak
+        mkdir -p /usr/share/nginx/www
+        cp ./html/* /usr/share/nginx/www/
 
-# Copy pre-defined html/php files to HTTP server root directory.
-mkdir -p /usr/share/nginx/www
-rm -rf /usr/share/nginx/www/index.html
-cp ./html/* /usr/share/nginx/html/
+        # Stop apache server in case it is installed and running.
+        systemctl stop httpd.service > /dev/null 2>&1 || true
+
+        systemctl restart nginx
+        systemctl restart mariadb
+
+        # Configure PHP.
+        cp /etc/php.ini /etc/php.ini.bak
+        sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php.ini
+        sed -i "s/listen.allowed_clients = 127.0.0.1/listen = \/run\/php-fpm\/php-fpm.sock/" /etc/php-fpm.d/www.conf
+        sed -i "s/;listen.owner = nobody/listen.owner = nginx/" /etc/php-fpm.d/www.conf
+        sed -i "s/;listen.group = nobody/listen.group = nginx/" /etc/php-fpm.d/www.conf
+        sed -i "s/user = apache/user = nginx/" /etc/php-fpm.d/www.conf
+        sed -i "s/group = apache/group = nginx/" /etc/php-fpm.d/www.conf
+        # This creates the needed php-fpm.sock file
+        systemctl restart php-fpm
+        chmod 666 /run/php-fpm/php-fpm.sock
+        chown nginx:nginx /run/php-fpm/php-fpm.sock
+        systemctl restart php-fpm
+
+        # Configure NGINX for PHP.
+        mv /etc/nginx/default.d/default.conf /etc/nginx/default.d/default.conf.bak
+        cp ./centos-nginx.conf /etc/nginx/default.d/default.conf
+        systemctl restart nginx
+        ;;
+    *)
+        info_msg "Supported distributions: Debian, CentOS"
+        error_msg "Unsupported distribution: ${dist}"
+        ;;
+esac
 
 # Test Nginx.
 skip_list="mysql-show-databases phpinfo php-connect-db php-create-db
@@ -143,5 +141,21 @@ curl -o "${OUTPUT}/delete-record" "http://localhost/delete-record.php"
 test_command="grep 'Record deleted successfully' ${OUTPUT}/delete-record"
 run_test_case "${test_command}" "php-delete-record"
 
+# Cleanup.
 # Delete myDB for the next run.
 mysql --user='root' --password='lemptest' -e 'DROP DATABASE myDB'
+
+# Restore from backups.
+# shellcheck disable=SC2154
+case "${dist}" in
+    Debian)
+        mv /usr/share/nginx/html.bak /usr/share/nginx/html
+        mv /etc/php5/fpm/php.ini.bak /etc/php5/fpm/php.ini
+        mv /etc/nginx/sites-available/default.bak /etc/nginx/sites-available/default
+        ;;
+    CentOS)
+        mv /usr/share/nginx/www.bak /usr/share/nginx/www
+        cp /etc/php.ini.bak /etc/php.ini
+        mv /etc/nginx/default.d/default.conf.bak /etc/nginx/default.d/default.conf
+        ;;
+esac
