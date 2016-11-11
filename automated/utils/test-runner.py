@@ -273,7 +273,7 @@ class ResultParser(object):
         with open('%s/result.json' % self.result_path, 'w') as f:
             json.dump([self.results], f, indent=4)
 
-        # Collect test resuls of all tests in ouput/result.json
+        # Collect test results of all tests in output/result.json
         feeds = []
         if os.path.isfile('%s/result.json' % self.output):
             with open('%s/result.json' % self.output, 'r') as f:
@@ -303,7 +303,7 @@ class ResultParser(object):
             for metric in self.results['metrics']:
                 writer.writerow(metric)
 
-        # Collect test resuls of all tests in ouput/result.csv
+        # Collect test results of all tests in output/result.csv
         if not os.path.isfile('%s/result.csv' % self.output):
             with open('%s/result.csv' % self.output, 'w') as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
