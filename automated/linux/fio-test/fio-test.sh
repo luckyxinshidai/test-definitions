@@ -11,7 +11,7 @@ BLOCK_SIZE="4k"
 
 usage() {
     echo "Usage: $0 [-p <partition>] [-b <block_size>] [-i <sync|psync|libaio>]
-                    [-s <true>]" 1>&2
+                    [-s <true|false>]" 1>&2
     exit 1
 }
 
