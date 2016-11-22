@@ -30,5 +30,5 @@ params:
 run:
     steps:
         - cd ./automated/linux/blogbench/
-        - ./blogbench.sh "${ITERATION}" "${PARTITION}"
+        - ./blogbench.sh -i "${ITERATION}" -p "${PARTITION}"
         - ../../utils/send-to-lava.sh ./output/result.txt

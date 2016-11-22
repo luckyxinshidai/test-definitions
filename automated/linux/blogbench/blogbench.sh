@@ -5,6 +5,7 @@ OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 LOG_FILE="${OUTPUT}/blogbench.txt"
 ITERATION="30"
+PARTITION=""
 
 usage() {
     echo "Usage: $0 [-i <iterations>] [-p </dev/sda1>]" 1>&2

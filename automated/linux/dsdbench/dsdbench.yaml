@@ -13,6 +13,7 @@ metadata:
         - fedora
         - centos
     scope:
+        - performance
         - functional
     environment:
         - lava-test-shell

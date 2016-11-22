@@ -71,11 +71,12 @@ fio_test() {
     echo
 
     # Parse output.
-    measurement=$(grep "iops=" "${file}" | cut -d= -f4 | cut -d, -f1)
+    cat "${file}"
+    measurement=$(grep -m 1 "iops=" "${file}" | cut -d= -f4 | cut -d, -f1)
     add_metric "fio-${rw}" "pass" "${measurement}" "iops"
 
     # Delete files created by fio to avoid out of space.
-    rm -rf "./${rw}*"
+    rm -rf ./"${rw}"*
 }
 
 # Config test.

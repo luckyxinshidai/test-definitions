@@ -138,7 +138,8 @@ run_test_case "${test_command}" "php-delete-record"
 mysql --user='root' --password='lemptest' -e 'DROP DATABASE myDB'
 
 # Restore from backups.
-mv -f /usr/share/nginx/html.bak /usr/share/nginx/html
+rm -rf /usr/share/nginx/html
+mv /usr/share/nginx/html.bak /usr/share/nginx/html
 # shellcheck disable=SC2154
 case "${dist}" in
     Debian)

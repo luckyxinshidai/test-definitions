@@ -37,7 +37,8 @@ prepare_partition() {
             | awk -F '"' '{print $2}')
 
         # If PARTITION specified, its FS_TYPE needs to be specified explicitly.
-        [ -z "${FS_TYPE}" ] && error_msg "Please specify ${FS_TYPE} explicitly"
+        [ -z "${FS_TYPE}" ] && \
+            error_msg "Please specify ${PARTITION} filesystem with -t"
 
         # Try to format the partition if it is unformatted or not the same as
         # the filesystem type specified with parameter '-t'.

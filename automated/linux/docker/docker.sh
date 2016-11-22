@@ -18,6 +18,7 @@ while getopts "i:h" o; do
     esac
 done
 
+! check_root && error_msg "You need to be root to run this script."
 [ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
 mkdir -p "${OUTPUT}"
 

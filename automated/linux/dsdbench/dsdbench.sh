@@ -1,5 +1,8 @@
 #!/bin/sh -e
 
+# This test script run docker storage driver benchmarks and tests.
+# Test suite source https://github.com/dmcgowan/dsdbench
+
 # shellcheck disable=SC1091
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
