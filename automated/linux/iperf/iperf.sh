@@ -6,18 +6,18 @@ OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 LOGFILE="${OUTPUT}/iperf.txt"
 # Test locahost by defualt, which tests the effificency of TCP/IP stack.
-# To test physical network bandwidth, specify remote host with '-c'.
+# To test physical network bandwidth, specify remote test server with '-c'.
 # Execute 'iperf3 -s' on remote host to run iperf3 test server.
 SERVER="127.0.0.1"
 # Time in seconds to transmit for
 TIME="10"
 # Number of parallel client streams to run
 THREADS="1"
-# iperf3 version.
+# Specify iperf3 version for CentOS.
 VERSION="3.1.4"
 
 usage() {
-    echo "Usage: $0 [-c server] [-t time] [-p number] [-s true]" 1>&2
+    echo "Usage: $0 [-c server] [-t time] [-p number] [-v version] [-s true|false]" 1>&2
     exit 1
 }
 
@@ -36,12 +36,14 @@ done
 mkdir -p "${OUTPUT}"
 cd "${OUTPUT}"
 
-if ! [ "${SKIP_INSTALL}" = "true" ] || [ "${SKIP_INSTALL}" = "True" ]; then
-    ! check_root && error_msg "You need to be root to run this script."
+if [ "${SKIP_INSTALL}" = "true" ] || [ "${SKIP_INSTALL}" = "True" ]; then
+    info_msg "iperf installation skipped"
+else
+    ! check_root && error_msg "You need to be root for installation!"
     dist_name
     # shellcheck disable=SC2154
     case "${dist}" in
-        Debian|Ubuntu|Fedoar)
+        Debian|Ubuntu|Fedora)
             install_deps "iperf3"
             ;;
         CentOS)
@@ -54,8 +56,6 @@ if ! [ "${SKIP_INSTALL}" = "true" ] || [ "${SKIP_INSTALL}" = "True" ]; then
             make install
             ;;
     esac
-else
-    info_msg "iperf installation skipped"
 fi
 
 # Run local iperf3 server as a daemon when testing localhost.

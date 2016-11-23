@@ -28,25 +28,15 @@ requirements:
     category: Bootloader
     tests:
       manual:
-        - path: manual/generic/linux/pxe_boot.yaml
+        - path: manual/generic/linux/pxe-boot.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
-        - path: manual/generic/linux/os_installer.yaml
-          repository: https://git.linaro.org/qa/test-definitions.git
-          mandatory: True
-          parameters:
-            installer: debian
-        - path: manual/generic/linux/os_installer.yaml
-          repository: https://git.linaro.org/qa/test-definitions.git
-          mandatory: True
-          parameters:
-            installer: centos
   - name: boot from the installed hard drive media
     owner: alan.bennett@linaro.org
     category: Bootloader
     tests:
       manual:
-        - path: manual/generic/linux/boot.yaml
+        - path: manual/generic/linux/disk-boot.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
   - name: Linux kernel
@@ -80,9 +70,16 @@ requirements:
     category: Base OS
     tests:
       manual:
-        # linked compilation
-        # static compilation
-        # linux kernel compilation (?)
+      # linux kernel compilation (?)
+      automated:
+        - path: automated/linux/toolchain-smoke/toolchain-smoke.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
+        - path: automated/linux/toolchain-smoke/toolchain-smoke.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
+          parameters:
+              STATIC: True
   - name: SATA drive support
     owner: alan.bennett@linaro.org
     category: Low-level kernel
@@ -175,7 +172,6 @@ requirements:
           mandatory: True
         # compare IO (fio) for host and guest *
         # compare network performance (netperf) for host and guest
-        # compare hackbench for host and guest
       automated:
           # hackbench should be executed inside KVM guest
         - path: automated/linux/hackbench/hackbench.yaml
@@ -188,7 +184,10 @@ requirements:
     category: Virtualization
     tests:
       automated:
-        - path: ububtu/docker.yaml # old implementation
+        - path: automated/linux/docker/docker.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
+        - path: automated/linux/dsdbench/dsdbench.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
   - name: OpenJDK
@@ -219,6 +218,10 @@ requirements:
     owner: alan.bennett@linaro.org
     category: Enterprise
     tests:
+      automated:
+        - path: automated/linux/lemp/lemp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
   - name: Tomcat webserver
     owner: alan.bennett@linaro.org
     category: Enterprise
@@ -227,25 +230,38 @@ requirements:
     owner: alan.bennett@linaro.org
     category: Base OS
     tests:
-      automated:
-        # OpenSSH tests from openssh sources
+      manual:
+        - path: manual/generic/linux/openssh-centos.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
   - name: OpenSSL
     owner: alan.bennett@linaro.org
     category: Base OS
     tests:
+      manual:
+        - path: manual/generic/linux/openssl-centos.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
       automated:
         - path: automated/linux/openssl/openssl-speed.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
-        # functional tests from openssl repository
   - name: OpenStack (Core)
     owner: martin.stadtler@linaro.org
     category: Enterprise
     tests:
+      manual:
+        - path: manual/enterprise/openstack-ceph.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
   - name: Ceph
     owner: martin.stadtler@linaro.org
     category: Enterprise
     tests:
+      manual:
+        - path: manual/enterprise/openstack-ceph.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
   - name: Hadoop
     owner: martin.stadtler@linaro.org
     category: Enterprise
@@ -276,10 +292,6 @@ requirements:
     owner: alan.bennett@linaro.org
     category: Performance
     tests:
-      manual:
-        - path: manual/generic/linux/blogbench.yaml
-          repository: https://git.linaro.org/qa/test-definitions.git
-          mandatory: True
       automated:
         - path: automated/linux/fio-test/fio-test.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
@@ -288,6 +300,9 @@ requirements:
           repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
         - path: automated/linux/device-read-perf/device-read-perf.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
+        - path: automated/linux/blogbench/blogbench.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
   - name: CPU performance
@@ -303,12 +318,24 @@ requirements:
     owner: alan.bennett@linaro.org
     category: Performance
     tests:
-        # apache bench with apache
+       automated:
+        - path: automated/linux/apache-apache-bench/apache-bench.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
+          parameters:
+              NUMBER: 10000
+              CONCURENT: 500
   - name: NGiNX webserver performance
     owner: alan.bennett@linaro.org
     category: Performance
     tests:
-        # apache bench with nginx
+       automated:
+        - path: automated/linux/nginx-apache-bench/apache-bench.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          mandatory: True
+          parameters:
+              NUMBER: 10000
+              CONCURENT: 500
   - name: Tomcat webserver performance
     owner: alan.bennett@linaro.org
     category: Performance
