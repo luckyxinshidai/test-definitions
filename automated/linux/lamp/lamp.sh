@@ -96,3 +96,6 @@ check_return "php-select-record"
 curl -o "${OUTPUT}/delete-record" "http://localhost/delete-record.php"
 grep "Record deleted successfully" "${OUTPUT}/delete-record"
 check_return "php-delete-record"
+
+# Delete myDB for the next run.
+mysql --user='root' --password='lamptest' -e 'DROP DATABASE myDB'
