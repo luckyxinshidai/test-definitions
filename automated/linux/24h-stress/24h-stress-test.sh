@@ -182,8 +182,7 @@ stress_network()
         check_return "network-enable-$iteration"
 
         # Check if IP obtained.
-        pkill dhclient
-        dhclient "$INTERFACE"
+        dhclient "$INTERFACE" > /dev/null 2>&1 || true
         ip=$(ip addr show "$INTERFACE" | grep -w inet | awk '{print $2}' | awk -F'/' '{print $1}')
         test -n "$ip"
         check_return "network-ip-check-$iteration"
@@ -207,7 +206,7 @@ stress_network()
 [ -d "${OUTPUT}" ] && mv "${OUTPUT}" "${OUTPUT}_$(date +%Y%m%d%H%M%S)"
 mkdir -p "${OUTPUT}"
 
-install_deps "curl"
+command -v curl || install_deps "curl"
 if ! stress-ng -V; then
     echo "stress-ng not found, installing..."
     detect_abi
