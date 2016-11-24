@@ -24,8 +24,8 @@ done
 dist_name
 # shellcheck disable=SC2154
 case "${dist}" in
-    Debian|Ubuntu) pkgs="bc xz-utils build-essential" ;;
-    CentOS|Fedora) pkgs="bc xz gcc make" ;;
+    Debian|Ubuntu) pkgs="time bc xz-utils build-essential" ;;
+    CentOS|Fedora) pkgs="time bc xz gcc make" ;;
 esac
 ! check_root && error_msg "You need to be root to install packages!"
 # install_deps supports the above distributions.
@@ -47,7 +47,7 @@ make defconfig
 processor_number=$(grep -c "processor" /proc/cpuinfo)
 { time -p make -j"${processor_number}" Image; } 2>&1 | tee "${LOGFILE}"
 
-measurement=$(grep "^real" "${LOGFILE}" | awk '{print $2}')
+measurement="$(grep "^real" "${LOGFILE}" | awk '{print $2}')"
 if egrep "arch/.*/boot/Image" "${LOGFILE}"; then
     report_pass "kernel-compilation"
     add_metric "kernel-compilation-time" "pass" "${measurement}" "seconds"
