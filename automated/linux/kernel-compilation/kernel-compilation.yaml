@@ -1,7 +1,8 @@
 metadata:
     name: kernel-compilation
     format: "Lava-Test-Shell Test Definition 1.0"
-    description: "Compile kernel with defconfig and measure how long it takes."
+    description: "Compile kernel with defconfig on ARM64/ARM platform and
+                  measure how long it takes."
     maintainer:
         - chase.qi@linaro.org
     os:

@@ -7,6 +7,7 @@ RESULT_FILE="${OUTPUT}/result.txt"
 export RESULT_FILE
 LOGFILE="${OUTPUT}/kernel-compilation.txt"
 VERSION='4.4.34'
+NPROC=$(nproc)
 
 usage() {
     echo "Usage: $0 [-v version] [-s true|false]" 1>&2
@@ -43,9 +44,15 @@ tar xf "linux-${VERSION}.tar.xz"
 cd "linux-${VERSION}"
 
 # Compile Kernel with defconfig.
+# It is native not cross compiling.
+# It will not work on x86.
 make defconfig
-processor_number=$(grep -c "processor" /proc/cpuinfo)
-{ time -p make -j"${processor_number}" Image; } 2>&1 | tee "${LOGFILE}"
+detect_abi
+case "{abi}" in
+    arm64) { time -p make -j"${NPROC}" Image; } 2>&1 | tee "${LOGFILE}";;
+    armeabi) { time -p make -j"${NPROC}" uImage; } 2>&1 | tee "${LOGFILE}";;
+    *) error_msg "Unsupported architecture!"
+esac
 
 measurement="$(grep "^real" "${LOGFILE}" | awk '{print $2}')"
 if egrep "arch/.*/boot/Image" "${LOGFILE}"; then
