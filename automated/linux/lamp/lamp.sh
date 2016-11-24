@@ -27,6 +27,7 @@ if [ "${SKIP_INSTALL}" = "True" ] || [ "${SKIP_INSTALL}" = "true" ]; then
     warn_msg "LAMP package installation skipped"
 else
     dist_name
+    # shellcheck disable=SC2154
     case "${dist}" in
       Debian|Ubuntu)
         if [ "${dist}" = "Debian" ]; then
@@ -58,7 +59,7 @@ grep "Test Page for the Apache HTTP Server" "${OUTPUT}/index.html"
 check_return "apache2-test-page"
 
 # Test MySQL.
-mysqladmin -u root password lamptest
+mysqladmin -u root password lamptest  > /dev/null 2>&1 || true
 mysql --user="root" --password="lamptest" -e "show databases"
 check_return "mysql-show-databases"
 

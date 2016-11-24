@@ -34,6 +34,7 @@ params:
     THREADS: "1"
     # Specify iperf3 version for CentOS.
     VERSION: "3.1.4"
+    SKIP_INSTALL: "false"
 
 run:
     steps:

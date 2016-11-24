@@ -11,6 +11,14 @@ metadata:
   format: Linaro Test Plan v1
 
 requirements:
+  - name: Linux kernel
+    owner: alan.bennett@linaro.org
+    category: Low-level kernel
+    tests:
+      automated:
+        - path: automated/linux/hackbench/hackbench.yaml
+          mandatory: True
+          repository: https://git.linaro.org/qa/test-definitions.git
   - name: Docker
     owner: alan.bennett@linaro.org
     category: Virtualization

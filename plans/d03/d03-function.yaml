@@ -25,9 +25,6 @@ requirements:
           parameters:
               TST_CMDFILES: syscalls,mm,math,timers,fcntl-locktests,ipc,fsx,fs,hugetlb,io,nptl,pty,containers,fs_bind,filecaps,admin_tools,connectors
           mandatory: True
-        - path: automated/linux/hackbench/hackbench.yaml
-          mandatory: True
-          repository: https://git.linaro.org/qa/test-definitions.git
   - name: Toolchain
     owner: alan.bennett@linaro.org
     category: Base OS
