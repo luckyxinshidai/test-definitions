@@ -1,8 +1,10 @@
 #!/bin/sh
 
+# shellcheck disable=SC1091
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
+export RESULT_FILE
 
 usage() {
     echo "Usage: $0 [-s <true|false>]" 1>&2
@@ -26,6 +28,9 @@ mkdir -p "${OUTPUT}"
 if [ "${SKIP_INSTALL}" = "True" ] || [ "${SKIP_INSTALL}" = "true" ]; then
     warn_msg "LAMP package installation skipped"
 else
+    # Stop nginx server in case it is installed and running.
+    systemctl stop nginx > /dev/null 2>&1 || true
+
     dist_name
     # shellcheck disable=SC2154
     case "${dist}" in
