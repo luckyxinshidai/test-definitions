@@ -20,7 +20,7 @@ requirements:
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: syscalls
-              SKIP_FILE: skipfile-q2432
+              SKIPFILE: skipfile-q2432
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
