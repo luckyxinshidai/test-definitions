@@ -1,0 +1,120 @@
+metadata:
+  name: rpb-ee-1612-d03-functional
+  description: Test plan for EE RPB. Common features across all boards
+  os: CentOS
+  devices:
+    - d03
+  maintainer:
+    - milosz.wasilewski@linaro.org
+  approver:
+    - alan.benett@linaro.org
+  format: Linaro Test Plan v1
+
+requirements:
+  - name: Linux kernel
+    owner: alan.bennett@linaro.org
+    category: Low-level kernel
+    tests:
+      automated:
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: syscalls
+              SKIPFILE: skipfile-d03
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: mm
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: math
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: timers
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: fcntl-locktests
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: ipc
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: fsx
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: fs
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: hugetlb
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: io
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: nptl
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: pty
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: containers
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: fs_bind
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: filecaps
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: admin_tools
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: connectors
+              SKIP_INSTALL: true
+          mandatory: True
