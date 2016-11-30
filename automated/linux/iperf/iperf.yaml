@@ -24,20 +24,14 @@ metadata:
         - d05
 
 params:
-    # Specify iperf test server. Execute 'iperf3 -s' on remote host to run
-    # iperf3 test server for physical network bandwidth test.
-    # Test locahost by defualt, which tests the effificency of TCP/IP stack.
-    SERVER: "127.0.0.1"
     # Time in seconds to transmit for
     TIME: "10"
     # Number of parallel client streams to run
     THREADS: "1"
-    # Specify iperf3 version for CentOS.
-    VERSION: "3.1.4"
     SKIP_INSTALL: "false"
 
 run:
     steps:
         - cd ./automated/linux/iperf/
-        - ./iperf.sh -c "${SERVER}" -t "${TIME}" -p "${THREADS}" -v "${VERSION}" -s "${SKIP_INSTALL}"
+        - ./iperf.sh -t "${TIME}" -p "${THREADS}" -s "${SKIP_INSTALL}"
         - ../../utils/send-to-lava.sh ./output/result.txt

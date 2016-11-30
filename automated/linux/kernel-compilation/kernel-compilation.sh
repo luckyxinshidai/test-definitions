@@ -46,13 +46,16 @@ cd "linux-${VERSION}"
 # Compile Kernel with defconfig.
 # It is native not cross compiling.
 # It will not work on x86.
-make defconfig
 detect_abi
 # shellcheck disable=SC2154
 case "${abi}" in
-    arm64) { time -p make -j"${NPROC}" Image; } 2>&1 | tee "${LOGFILE}";;
-    armeabi) { time -p make -j"${NPROC}" uImage; } 2>&1 | tee "${LOGFILE}";;
-    *) error_msg "Unsupported architecture!"
+    arm64|armeabi)
+        make defconfig
+        { time -p make -j"${NPROC}" Image; } 2>&1 | tee "${LOGFILE}"
+        ;;
+    *)
+        error_msg "Unsupported architecture!"
+        ;;
 esac
 
 measurement="$(grep "^real" "${LOGFILE}" | awk '{print $2}')"

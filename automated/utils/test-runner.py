@@ -7,6 +7,7 @@ import logging
 import os
 import re
 import shutil
+import subprocess
 import sys
 import time
 from uuid import uuid4
@@ -87,6 +88,7 @@ class TestSetup(object):
         self.test_path = os.path.join(self.output, self.test_uuid)
         self.logger = logging.getLogger('RUNNER.TestSetup')
         self.test_kind = args.kind
+        self.test_version = test.get('version', None)
 
     def validate_env(self):
         # Inspect if environment set properly.
@@ -115,6 +117,13 @@ class TestSetup(object):
                 sys.exit(1)
             shutil.copytree(self.repo_path, self.test_path, symlinks=True)
             self.logger.info('Test repo copied to: %s' % self.test_path)
+
+    def checkout_version(self):
+        if self.test_version:
+            path = os.getcwd()
+            os.chdir(self.test_path)
+            subprocess.call("git checkout %s" % self.test_version, shell=True)
+            os.chdir(path)
 
     def create_uuid_file(self):
         with open('%s/uuid' % self.test_path, 'w') as f:
@@ -392,11 +401,24 @@ class ResultParser(object):
         self.results['test'] = self.test_name
         self.results['id'] = self.test_uuid
         self.logger = logging.getLogger('RUNNER.ResultParser')
-        self.results['params'] = None
-        if 'parameters' in test:
-            self.results['params'] = test['parameters']
-        if 'params' in test:
-            self.results['params'] = test['params']
+        self.results['params'] = {}
+        with open(os.path.join(self.result_path, "testdef.yaml"), "r") as f:
+            self.testdef = yaml.safe_load(f)
+            self.results['name'] = self.testdef['metadata']['name']
+            if 'params' in self.testdef.keys():
+                self.results['params'] = self.testdef['params']
+        if 'parameters' in test.keys():
+            self.results['params'].update(test['parameters'])
+        if 'params' in test.keys():
+            self.results['params'].update(test['params'])
+        if 'version' in test.keys():
+            self.results['version'] = test['version']
+        else:
+            path = os.getcwd()
+            os.chdir(self.result_path)
+            test_version = subprocess.check_output("git rev-parse HEAD", shell=True)
+            self.results['version'] = test_version.rstrip()
+            os.chdir(path)
 
     def run(self):
         self.parse_stdout()
@@ -451,11 +473,11 @@ class ResultParser(object):
             test_params = ';'.join(['%s=%s' % (k, v) for k, v in params_dict.iteritems()])
 
         for metric in self.results['metrics']:
-            metric['test'] = self.results['test']
+            metric['name'] = self.results['name']
             metric['test_params'] = test_params
 
         # Save test results to output/test_id/result.csv
-        fieldnames = ['test', 'test_case_id', 'result', 'measurement', 'units', 'test_params']
+        fieldnames = ['name', 'test_case_id', 'result', 'measurement', 'units', 'test_params']
         with open('%s/result.csv' % self.result_path, 'w') as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
@@ -536,6 +558,7 @@ def main():
         setup = TestSetup(test, args)
         setup.create_dir()
         setup.copy_test_repo()
+        setup.checkout_version()
         setup.create_uuid_file()
 
         # Convert test definition.
