@@ -1,3 +1,6 @@
-# https://bugs.linaro.org/show_bug.cgi?id=2646
+# kernel crash: https://bugs.linaro.org/show_bug.cgi?id=2646
 msgctl10
+# kernel crash: https://bugs.linaro.org/show_bug.cgi?id=2649
 msgctl11
+# not always, but oom1 test will kill ltp test.
+oom1

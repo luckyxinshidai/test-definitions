@@ -1,2 +1,4 @@
 # readahead02 test hangs.
 readahead02
+# not always, but omm1 will kill ltp test.
+oom1
