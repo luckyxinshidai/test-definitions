@@ -1,5 +1,5 @@
 metadata:
-  name: rpb-ee-1612-d03-performance
+  name: rpb-ee-1612-perf
   description: Test plan for EE RPB. Common features across all boards
   os: CentOS
   devices:
@@ -31,12 +31,14 @@ requirements:
     owner: alan.bennett@linaro.org
     category: Base OS
     tests:
+      automated:
         - path: automated/linux/openssl/openssl-speed.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
   - name: Networking performance
     owner: alan.bennett@linaro.org
     tests:
+      automated:
         - path: automated/linux/iperf/iperf.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
