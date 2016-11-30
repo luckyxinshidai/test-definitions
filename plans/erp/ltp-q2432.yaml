@@ -19,14 +19,7 @@ requirements:
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
-              TST_CMDFILES: syscalls
-              SKIPFILE: skipfile-q2432
-          mandatory: True
-        - path: automated/linux/ltp/ltp.yaml
-          repository: https://git.linaro.org/qa/test-definitions.git
-          parameters:
-              TST_CMDFILES: mm
-              SKIP_INSTALL: true
+              TST_CMDFILES: containers
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
@@ -118,3 +111,16 @@ requirements:
               TST_CMDFILES: connectors
               SKIP_INSTALL: true
           mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: syscalls
+              SKIP_INSTALL: true
+              SKIPFILE: skipfile-q2432
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: mm
+              SKIP_INSTALL: true
+              SKIPFILE: skipfile-q2432

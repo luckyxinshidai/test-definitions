@@ -19,14 +19,7 @@ requirements:
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
-              TST_CMDFILES: syscalls
-              SKIPFILE: skipfile-d03
-          mandatory: True
-        - path: automated/linux/ltp/ltp.yaml
-          repository: https://git.linaro.org/qa/test-definitions.git
-          parameters:
-              TST_CMDFILES: mm
-              SKIP_INSTALL: true
+              TST_CMDFILES: containers
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
@@ -91,12 +84,6 @@ requirements:
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
-              TST_CMDFILES: containers
-              SKIP_INSTALL: true
-          mandatory: True
-        - path: automated/linux/ltp/ltp.yaml
-          repository: https://git.linaro.org/qa/test-definitions.git
-          parameters:
               TST_CMDFILES: fs_bind
               SKIP_INSTALL: true
           mandatory: True
@@ -118,3 +105,16 @@ requirements:
               TST_CMDFILES: connectors
               SKIP_INSTALL: true
           mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: syscalls
+              SKIPFILE: skipfile-d03
+              SKIP_INSTALL: true
+          mandatory: True
+        - path: automated/linux/ltp/ltp.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
+          parameters:
+              TST_CMDFILES: mm
+              SKIPFILE: skipfile-d03
+              SKIP_INSTALL: true
