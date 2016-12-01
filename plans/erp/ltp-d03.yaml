@@ -26,84 +26,98 @@ requirements:
           parameters:
               TST_CMDFILES: math
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: timers
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: fcntl-locktests
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: ipc
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: fsx
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: fs
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: hugetlb
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: io
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: nptl
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: pty
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: fs_bind
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: filecaps
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: admin_tools
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
           parameters:
               TST_CMDFILES: connectors
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
@@ -111,6 +125,7 @@ requirements:
               TST_CMDFILES: syscalls
               SKIPFILE: skipfile-d03
               SKIP_INSTALL: true
+          timeout: 3600
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
@@ -118,3 +133,5 @@ requirements:
               TST_CMDFILES: mm
               SKIPFILE: skipfile-d03
               SKIP_INSTALL: true
+          timeout: 3600
+          mandatory: True
