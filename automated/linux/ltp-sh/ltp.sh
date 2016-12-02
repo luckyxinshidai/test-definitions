@@ -1,13 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 
+# shellcheck disable=SC1091
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 # Absolute path to this script. /home/user/bin/foo.sh
-SCRIPT="$(readlink -f $0)"
+SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in. /home/user/bin
-SCRIPTPATH="$(dirname $SCRIPT)"
-echo "Script path is: "${SCRIPTPATH}""
+SCRIPTPATH=$(dirname "$SCRIPT")
+echo "Script path is: ${SCRIPTPATH}"
 # List of test cases
 TST_CMDFILES=""
 # List of test cases to be skipped
@@ -22,36 +23,41 @@ usage() {
     exit 0
 }
 
-while getopts "T:S:s:v:" arg; do
-   case "$arg" in
-     T)
-        TST_CMDFILES="${OPTARG}"
-        LOG_FILE=$(echo "${OPTARG}"| sed 's,\/,_,')
-        ;;
-     S)
-        OPT=$(echo "${OPTARG}" | grep "http")
-        if [ -z "${OPT}" ] ; then
-        # LTP skipfile
-          SKIPFILE="-S "${SCRIPTPATH}"/"${OPTARG}""
-        else
-        # Download LTP skipfile from speficied URL
-          wget "${OPTARG}"
-          SKIPFILE=$(echo "${OPTARG##*/}")
-          SKIPFILE="-S $(pwd)/${SKIPFILE}"
-        fi
-        ;;
-     # SKIP_INSTALL is true in case of Open Embedded builds
-     # SKIP_INSTALL is flase in case of Debian builds
-     s) SKIP_INSTALL="${OPTARG}";;
-     v) LTP_VERSION="${OPTARG}";;
-  esac
+while getopts "T:S:s:v:h" arg; do
+    case "$arg" in
+        T)
+            TST_CMDFILES="${OPTARG}"
+            LOG_FILE=$(echo "${OPTARG}"| sed 's/,/_/')
+            ;;
+        S)
+            if echo "${OPTARG}" | grep "http"; then
+                # Download LTP skipfile from speficied URL
+                wget "${OPTARG}"
+                # Get basename of the URL.
+                SKIPFILE="${OPTARG##*/}"
+                SKIPFILE="$(pwd)/${SKIPFILE}"
+            else
+                SKIPFILE="${SCRIPTPATH}/${OPTARG}"
+            fi
+            ;;
+        # SKIP_INSTALL is true in case of Open Embedded builds # SKIP_INSTALL is flase in case of Debian builds
+        s)
+            SKIP_INSTALL="${OPTARG}"
+            ;;
+        v)
+            LTP_VERSION="${OPTARG}"
+            ;;
+        *)
+            usage
+            ;;
+    esac
 done
 
 # Install LTP test suite
 install_ltp() {
     rm -rf /opt/ltp
     mkdir -p /opt/ltp
-    cd /opt/ltp
+    cd /opt/ltp || exit
     wget https://github.com/linux-test-project/ltp/releases/download/"${LTP_VERSION}"/ltp-full-"${LTP_VERSION}".tar.xz
     tar --strip-components=1 -Jxf ltp-full-"${LTP_VERSION}".tar.xz
     ./configure
@@ -74,17 +80,13 @@ parse_ltp_output() {
 
 # Run LTP test suite
 run_ltp() {
-    cd "${LTP_PATH}"
+    cd "${LTP_PATH}" || exit
 
-    exec 4>&1
-    error_statuses="$(((./runltp -p -q -f "${TST_CMDFILES}" \
+    ./runltp -p -q -f "${TST_CMDFILES}" \
         -l "${OUTPUT}/LTP_${LOG_FILE}.log" \
-        -C "${OUTPUT}/LTP_${LOG_FILE}.failed" "${SKIPFILE}" \
-        ||  echo "0:$?" >&3) | (tee "${OUTPUT}/LTP_${LOG_FILE}.out" \
-        ||  echo "1:$?" >&3)) 3>&1 >&4)"
-    exec 4>&-
+        -C "${OUTPUT}/LTP_${LOG_FILE}.failed" -S "${SKIPFILE}" \
+        | tee "${OUTPUT}/LTP_${LOG_FILE}.out"
 
-    echo "${error_statuses}"
     parse_ltp_summary "${OUTPUT}/LTP_${LOG_FILE}.log"
     parse_ltp_output "${OUTPUT}/LTP_${LOG_FILE}.log"
 }
@@ -101,6 +103,7 @@ if [ "${SKIP_INSTALL}" = "True" ] || [ "${SKIP_INSTALL}" = "true" ]; then
     info_msg "install_ltp skipped"
 else
     dist_name
+    # shellcheck disable=SC2154
     case "${dist}" in
       Debian|Ubuntu)
         pkgs="xz-utils flex bison build-essential wget curl"
