@@ -125,7 +125,7 @@ requirements:
               TST_CMDFILES: syscalls
               SKIPFILE: skipfile-d03
               SKIP_INSTALL: true
-          timeout: 3600
+          timeout: 7200
           mandatory: True
         - path: automated/linux/ltp/ltp.yaml
           repository: https://git.linaro.org/qa/test-definitions.git
@@ -133,5 +133,5 @@ requirements:
               TST_CMDFILES: mm
               SKIPFILE: skipfile-d03
               SKIP_INSTALL: true
-          timeout: 3600
+          timeout: 7200
           mandatory: True

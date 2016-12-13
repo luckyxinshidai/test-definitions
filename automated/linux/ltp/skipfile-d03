@@ -2,3 +2,4 @@
 readahead02 readahead02
 # not always, but omm1 will kill ltp test.
 oom01 oom01
+min_free_kbytes min_free_kbytes

@@ -4,3 +4,4 @@ msgctl10 msgctl10
 msgctl11 msgctl11
 # not always, but oom1 test will kill ltp test.
 oom01 oom01
+min_free_kbytes min_free_kbytes
