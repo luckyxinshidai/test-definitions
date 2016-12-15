@@ -6,7 +6,7 @@ DIR=$1
 OUTPUT=$2
 
 mkdir -p "${OUTPUT}"
-for plan in func func-manual enterprise perf perf-manual ltp libhugetlbfs; do
+for plan in func func-manual enterprise enterprise-manual perf perf-manual ltp libhugetlbfs; do
     if [ -f "${DIR}/${plan}/result.csv" ]; then
         cp "${DIR}/${plan}/result.csv" "${OUTPUT}/${plan}.csv"
     fi
