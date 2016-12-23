@@ -20,18 +20,18 @@ requirements:
     category: Performance
     tests:
       automated:
-        - path: 24h-stress-test.yaml
-          repository: https://git.linaro.org/qa/24h-stress-test.git
+        - path: automated/linux/24h-stress/24h-stress-test.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
           parameters:
               TEST: stress_ng
-        - path: 24h-stress-test.yaml
-          repository: https://git.linaro.org/qa/24h-stress-test.git
+        - path: automated/linux/24h-stress/24h-stress-test.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
           parameters:
               TEST: stress_oom
-        - path: 24h-stress-test.yaml
-          repository: https://git.linaro.org/qa/24h-stress-test.git
+        - path: automated/linux/24h-stress/24h-stress-test.yaml
+          repository: https://git.linaro.org/qa/test-definitions.git
           mandatory: True
           parameters:
               TEST: stress_network
