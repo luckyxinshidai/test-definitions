@@ -3,7 +3,6 @@
 OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 SKIP_INSTALL="false"
-set -x
 get_binary() {
 	if [ ! -e "./Image" ]; then
 		wget http://192.168.1.107/v3.0rc0-pretest1/Image
@@ -14,6 +13,10 @@ get_binary() {
 
 install() {
     dist_name
+    if [ "${dist}"x = ""x ]; then
+	echo 'versio tool not install'
+	exit
+    fi
     case "${dist}" in
       Debian|Ubuntu) pkgs="lsb-release qemu qemu-kvm libvirt-bin bridge-utils" ;;
       Fedora|CentOS) pkgs="qemu qemu-kvm libvirt libcanberra-gtk2 qemu-kvm qemu-kvm-tools libvirt-cim libvirt-client libvirt-java.noarch  libvirt-python libiscsi-1.7.0-5.el6  dbus-devel  virt-clone tunctl virt-manager libvirt libvirt-python python-virtinst wget bridge-utils" ;;
