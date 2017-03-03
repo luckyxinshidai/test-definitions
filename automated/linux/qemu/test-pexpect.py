@@ -1,8 +1,8 @@
 #!/usr/bin/python
 import sys
 import pexpect
-
-
+import pdb
+DEBUG=True
 def start_qemu():
     child = pexpect.spawn('''qemu-system-aarch64 -machine virt,gic_version=3
                           -cpu host -kernel Image -drive if=none,file=ubuntu.img,id=fs
@@ -50,6 +50,7 @@ def create_dir_in_qemu(child):
         print '''sorry the dir create failed with status TIMEOUT'''
         close_qemu(child)
         exit(-1)
+    print 'create qemu before return'
     return
 
 
@@ -118,10 +119,7 @@ def main():
     close_qemu(child)
     child1 = start_qemu()
     if child1 == -1:
-        print '''qemu 1 start failed'''
-        exit(-1)
-    find_the_exist_dir_in_virt_disk(child1)
-    test_the_network(child1)
+    	test_the_network(child1)
     close_qemu(child1)
 
 

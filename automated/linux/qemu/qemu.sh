@@ -1,11 +1,9 @@
 #!/bin/sh
-
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 SKIP_INSTALL="false"
-
-
+set -x
 get_binary() {
 	if [ ! -e "./Image" ]; then
 		wget http://192.168.1.107/v3.0rc0-pretest1/Image
@@ -17,11 +15,11 @@ get_binary() {
 install() {
     dist_name
     case "${dist}" in
-      Debian|Ubuntu) pkgs="lsb-release" ;;
+      Debian|Ubuntu) pkgs="lsb-release qemu qemu-kvm libvirt-bin bridge-utils" ;;
       Fedora|CentOS) pkgs="qemu qemu-kvm libvirt libcanberra-gtk2 qemu-kvm qemu-kvm-tools libvirt-cim libvirt-client libvirt-java.noarch  libvirt-python libiscsi-1.7.0-5.el6  dbus-devel  virt-clone tunctl virt-manager libvirt libvirt-python python-virtinst wget bridge-utils" ;;
     esac
 	# centos and Fedor add linaro repo source
-	if [ x"${dist}" == x"Fedora" ] || [ x"${dist}" == x"CentOS" ]; then
+	if [ "${dist}"x = "Fedora"x ] || [ "${dist}"x = "CentOS"x ]; then
 		if [ ! -e /etc/yum.repos.d/Linaro-overlay.repo ]; then
 			cat > /etc/yum.repos.d/Linaro-overlay.repo << END_TEXT
 [linaro-overlay]
@@ -36,7 +34,7 @@ END_TEXT
 	fi
 
     install_deps "${pkgs}" "${SKIP_INSTALL}"
-	if [ x"${dist}" == x"Fedora" ] || [ x"${dist}" == x"CentOS" ]; then
+	if [ "${dist}"x = "Fedora"x ] || [ "${dist}"x = "CentOS"x ]; then
 		# recovery yum's default conf
 		sed -i "/^gpgcheck/s/0/1/g" /etc/yum.conf
 	fi
@@ -79,9 +77,17 @@ fi
 }
 # start qemu with virt disk and network
 start_qemu_disk_network() {
-	local key=`python ./test-pexpect.py`
-	echo $?
-	echo "${key}"
+	dist_name
+	case "${dist}" in
+	   Fedora|CentOS)
+	        local key=`python ./test-pexpect.py`
+	        echo $?
+	        echo "${key}":q
+	   ;;
+	   Debian|Ubuntu)
+		python ./test-pexpect.py
+	   ;;
+	esac
 }
 # install depended-upon packages
 install
