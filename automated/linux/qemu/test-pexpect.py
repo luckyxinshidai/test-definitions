@@ -116,7 +116,10 @@ def main():
     close_qemu(child)
     child1 = start_qemu()
     if child1 == -1:
-    	test_the_network(child1)
+	print 'qemu 1 start failed'
+	exit(-1)
+    find_the_exist_dir_in_virt_disk(child1)
+    test_the_network(child1)
     close_qemu(child1)
 
 
