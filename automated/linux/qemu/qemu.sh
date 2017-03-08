@@ -14,7 +14,7 @@ get_binary() {
 install() {
     dist_name
     if [ "${dist}"x = ""x ]; then
-	echo 'versio tool not install'
+	echo 'version tool not install'
 	exit
     fi
     case "${dist}" in
