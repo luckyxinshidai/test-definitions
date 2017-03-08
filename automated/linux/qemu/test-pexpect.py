@@ -1,8 +1,6 @@
 #!/usr/bin/python
 import sys
 import pexpect
-
-
 def start_qemu():
     child = pexpect.spawn('''qemu-system-aarch64 -machine virt,gic_version=3
                           -cpu host -kernel Image -drive if=none,file=ubuntu.img,id=fs
@@ -118,8 +116,8 @@ def main():
     close_qemu(child)
     child1 = start_qemu()
     if child1 == -1:
-        print '''qemu 1 start failed'''
-        exit(-1)
+	print 'qemu 1 start failed'
+	exit(-1)
     find_the_exist_dir_in_virt_disk(child1)
     test_the_network(child1)
     close_qemu(child1)
